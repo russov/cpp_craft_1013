@@ -15,11 +15,8 @@ static const char* OutputFilename = "Output.txt";
 static const size_t MaxTextLength = 100000;
 static const char* Delimiters = " -\\";
 
-//inline char ToLower(char x) { return ::tolower(x); }
-void ToLower(string& s) {
-  //transform(s.begin(), s.end(), s.begin(), ToLower);
-  for (size_t i = 0; i < s.length(); ++i)
-    s[i] = ::tolower(s[i]);
+inline void ToLower(string& s) {
+  transform(s.begin(), s.end(), s.begin(), ::tolower);
 }
 
 class IfCharacterInString {
