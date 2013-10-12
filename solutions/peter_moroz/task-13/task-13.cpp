@@ -13,11 +13,28 @@ static const char* InputFilename_translit = "Input_translit.txt";
 static const char* InputFilename_ru1251 = "Input_ru1251.txt";
 static const char* OutputFilename = "Output.txt";
 static const size_t MaxTextLength = 100000;
+static const char* Delimiters = " -\\";
 
-inline char ToLower(char x) { return ::tolower(x); }
-inline void ToLower(string& s) {
+//inline char ToLower(char x) { return ::tolower(x); }
+void ToLower(string& s) {
+  //transform(s.begin(), s.end(), s.begin(), ToLower);
   for (size_t i = 0; i < s.length(); ++i)
     s[i] = ::tolower(s[i]);
+}
+
+class IfCharacterInString {
+public:
+  IfCharacterInString(const string& s) : s_(s) {}
+  bool operator()(char x) {
+    return (s_.find(x) != string::npos);
+  }
+private:
+  string s_;
+};
+
+inline void RemoveDelimiters(string& s, const string& delimiters) {
+  IfCharacterInString if_character_in_string(delimiters);
+  s.erase(remove_if(s.begin(), s.end(), if_character_in_string), s.end());
 }
 
 void ReadKeys(ifstream& ifs, vector<string>& keys);
@@ -25,7 +42,11 @@ void FindKeysAndLogResult(const string& where,
                           const vector<string>& keys,
                           ofstream& ofs);
 
-string Reverse(const string& s);
+inline string Reverse(string s) {
+  reverse(s.begin(), s.end());
+  return s;
+}
+
 string Join(const string& s, const char* delims = " -\\");
 vector<string> Split(const string& s, const char* delims = " -\\");
 
@@ -50,8 +71,6 @@ int main() {
 
   string discovered_text;
   getline(ifs, discovered_text);
-  ToLower(discovered_text);
-  discovered_text = Join(discovered_text);
 
   if (discovered_text.length() > MaxTextLength) {
     cout << "The length of discoverred text is greater than"
@@ -59,6 +78,10 @@ int main() {
       << " Content of text has been truncated to this value.\n";
     discovered_text.resize(MaxTextLength);
   }
+
+  ToLower(discovered_text);
+  
+  RemoveDelimiters(discovered_text, Delimiters);
 
   vector<string> keys;
   ReadKeys(ifs, keys);
@@ -77,6 +100,7 @@ void ReadKeys(ifstream& ifs, vector<string>& keys) {
     getline(ifs, line);
     if (line.length() > 0) {
       ToLower(line);
+      RemoveDelimiters(line, Delimiters);
       keys.push_back(line);
     }
   }
@@ -84,31 +108,12 @@ void ReadKeys(ifstream& ifs, vector<string>& keys) {
 void FindKeysAndLogResult(const string& where, 
                           const vector<string>& keys, ofstream& ofs) {
   for (size_t i = 0; i < keys.size(); ++i) {
-    vector<string> key_parts = Split(Reverse(keys[i]));
-    size_t j = 0;
-    size_t p = 0;
-    while (j < key_parts.size()) {
-      p = where.find(key_parts[j], p);
-      if (p == string::npos)
-        break;
-      p += key_parts[j].length();
-      ++j;
-    } // while (j < key_parts.size())
-    if (j < key_parts.size())
+    if (where.find(Reverse(keys[i])) == string::npos)
       ofs << "NO";
     else
       ofs << "YES";
     ofs << endl;
   } // for (size_t i = 0; i < keys.size(); ++i)
-}
-string Reverse(const string& s) {
-  string r(s);
-  size_t len = r.length();
-  size_t i = len - 1;
-  size_t half_len = len / 2;
-  for (size_t j = 0; j < half_len; ++j, --i)
-    swap(r[j], r[i]);
-  return r;
 }
 string Join(const string& s, const char* delims /*= " -\\"*/) {
   vector<string> parts = Split(s, delims);
