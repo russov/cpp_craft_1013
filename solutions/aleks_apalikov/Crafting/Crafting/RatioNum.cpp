@@ -1,4 +1,5 @@
 #include "RatioNum.h"
+#include <math.h>
 
 RatioNum::RatioNum(string fileName)
 {
@@ -33,22 +34,20 @@ RatioNum::~RatioNum(void)
 int RatioNum::check()
 {
 	float pass;
+
+	bool concur;
 	while (!fs.eof())
 	{
+		concur = false;
 		fs>>pass;
 		passes.push_back(pass);
-	}
-	for(vector<float>::iterator it = codes.begin(); it < codes.end(); it++)
-	{
-		if((*it - pass) < 1e-4)
+		for(vector<float>::iterator it = codes.begin(); it < codes.end(); it++)
 		{
-			of << "Yes\n";
-			count ++;
+			concur |= (fabs(*it - pass) < 1e-4);
 		}
-		else
-		{
-			of << "No\n";
-		}
+		string ans = concur ? "Yes\n" : "No\n";
+		of << ans.c_str();
 	}
+	
 	return count;
 }
