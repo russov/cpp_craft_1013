@@ -1,5 +1,6 @@
 #include "reversedStr.h"
 #include <string>
+#include <algorithm>
 
 using namespace std;
 const string reversedStr::path = "F:\\Cpp_Craft\\cpp_craft_1013\\solutions\\aleks_apalikov\\Crafting\\Crafting\\";
@@ -16,10 +17,13 @@ reversedStr::reversedStr(string fileName)
 	getline(fs, input);
 	of.open("Output.txt", fstream::out  | fstream::trunc );
 
+	//str = path + "Output.txt";
 	if(!of.is_open()) {
 		printf("Output failed to open!");
 	}
-	str = path + "Output.txt";
+
+	lowerInput = toLower(input);
+
 
 }
 
@@ -41,7 +45,8 @@ int reversedStr::findNext()
 	{
 		rev += *it;
 	}
-	if(input.find(rev, 0) == string::npos)
+	rev = toLower(rev);
+	if(lowerInput.find(rev, 0) != string::npos)
 	{
 		of << "Yes\n";
 		count ++;
@@ -61,5 +66,19 @@ int reversedStr::findAll()
 		cout<<"Founded "<< i << endl;
 	}
 	return i;
+}
+
+string reversedStr::toLower(string in)
+{
+	string low;
+	for( string::iterator it = in.begin(); it < in.end(); it++)
+	{
+		if(*it != ' ' && *it != '\\' && *it != '-')
+		{
+			low += *it;
+		}
+	}
+	std::transform(low.begin(), low.end(), low.begin(), ::tolower);
+	return low;
 }
 
