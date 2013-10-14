@@ -9,6 +9,6 @@ int main()
 	RatioNum rN("input2.txt");
 	rN.check();*/
 	Islands is;
-	is.Count();
+	cout<<is.Count();
 	return 1;
 }

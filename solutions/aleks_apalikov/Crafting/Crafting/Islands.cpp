@@ -30,10 +30,10 @@ Islands::Islands(void)
 	}
 	if (Map[rows-2].size() == 0) //del empty line
 	{
-		rows--;
+		rows-=2;
 		Map.pop_back();
 	}
-//	cols = Map[rows-1].size();
+	columns = Map[rows-1].size();
 	of.open("Output3.txt", fstream::out  | fstream::trunc );
 
 	//str = path + "Output.txt";
@@ -44,23 +44,112 @@ Islands::Islands(void)
 
 Islands::~Islands(void)
 {
-}
+	for(vector<vector<int>>::iterator it = Map.begin(); it < Map.end(); it++)
+	{
+		it->erase(it->begin(), it->end());
+	}
 
-int Islands::Count()
+	Map.erase(Map.begin(), Map.end());
+}
+int Islands::Trace()
 {
+	count = 1; //do not forget to decrease at the end
 	for(int i = 0; i < rows; ++i)
 	{
 		for(int j = 0; j < columns; ++j)
 		{
-			if (Map[i][j] != 0 && Map[i+1][j] != 0 && Map[i][j+1] != 0)
+			if(j < columns - 1)
 			{
-				count++;
-				if (Map[i][j])
+				int& right = Map[i][j+1];
+				int& cur = Map[i][j];
+				if ( cur != 0 && right != 0 )
 				{
-					Map[i][j] = 2;
+					if (cur > right)
+					{
+						right = cur;
+					}
+					else if(cur < right)
+					{
+						int oldCur = cur;
+						cur = right;
+						changeAll(oldCur, cur);
+					}
+					else if((cur == 1) && (right == 1))
+					{
+						count++;
+						right = count;
+						cur = count;
+					}
+				}
+			}
+			if(i < rows - 1)
+			{
+				int& lower = Map[i+1][j];
+				int& cur1 = Map[i][j];
+				if(cur1 != 0 && lower != 0)
+				{
+					if (cur1 > lower)
+					{
+						lower = cur1;
+					}
+					else
+					{
+						count++;
+						lower = count;
+						cur1 = count;
+					}
 				}
 			}
 		}
 	}
 	return count;
+}
+
+void Islands::changeAll(const int old, const int ne )
+{
+	if((old == 1) || (ne == 1))
+		return;
+	for(int i = 0; i < rows; ++i)
+	{
+		for(int j = 0; j < columns; ++j)
+		{
+			if(Map[i][j] == old)
+				Map[i][j] = ne;
+		}
+	}
+
+	
+}
+
+int Islands::Count()
+{
+	Trace();
+	int* numbers = new int[count];
+	int k;
+	for(k = 0; k < count; k++)
+	{
+		numbers[k] = 0;
+	}
+	for(int i = 0; i < rows; ++i)
+	{
+		for(int j = 0; j < columns; ++j)
+		{
+			int cur = Map[i][j];
+			if(cur == 1)
+			{
+				numbers[1]++;
+			}
+			else
+			{
+				numbers[cur] = 1;
+			}
+		}
+	}
+	int sum = 0;
+	for(k = 0; k < count; k++)
+	{
+		sum += numbers[k];
+	}
+	of << sum;
+	return sum;
 }
