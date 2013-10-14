@@ -11,8 +11,10 @@ class Islands
 	int rows;
 	int columns;
 	vector<vector<int>> Map;
+	int Trace();
 public:
 	Islands(void);
 	int Count();
+	void changeAll(const int old, const int ne);
 	~Islands(void);
 };
