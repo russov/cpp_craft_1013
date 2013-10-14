@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class reversedStr
+class ReversedStr
 {
 	ifstream fs;
 	ofstream of;
@@ -14,11 +14,11 @@ class reversedStr
 	int count;
 public:
 	static const string path;
-	reversedStr(string fileName); //read 1st line
+	ReversedStr(string fileName); //read 1st line
 
 	string toLower(string);
 
 	int findNext(); //read next line and output y/n, stop after -1
 	int findAll();
-	~reversedStr(void);
+	~ReversedStr(void);
 };

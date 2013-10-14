@@ -3,10 +3,10 @@
 #include <algorithm>
 
 using namespace std;
-const string reversedStr::path = "F:\\Cpp_Craft\\cpp_craft_1013\\solutions\\aleks_apalikov\\Crafting\\Crafting\\";
+const string ReversedStr::path = "F:\\Cpp_Craft\\cpp_craft_1013\\solutions\\aleks_apalikov\\Crafting\\Crafting\\";
 
 
-reversedStr::reversedStr(string fileName)
+ReversedStr::ReversedStr(string fileName)
 {
 	string str = path + fileName;
 	fs.open(fileName.c_str(), fstream::in);
@@ -27,13 +27,13 @@ reversedStr::reversedStr(string fileName)
 
 }
 
-reversedStr::~reversedStr(void)
+ReversedStr::~ReversedStr(void)
 {
 	fs.close();
 	of.close();
 }
 
-int reversedStr::findNext()
+int ReversedStr::findNext()
 {
 	getline(fs, current);
 	if(current.length() <= 1)
@@ -58,7 +58,7 @@ int reversedStr::findNext()
 	return count;
 }
 
-int reversedStr::findAll()
+int ReversedStr::findAll()
 {
 	int i = 0;
 	while((i = findNext()) != -1)
@@ -68,7 +68,7 @@ int reversedStr::findAll()
 	return i;
 }
 
-string reversedStr::toLower(string in)
+string ReversedStr::toLower(string in)
 {
 	string low;
 	for( string::iterator it = in.begin(); it < in.end(); it++)

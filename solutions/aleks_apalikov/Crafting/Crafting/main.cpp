@@ -1,8 +1,11 @@
 #include "reversedStr.h"
+#include "RatioNum.h"
 
 int main()
 {
-	reversedStr rs("Input.txt");
+	ReversedStr rs("Input.txt");
 	rs.findAll();
+	RatioNum rN("input2.txt");
+	rN.check();
 	return 1;
 }
