@@ -16,20 +16,8 @@ void ReadCodes(ifstream& ifs, int& codes_count, vector<double>& codes);
 void ReadPasswords(ifstream& ifs, vector<double>& passwords);
 void CheckPasswordsAndLogResults(const vector<double>& passwords,
                                  const vector<double>& codes,
+
                                  ofstream& ofs);
-
-class CompareWithPrecision 
-  : public binary_function<double, double, bool> {
-public:
-  CompareWithPrecision(const double& precision) 
-    : precision_(precision) {}
-  bool operator()(const double& lhs, const double& rhs) const {
-    return (::fabs(lhs - rhs) < precision_);
-  }
-private:
-  double precision_;
-};
-
 int main() {
   int codes_count = 0;
   vector<double> codes;
@@ -109,16 +97,23 @@ void CheckPasswordsAndLogResults(const vector<double>& passwords,
                                  const vector<double>& codes, ofstream& ofs) {
 
   const double kPrecision = 0.0001;
+  const double kScale = 1.0 / kPrecision;
 
   for (size_t i = 0; i < passwords.size(); ++i) {
-    if (find_if(codes.begin(), codes.end(), 
-        bind2nd(CompareWithPrecision(kPrecision), 
-                passwords[i])) != codes.end()) {
+    size_t j = 0;
+    while (j < codes.size()) {
+      if (::fabs(passwords[i] - codes[j]) < kPrecision) {
+        double x = ::floor(::fabs(passwords[i]) * kScale);
+        double y = ::floor(::fabs(codes[j]) * kScale);
+        if (::fabs(x - y) == 0.0)
+          break;
+      }
+      ++j;
+    } // while (j < codes.size())
+    if (j < codes.size())
       ofs << "YES";
-    } else {
+    else
       ofs << "NO";
-    }
-
     ofs << endl;
   } // for (size_t i = 0; i < passwords.size(); ++i)
 }
