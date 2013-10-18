@@ -1,7 +1,7 @@
 set(PROJECT task-25)
 set(MAIN_SOURCES ${PROJECT}.cpp)
-set(PRIVATE_CLASSES Task25)
-set(COMMON_CLASSES Task StringConstants)
+set(PRIVATE_CLASSES Message MessagesBuffer Statistics Task25)
+set(COMMON_CLASSES Task)
 
 set(SOURCES)
 set(HEADERS)

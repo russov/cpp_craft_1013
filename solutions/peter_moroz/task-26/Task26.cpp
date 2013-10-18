@@ -1,5 +1,7 @@
 #include "Task26.h"
+#include <iostream>
 #include <sstream>
+#include "Message.h"
 
 using namespace std;
 
@@ -9,6 +11,24 @@ void Task26::Perform() {
     message << "Task26::Perform() : class instance hasn't been "
       << "initialized yet, invoke Initialize() before." << endl;
     throw Exception(message.str().c_str());
+  }
+
+  Message message;
+  message.ReadFrom(ifs_);
+  while (!ifs_.eof()) {
+    bool success = true;
+    try {
+      message.CalculateDays();
+    } catch (Date::Exception& ex) { 
+      cerr << "Task26::Perform - Date::Exception has been caught " 
+          << "reason: " << ex.reason() << endl;
+      success = false;      
+    }
+    
+    if (success)
+      message.WriteTo(ofs_);
+
+    message.ReadFrom(ifs_);
   }
 }
 void Task26::Initialize() {

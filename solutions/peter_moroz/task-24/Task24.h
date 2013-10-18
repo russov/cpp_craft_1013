@@ -5,6 +5,8 @@
 
 class Task24 : public Task {
 
+  static bool IsAllowedMessageType(unsigned type);  
+
 public:
   Task24(const char* input_fname, const char* output_fname)
     : Task(input_fname, output_fname) {}
