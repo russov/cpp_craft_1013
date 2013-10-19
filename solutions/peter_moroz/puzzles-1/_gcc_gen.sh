@@ -1,5 +1,5 @@
 
-export SOLUTION_NAME=cmake_example
+export SOLUTION_NAME=puzzles-1
 
 export BUILD_TYPE=Debug
 if [ "$1" == 'Release' ];
