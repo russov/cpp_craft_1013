@@ -4,9 +4,9 @@ Deals::Deals( string & fileName )
 {
 	fileErr = false;
 	string fileN1 = fileName + ".in"; 
-	in.open(fileN1.c_str(), ios_base::in | ios_base::binary);
-	string fileN2 = fileName + ".in"; 
-	out.open(fileN2.c_str(), ios_base::out | ios_base::binary);
+	in.open(fileN1.c_str(), fstream::in | fstream::binary);
+	string fileN2 = fileName + ".out"; 
+	out.open(fileN2.c_str(), fstream::out | fstream::binary);
 	if(!in.is_open() || !out.is_open())
 	{
 		cout << "File not found! "<<endl;
@@ -31,14 +31,14 @@ int Deals::createOutput()
 	}
 	int n = 0; //total number of objects
 	UINT32 type, time, len, currentTime = 0;
-	char* str;
+	char* str = NULL;
 	bool toWrite = false;
-	DealsElem* de;
+	DealsElem* de = NULL;
 	while (!in.eof())
 	{
-		in >> type;
+		type = read_uint32(in);
 		toWrite = (type>=MARKET_OPEN && type<=MARKET_CLOSE);
-		in >> time;
+		time = read_uint32(in);
 		if(currentTime != 0) //test of first read
 		{
 			if (time<=currentTime-2)
@@ -57,7 +57,9 @@ int Deals::createOutput()
 			toWrite |= true;
 			currentTime = time;
 		}
-		in >> len;
+		len = read_uint32(in);
+		if(len > 1000)
+			break;
 		if(str)
 		{
 			delete[] str;
@@ -76,7 +78,7 @@ int Deals::createOutput()
 		de = new DealsElem(type, time, len, str);
 		if (toWrite)
 		{
-			out << de;
+			de->operator <<(out);
 		}
 	}
 	return n;

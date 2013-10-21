@@ -8,7 +8,7 @@ using namespace std;
 class Deals
 {
 	fstream in;
-	fstream out;
+	ofstream out;
 	bool fileErr;
 public:
 	Deals(string & fileName);
