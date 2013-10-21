@@ -1,6 +1,7 @@
 #include <reader.h>
 
 #include <iostream>
+#include <fstream>
 
 #define test_no_throw( action ) \
 { \
@@ -13,6 +14,8 @@
 		std::cout << "test_no_throw failed: " <<  __FILE__ << ":" << __LINE__ << std::endl; \
 	} \
 } \
+
+
 
 int main()
 {
