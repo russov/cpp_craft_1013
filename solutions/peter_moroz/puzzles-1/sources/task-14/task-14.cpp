@@ -1,10 +1,13 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <exception>
 #include <fstream>
 #include <functional>
+#include <sstream>
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 
@@ -29,7 +32,12 @@ int main() {
     return -1;
   }
 
-  ReadCodes(ifs, codes_count, codes);
+  try {
+    ReadCodes(ifs, codes_count, codes);
+  } catch (exception& ex) {
+    cerr << "ReadCodes  failed. Reason: " << ex.what() << endl;
+    return -1;
+  }
   if (codes_count != static_cast<int>(codes.size())) {
     cerr << "Wrong input data: \n";
     cerr << "Number of Codes : " << codes_count << endl
@@ -61,37 +69,67 @@ int main() {
 
 
 void ReadCodes(ifstream& ifs, int& count, vector<double>& codes) {
+  using namespace boost;
+
   codes.clear();
   count = 0;
   string line;
+  stringstream msg;
 
   getline(ifs, line);
-  count = ::atoi(line.c_str());
+  try {
+    count = lexical_cast<int>(line.c_str());
+  } catch (bad_lexical_cast& ex) {
+    msg << "boost::bad_lexical_cast has been caught "
+        << "when " << line << " had been casted to int. "
+        << "Details: " << ex.what();
+    throw logic_error(msg.str());
+  }
 
-  if (count > N)
-    return;
+  if (count > N) {
+    msg << "The codes counter " << count
+        << " is greater than allowed value.";
+    throw logic_error(msg.str());
+  }
 
   codes.reserve(count);
-
-  int i = 0;
-  while (i < count) {
+  for (int i = 0; i < count && !ifs.eof(); ++i) {
     getline(ifs, line);
-    if (line.size() > 0)  // skip empty line
-      codes.push_back(::atof(line.c_str()));
-    if (ifs.eof())
-      break;
-    ++i;
+    double code_value = 0.0;
+    try {
+      code_value = lexical_cast<double>(line.c_str());
+    } catch (bad_lexical_cast& ex) {
+      cerr << "ReadCodes: bad_lexical_cast has been caught, "
+           << "when " << line << " had been casted to double. "
+           << "Value will be skipped. "
+           << "Details: " << ex.what() << endl;
+      continue;
+    }
+    codes.push_back(code_value);
   }
 }
 void ReadPasswords(ifstream& ifs, vector<double>& passwords) {
+  using namespace boost;
+
   passwords.clear();
 
   string line;
   while (!ifs.eof()) {
     getline(ifs, line);
-    if (line.size() > 0)
-      passwords.push_back(::atof(line.c_str()));
-  }
+    if (line.size() > 0) {
+      double pass_value = 0.0;
+      try {
+        pass_value = lexical_cast<double>(line.c_str());
+      } catch (bad_lexical_cast& ex) {
+        cerr << "ReadPasswords: bad_lexical_cast has been caught, "
+             << "when " << line << " had been casted to double. "
+             << "Value will be skipped. "
+             << "Details: " << ex.what() << endl;
+        continue;
+      }
+      passwords.push_back(pass_value);
+    }
+  } // while (!ifs.eof())
 }
 void CheckPasswordsAndLogResults(const vector<double>& passwords,
                                  const vector<double>& codes, ofstream& ofs) {
