@@ -1,5 +1,4 @@
 #include "MessagesBuffer.h"
-#include "Message.h"
 #include "Statistics.h"
 
 using namespace std;

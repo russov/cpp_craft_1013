@@ -1,5 +1,5 @@
 #include "Task24.h"
-#include "Message.h"
+#include "../common/Message.h"
 #include <sstream>
 
 using namespace std;

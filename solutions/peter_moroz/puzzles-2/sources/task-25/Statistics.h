@@ -2,7 +2,7 @@
 #define STATISTICS_H_
 
 #include <map>
-#include "Message.h"
+#include "../common/Message.h"
 
 class Statistics {
 public:

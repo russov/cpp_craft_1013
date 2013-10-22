@@ -6,17 +6,25 @@
 typedef unsigned MessageType;
 
 class Message {
+public:
+  enum Types {
+    MT_MarketOpen = 1,
+    MT_Trade,
+    MT_Quote,
+    MT_MarketClose
+  };
 
 public:
   Message() : type_(0), time_(0) {}
 
-  void ReadFrom(std::ifstream& ifs);
+  MessageType type() const { return type_; }
+  unsigned time() const { return time_; }
+
   size_t GetTotalSize() const {
     return (sizeof(type_) + sizeof(time_) + text_.size());
   }
-
-  MessageType type() const { return type_; }
-  unsigned time() const { return time_; }
+  void ReadFrom(std::istream& is);
+  void WriteTo(std::ostream& os) const;
 
 private:
   MessageType type_;

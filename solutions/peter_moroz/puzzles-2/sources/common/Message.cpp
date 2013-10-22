@@ -24,3 +24,4 @@ void Message::WriteTo(ostream& os) const {
 		os.write(&x, sizeof(x));
 	}
 }
+
