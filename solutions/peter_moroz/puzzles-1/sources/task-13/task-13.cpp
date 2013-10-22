@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -19,7 +20,17 @@ inline void ToLower(string& s) {
   transform(s.begin(), s.end(), s.begin(), ::tolower);
 }
 
-class IfCharacterInString {
+/*class IfCharacterInString {
+public:
+  IfCharacterInString(const string& s) : s_(s) {}
+  bool operator()(char x) {
+    return (s_.find(x) != string::npos);
+  }
+private:
+  string s_;
+};*/
+
+class IfCharacterInString : public unary_function<char, bool> {
 public:
   IfCharacterInString(const string& s) : s_(s) {}
   bool operator()(char x) {
@@ -34,15 +45,10 @@ inline void RemoveDelimiters(string& s, const string& delimiters) {
   s.erase(remove_if(s.begin(), s.end(), if_character_in_string), s.end());
 }
 
-void ReadKeys(ifstream& ifs, vector<string>& keys);
+void ReadKeysWithReverse(ifstream& ifs, vector<string>& keys);
 void FindKeysAndLogResult(const string& where,
                           const vector<string>& keys,
                           ofstream& ofs);
-
-inline string Reverse(string s) {
-  reverse(s.begin(), s.end());
-  return s;
-}
 
 string Join(const string& s, const char* delims = " -\\");
 vector<string> Split(const string& s, const char* delims = " -\\");
@@ -81,7 +87,7 @@ int main() {
   RemoveDelimiters(discovered_text, Delimiters);
 
   vector<string> keys;
-  ReadKeys(ifs, keys);
+  ReadKeysWithReverse(ifs, keys);
   ifs.close();
 
   ofstream ofs(OutputFilename);
@@ -91,13 +97,14 @@ int main() {
   return 0;
 }
 
-void ReadKeys(ifstream& ifs, vector<string>& keys) {
+void ReadKeysWithReverse(ifstream& ifs, vector<string>& keys) {
   string line;
   while (!ifs.eof()) {
     getline(ifs, line);
     if (line.length() > 0) {
       ToLower(line);
       RemoveDelimiters(line, Delimiters);
+      reverse(line.begin(), line.end());
       keys.push_back(line);
     }
   }
@@ -105,7 +112,7 @@ void ReadKeys(ifstream& ifs, vector<string>& keys) {
 void FindKeysAndLogResult(const string& where, 
                           const vector<string>& keys, ofstream& ofs) {
   for (size_t i = 0; i < keys.size(); ++i) {
-    if (where.find(Reverse(keys[i])) == string::npos)
+    if (where.find(keys[i]) == string::npos)
       ofs << "NO";
     else
       ofs << "YES";
