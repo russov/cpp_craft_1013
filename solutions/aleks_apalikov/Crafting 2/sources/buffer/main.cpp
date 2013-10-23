@@ -15,5 +15,6 @@ int main(int argc, char** argv)
 	b.createOutput();
 	s = searchPath + "2.6";
 	Datafeed df(s);
+	df.createOutput();
 	return 0;
 }

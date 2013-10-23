@@ -1,5 +1,5 @@
 #include "Datafeed.h"
-
+//now working only with 0x20 symbols instead of 0x0
 
 Datafeed::Datafeed( string & fileName )
 {
@@ -32,55 +32,47 @@ int Datafeed::createOutput()
 	}
 	int n = 0; //total number of objects
 	UINT32 type, time, len, currentTime = 0;
+	Data* d;
 	char* str = NULL;
 	bool toWrite = false;
 	DealsElem* de = NULL;
 	while (!in.eof())
 	{
-		type = read_uint32(in);
-		toWrite = (type>=MARKET_OPEN && type<=MARKET_CLOSE);
-		time = read_uint32(in);
-		if(currentTime != 0) //test of first read
-		{
-			if (time<=currentTime-2)
-			{
-				toWrite |= false;
-			}
-			else 
-			{
-				toWrite |= true;
-				currentTime = time;
-			}
+		d = new Data();
+		d->stock_name = read_str(in);
+		d->date_time = read_date(in);
+		d->days();
+		d->price = read_double(in);
+		d->vwap = read_double(in);
+		d->volume = read_uint32(in);
+		d->f1 = read_double(in);
+		d->t1 = read_double(in);
+		d->f2 = read_double(in);
+		d->f3 = read_double(in);
+		d->f4 = read_double(in);
 
-		}
-		else
+		if( in.peek() == EOF )
 		{
-			toWrite |= true;
-			currentTime = time;
-		}
-		len = read_uint32(in);
-		if(len > 1000)
 			break;
-		if(str)
-		{
-			delete[] str;
 		}
-		if (de)
-		{
-			delete de;
-		}
-		str = new char[len+1];
-		for (int i = 0; i < len; i++)
-		{
-			in >> str[i];
-		}
-		str[len] = '\0';
+
+		write_str(out, d->stock_name.c_str());
+		write_uint32(out, d->ds);
+		write_double(out, d->vwap);
+		write_uint32(out, d->volume);
+		write_double(out, d->f2);
 		n++;
-		de = new DealsElem(type, time, len, str);
-		if (toWrite)
-		{
-			de->operator <<(out);
-		}
+		delete d;
 	}
 	return n;
+}
+
+UINT32 Data::days()
+{
+	int total = (date_time / 10000) * 372;
+	int month = (date_time % 10000) /100;
+	int days = date_time % 100;
+	total += month * 31 + days;
+	ds = total;
+	return total;
 }
