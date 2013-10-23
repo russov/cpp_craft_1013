@@ -18,7 +18,8 @@ DealsElem::DealsElem( UINT32 type, UINT32 time, UINT32 len, char* str )
 
 DealsElem::~DealsElem(void)
 {
-	delete[] Msg;
+	if(Msg)
+		delete[] Msg;
 }
 
 UINT32 write_uint32( ofstream& ins, UINT32 value)
@@ -45,9 +46,13 @@ UINT32 read_uint32( fstream& ins)
 	return value;
 }
 
+void write_double( ofstream& out, double rational ) 
+{
+	out.write( reinterpret_cast<char*>( &rational ), sizeof rational );
+}
+
 char* write_str( ofstream& ins, char* str )
 {
-
 	for (unsigned size = 0; size < strlen(str); ++size)
 		ins.put(str[size]);
 	return str;

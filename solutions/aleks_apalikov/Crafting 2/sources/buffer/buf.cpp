@@ -1,10 +1,11 @@
 #include "buf.h"
+#define BINARY_DIR ("")
 
 
-buf::buf( string & fName )
+buf::buf( string & fileName ):TotalTypes(100000)
 {
 	fileErr = false;
-	string fileN1 = fileName + ".in"; 
+	string fileN1 =  fileName + ".in"; 
 	in.open(fileN1.c_str(), fstream::in | fstream::binary);
 	string fileN2 = fileName + ".out"; 
 	out.open(fileN2.c_str(), fstream::out | fstream::binary);
@@ -14,6 +15,8 @@ buf::buf( string & fName )
 		fileErr = true;
 		return;
 	}
+	numBytes.resize(TotalTypes+1, 0);
+	totalBytes.resize(TotalTypes+1, 0);
 
 }
 
@@ -24,6 +27,7 @@ buf::~buf(void)
 	out.close();
 }
 
+
 int buf::createOutput()
 {
 	if (fileErr)
@@ -31,56 +35,68 @@ int buf::createOutput()
 		return -1;
 	}
 	int n = 0; //total number of objects
-	UINT32 type, time, len, currentTime = 0;
+	UINT32 type, time, len;
+	UINT32 curTime = 0;
 	char* str = NULL;
 	bool toWrite = false;
 	DealsElem* de = NULL;
-	while (!in.eof())
+	while (in)
 	{
 		type = read_uint32(in);
 		toWrite = (type>=MARKET_OPEN && type<=MARKET_CLOSE);
 		time = read_uint32(in);
-		if(currentTime != 0) //test of first read
+		if(time>curTime)
 		{
-			if (time<=currentTime-2)
+			curTime = time;
+			for(vector<int>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); it++, tb++)
 			{
-				toWrite |= false;
+				*tb += *it;
 			}
-			else 
-			{
-				toWrite |= true;
-				currentTime = time;
-			}
-
-		}
-		else
-		{
-			toWrite |= true;
-			currentTime = time;
-		}
+			numBytes.assign(TotalTypes + 1, 0);
+		}		
 		len = read_uint32(in);
-		if(len > 1000)
+		if ((numBytes[type] + len + 3 * sizeof(UINT32)) <= 2400)
+		{
+			numBytes[type] += len + 3 * sizeof(UINT32);
+		}
+		if( in.peek() == EOF )
+		{
 			break;
+		}
+		if(len == 0)
+			continue;
+		str = new char[len+1];
+		for (int i = 0; i < len; i++)
+		{
+			str[i] = in.get();
+		}
+		str[len] = '\0';
+		n++;
 		if(str)
 		{
 			delete[] str;
+		}
+	}
+	for(vector<int>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); it++, tb++)
+	{
+		*tb += *it;
+	}
+	type = 0;
+	for(vector<int>::iterator tb = totalBytes.begin(); tb != totalBytes.end(); tb++)
+	{
+		if (*tb == 0)
+		{
+			type++;
+			continue;
 		}
 		if (de)
 		{
 			delete de;
 		}
-		str = new char[len+1];
-		for (int i = 0; i < len; i++)
-		{
-			in >> str[i];
-		}
-		str[len] = '\0';
-		n++;
-		de = new DealsElem(type, time, len, str);
-		if (toWrite)
-		{
-			de->operator <<(out);
-		}
+
+		write_uint32(out, type);
+		write_double(out, (double)*tb/curTime);
+		type++;
 	}
 	return n;
 }
