@@ -1,4 +1,5 @@
 #include "Task25.h"
+#include <exception>
 #include <sstream>
 
 using namespace std;
@@ -8,7 +9,7 @@ void Task25::Perform() {
     stringstream message;
     message << "Task25::Perform() : class instance hasn't been "
       << "initialized yet, invoke Initialize() before." << endl;
-    throw Exception(message.str().c_str());
+    throw logic_error(message.str());
   }
 
 
@@ -38,19 +39,18 @@ void Task25::Perform() {
   statistics_.DumpOnTime(ofs_, message.time());
 }
 void Task25::Initialize() {
+  stringstream message;
   ifs_.open(input_fname().c_str(), ios_base::binary);
   if (!ifs_.is_open()) {
-    stringstream message;
     message << "Task25::Initialize() : Can't open file "
       << input_fname() << endl;
-    throw Exception(message.str().c_str());
+    throw runtime_error(message.str());
   }
 
   ofs_.open(output_fname().c_str(), ios_base::binary);
   if (!ofs_.is_open()) {
-    stringstream message;
     message << "Task25::Initialize() : Can't open file "
       << output_fname() << endl;
-    throw Exception(message.str().c_str());
+    throw runtime_error(message.str());
   }
 }

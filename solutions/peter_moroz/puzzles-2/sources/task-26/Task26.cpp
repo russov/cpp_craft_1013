@@ -1,4 +1,5 @@
 #include "Task26.h"
+#include <exception>
 #include <iostream>
 #include <sstream>
 #include "Message.h"
@@ -10,7 +11,7 @@ void Task26::Perform() {
     stringstream message;
     message << "Task26::Perform() : class instance hasn't been "
       << "initialized yet, invoke Initialize() before." << endl;
-    throw Exception(message.str().c_str());
+    throw logic_error(message.str());
   }
 
   Message message;
@@ -19,9 +20,9 @@ void Task26::Perform() {
     bool success = true;
     try {
       message.CalculateDays();
-    } catch (Date::Exception& ex) { 
-      cerr << "Task26::Perform - Date::Exception has been caught " 
-          << "reason: " << ex.reason() << endl;
+    } catch (exception& ex) { 
+      cerr << "Task26::Perform exception has been caught " 
+          << "reason: " << ex.what() << endl;
       success = false;      
     }
     
@@ -32,19 +33,18 @@ void Task26::Perform() {
   }
 }
 void Task26::Initialize() {
+  stringstream message;
   ifs_.open(input_fname().c_str(), ios_base::binary);
   if (!ifs_.is_open()) {
-    stringstream message;
     message << "Task26::Initialize() : Can't open file "
       << input_fname() << endl;
-    throw Exception(message.str().c_str());
+    throw runtime_error(message.str());
   }
 
   ofs_.open(output_fname().c_str(), ios_base::binary);
   if (!ofs_.is_open()) {
-    stringstream message;
     message << "Task26::Initialize() : Can't open file "
       << output_fname() << endl;
-    throw Exception(message.str().c_str());
+    throw runtime_error(message.str());
   }
 }

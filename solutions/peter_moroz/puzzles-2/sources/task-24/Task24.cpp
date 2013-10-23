@@ -1,5 +1,6 @@
 #include "Task24.h"
 #include "../common/Message.h"
+#include <exception>
 #include <sstream>
 
 using namespace std;
@@ -16,7 +17,7 @@ void Task24::Perform() {
     stringstream message;
     message << "Task24::Perform() : class instance hasn't been "
       << "initialized yet, invoke Initialize() before." << endl;
-    throw Exception(message.str().c_str());
+    throw logic_error(message.str());
   }
 
   unsigned max_time = 0;
@@ -40,19 +41,18 @@ void Task24::Perform() {
 
 }
 void Task24::Initialize() {
+  stringstream message;
   ifs_.open(input_fname().c_str(), ios_base::binary);
   if (!ifs_.is_open()) {
-    stringstream message;
     message << "Task24::Initialize() : Can't open file "
       << input_fname() << endl;
-    throw Exception(message.str().c_str());
+    throw runtime_error(message.str());
   }
 
   ofs_.open(output_fname().c_str(), ios_base::binary);
   if (!ofs_.is_open()) {
-    stringstream message;
     message << "Task24::Initialize() : Can't open file "
       << output_fname() << endl;
-    throw Exception(message.str().c_str());
+    throw runtime_error(message.str());
   }
 }

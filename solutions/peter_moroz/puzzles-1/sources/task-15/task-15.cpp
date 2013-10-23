@@ -1,7 +1,8 @@
 #include <algorithm>
-#include <iostream>
+#include <exception>
 #include <fstream>
 #include <functional>
+#include <iostream>
 #include "Island.h"
 #include "EarthSurface.h"
 
@@ -28,9 +29,9 @@ int main() {
   EarthSurface earth_surface;
   try {
     earth_surface.ReadFromStream(ifs);
-  } catch (EarthSurface::Exception& ex) {
-    cerr << "EarthSurface::ReadFromStream failed: "
-      << ex.reason() << endl;
+  } catch (exception& ex) {
+    cerr << "EarthSurface::ReadFromStream failed. "
+         << "Reason: " << ex.what() << endl;
     ifs.close();
     return -1;
   }

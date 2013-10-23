@@ -1,5 +1,6 @@
 #include "EarthSurface.h"
 
+#include <exception>
 #include <sstream>
 
 using namespace std;
@@ -12,7 +13,7 @@ void EarthSurface::ReadFromStream(ifstream& ifs) {
 
   size_t column_count = line.length();
   if (column_count == 0)
-    throw Exception("Zero length of top row, check input data.");
+    throw logic_error("Zero length of top row, check input data.");
 
   layout_.push_back(line);
 
@@ -22,8 +23,9 @@ void EarthSurface::ReadFromStream(ifstream& ifs) {
     ++row_count;
     if (line.length() != column_count) {
       stringstream message;
-      message << "Invalid data at row: " << row_count << endl;
-      throw Exception(message.str().c_str());
+      message << "Invalid data at row: " << row_count 
+		  << ", all rows must have equal length. " << endl;
+      throw logic_error(message.str());
     }
     layout_.push_back(line);
   }

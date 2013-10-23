@@ -7,15 +7,6 @@
 class Task {
 
 public:
-  class Exception {
-  public:
-    Exception(const char* reason) : reason_(reason) {}
-    std::string reason() const { return reason_; }
-  protected:
-    std::string reason_;
-  };
-
-public:
   virtual ~Task();
 
 protected:

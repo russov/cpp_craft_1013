@@ -9,15 +9,6 @@ class Date {
   static const unsigned kMonthsInYear = 12;
   static const unsigned kDaysInYear = kDaysInMonth * kMonthsInYear;
 
-public:
-  class Exception {
-  public:
-    Exception(const std::string& reason) : reason_(reason) {}
-    const std::string& reason() const { return reason_; }
-  private:
-    std::string reason_;
-  };
-
 private:
   Date() : d_(0), m_(0), y_(0) {}
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <exception>
 #include "Task24.h"
 
 using namespace std;
@@ -13,9 +14,9 @@ int main() {
   try {
     task.Initialize();
     task.Perform();
-  } catch (Task::Exception& ex) {
-    cout << "Task::Exception has been caught. "
-      << "Reason: " << ex.reason() << endl;
+  } catch (exception& ex) {
+    cout << "An exception has been caught. "
+      << "Reason: " << ex.what() << endl;
     return -1;
   }
 

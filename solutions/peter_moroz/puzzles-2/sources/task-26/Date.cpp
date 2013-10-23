@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <cstring>
+#include <exception>
 #include <iostream>
 #include <sstream>
 #include "Date.h"
@@ -17,7 +18,7 @@ Date Date::ParseString(const char* s) {
   if (::strlen(s) < 8) {
     msg << "Date::ParseString - invalid date string: "
       << s << ", it must has format YYYYMMDD" << endl;
-    throw Exception(msg.str());
+    throw logic_error(msg.str());
   }
 
   ::sscanf(s, "%4u%2u%2u", &d.y_, &d.m_, &d.d_);
@@ -25,19 +26,19 @@ Date Date::ParseString(const char* s) {
   if (!CheckYearValue(d.y_)) {
     msg << "Date::ParseString - invalid year value, "
         << "it must be greater than 0" << endl;
-    throw Exception(msg.str());
+    throw logic_error(msg.str());
   }
 
   if (!CheckMonthValue(d.m_)) {
     msg << "Date::ParseString - invalid month value, "
         << "it must be in range [1; 12] " << endl;
-    throw Exception(msg.str());
+    throw logic_error(msg.str());
   }
 
   if (!CheckDayValue(d.d_)) {
     msg << "Date::ParseString - invalid day value, "
       	<< "it must be in range [1; 31] " << endl;
-    throw Exception(msg.str());
+    throw logic_error(msg.str());
   }
   
   return d;

@@ -10,19 +10,6 @@
 class EarthSurface {
 
 public:
-  class Exception {
-  public:
-    Exception(const char* reason) 
-      : reason_(reason) {}
-
-    const std::string& reason() const {
-      return reason_;
-    }
-  private:
-    std::string reason_;
-  };
-
-public:
   EarthSurface() {}
   ~EarthSurface() {}
 
