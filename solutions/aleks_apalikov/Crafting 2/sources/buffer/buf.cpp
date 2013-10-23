@@ -43,7 +43,6 @@ int buf::createOutput()
 	while (in)
 	{
 		type = read_uint32(in);
-		toWrite = (type>=MARKET_OPEN && type<=MARKET_CLOSE);
 		time = read_uint32(in);
 		if(time>curTime)
 		{
@@ -68,7 +67,7 @@ int buf::createOutput()
 		str = new char[len+1];
 		for (int i = 0; i < len; i++)
 		{
-			str[i] = in.get();
+			in.read(&(str[i]), 1);
 		}
 		str[len] = '\0';
 		n++;

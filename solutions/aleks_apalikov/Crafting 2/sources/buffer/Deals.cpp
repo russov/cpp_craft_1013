@@ -71,7 +71,8 @@ int Deals::createOutput()
 		str = new char[len+1];
 		for (int i = 0; i < len; i++)
 		{
-			str[i] = in.get();
+			in.read(&(str[i]), 1);
+//			str[i] = in.get();
 		}
 		if( in.peek() == EOF )
 		{
