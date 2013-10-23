@@ -1,6 +1,7 @@
-#include "Deals.h"
+#include "Datafeed.h"
 
-Deals::Deals( string & fileName )
+
+Datafeed::Datafeed( string & fileName )
 {
 	fileErr = false;
 	string fileN1 = fileName + ".in"; 
@@ -14,16 +15,16 @@ Deals::Deals( string & fileName )
 		return;
 	}
 
-
 }
 
-Deals::~Deals(void)
+Datafeed::~Datafeed(void)
 {
+
 	in.close();
 	out.close();
 }
 
-int Deals::createOutput()
+int Datafeed::createOutput()
 {
 	if (fileErr)
 	{
@@ -71,11 +72,7 @@ int Deals::createOutput()
 		str = new char[len+1];
 		for (int i = 0; i < len; i++)
 		{
-			str[i] = in.get();
-		}
-		if( in.peek() == EOF )
-		{
-			break;
+			in >> str[i];
 		}
 		str[len] = '\0';
 		n++;
@@ -85,11 +82,5 @@ int Deals::createOutput()
 			de->operator <<(out);
 		}
 	}
-
-	if(str)
-	{
-		delete[] str;
-	}
 	return n;
 }
-
