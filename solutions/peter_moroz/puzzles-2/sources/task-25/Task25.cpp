@@ -5,19 +5,19 @@
 using namespace std;
 
 void Task25::Perform() {
+  stringstream error_text;
   if (!ifs_.is_open() || !ofs_.is_open()) {
-    stringstream message;
-    message << "Task25::Perform() : class instance hasn't been "
+    error_text << "Task25::Perform() : class instance hasn't been "
       << "initialized yet, invoke Initialize() before." << endl;
-    throw logic_error(message.str());
+    throw logic_error(error_text.str());
   }
 
 
   Message message;
   message.ReadFrom(ifs_);
 
-  unsigned start_time = message.time();
-  unsigned current_time = start_time;
+  boost::uint32_t start_time = message.time();
+  boost::uint32_t current_time = start_time;
 
   statistics_.Reset();
   statistics_.set_start_time(start_time);
@@ -36,7 +36,13 @@ void Task25::Perform() {
     } // if (message.type() <= kMaximalAllowedMessageType)
   } // while(!ifs_.eof())
 
-  statistics_.DumpOnTime(ofs_, message.time());
+  try {
+    statistics_.DumpOnTime(ofs_, message.time());
+  } catch (exception& ex) {
+    error_text << "Task25::Perform() : exception has been caught. "
+      << "Reason: " << ex.what() << endl;
+    throw logic_error(error_text.str());
+  }
 }
 void Task25::Initialize() {
   stringstream message;

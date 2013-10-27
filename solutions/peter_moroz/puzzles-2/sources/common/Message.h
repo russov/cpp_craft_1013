@@ -2,8 +2,9 @@
 #define MESSAGE_H_
 
 #include <string>
+#include <boost/cstdint.hpp>
 
-typedef unsigned MessageType;
+typedef boost::uint32_t MessageType;
 
 class Message {
 public:
@@ -18,7 +19,7 @@ public:
   Message() : type_(0), time_(0) {}
 
   MessageType type() const { return type_; }
-  unsigned time() const { return time_; }
+  boost::uint32_t time() const { return time_; }
 
   size_t GetTotalSize() const {
     return (sizeof(type_) + sizeof(time_) + text_.size());
@@ -28,7 +29,7 @@ public:
 
 private:
   MessageType type_;
-  unsigned time_;
+  boost::uint32_t time_;
   std::string text_;
 };
 

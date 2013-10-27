@@ -1,11 +1,12 @@
 #ifndef TASK_24_H_
 #define TASK_24_H_
 
+#include "../common/Message.h"
 #include "../common/Task.h"
 
 class Task24 : public Task {
 
-  static bool IsAllowedMessageType(unsigned type);  
+  static bool IsAllowedMessageType(MessageType type);  
 
 public:
   Task24(const char* input_fname, const char* output_fname)

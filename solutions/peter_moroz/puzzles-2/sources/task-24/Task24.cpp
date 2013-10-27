@@ -1,11 +1,10 @@
 #include "Task24.h"
-#include "../common/Message.h"
 #include <exception>
 #include <sstream>
 
 using namespace std;
 
-bool Task24::IsAllowedMessageType(unsigned type) {
+bool Task24::IsAllowedMessageType(MessageType type) {
   return (type == Message::MT_MarketOpen ||
           type == Message::MT_Trade || 
           type == Message::MT_Quote || 
@@ -20,8 +19,8 @@ void Task24::Perform() {
     throw logic_error(message.str());
   }
 
-  unsigned max_time = 0;
-  unsigned allowed_time = 0;
+  boost::uint32_t max_time = 0;
+  boost::uint32_t allowed_time = 0;
   Message message;
   message.ReadFrom(ifs_);
   while (!ifs_.eof()) {
@@ -29,7 +28,7 @@ void Task24::Perform() {
     if (IsAllowedMessageType(message.type())) {
       if (message.time() > max_time) {
         max_time = message.time();
-        allowed_time = max_time - 2;
+        allowed_time = max_time > 2 ? max_time - 2 : max_time;
         message.WriteTo(ofs_);
       } else {
         if (message.time() > allowed_time)

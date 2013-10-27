@@ -2,12 +2,13 @@
 #define DATE_H_
 
 #include <string>
+#include <boost/cstdint.hpp>
 
 class Date {
 
-  static const unsigned kDaysInMonth = 31;
-  static const unsigned kMonthsInYear = 12;
-  static const unsigned kDaysInYear = kDaysInMonth * kMonthsInYear;
+  static const boost::uint32_t kDaysInMonth = 31;
+  static const boost::uint32_t kMonthsInYear = 12;
+  static const boost::uint32_t kDaysInYear = kDaysInMonth * kMonthsInYear;
 
 private:
   Date() : d_(0), m_(0), y_(0) {}
@@ -18,25 +19,25 @@ public:
   static Date ParseString(const char* s);
 
 private:
-  static bool CheckDayValue(unsigned dv) {
+  static bool CheckDayValue(boost::uint32_t dv) {
     return (dv > 0 && dv <= kDaysInMonth);
   }
-  static bool CheckMonthValue(unsigned mv) {
+  static bool CheckMonthValue(boost::uint32_t mv) {
     return (mv > 0 && mv <= kMonthsInYear);
   }
-  static bool CheckYearValue(unsigned yv) {
+  static bool CheckYearValue(boost::uint32_t yv) {
     return (yv > 0);
   }
 
 public:
-  unsigned GetDaysSinceChristmas() const {
+  boost::uint32_t GetDaysSinceChristmas() const {
     return ((y_ - 1) * kDaysInYear + (m_ - 1) * kDaysInMonth + d_);
   }
 
 private:
-  unsigned d_;
-  unsigned m_;
-  unsigned y_;
+  boost::uint32_t d_;
+  boost::uint32_t m_;
+  boost::uint32_t y_;
 };
 
 #endif // DATE_H_
