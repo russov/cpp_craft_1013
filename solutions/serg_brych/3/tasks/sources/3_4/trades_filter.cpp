@@ -3,7 +3,7 @@
 #include <fstream> 
 #include <algorithm>
 #include <stdint.h>
-#include <memory>
+#include <queue>
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
@@ -20,60 +20,90 @@ struct deal
 	uint32_t len;
 };
 
+
 typedef boost::shared_ptr<std::ifstream> shared_ifstream;
 typedef boost::shared_ptr<std::ofstream> shared_ofstream;
+typedef std::queue<std::pair<shared_ifstream, shared_ofstream> > TaskQueue;
 
-void ThreadFunction(shared_ifstream input_file, shared_ofstream output_file)
+boost::mutex mutex_task;
+
+TaskQueue task_queue;
+bool stop_work = false;
+
+void ThreadFunction()
 {
 	uint32_t max_time = 0;
 	char buffer[BufferSize] = {0};
 	deal current_deal ={0};
 	bool store_deal = false;
+	shared_ifstream input_file;
+	shared_ofstream output_file;
 
-	if(input_file->is_open() && output_file->is_open())
+	while(!stop_work)
 	{
-		while(input_file->read(reinterpret_cast<char*>(&current_deal), sizeof(deal)))
+		mutex_task.lock();
+		if(!task_queue.empty())
 		{
-			store_deal = false;
+			
+			input_file = task_queue.front().first;
+			output_file = task_queue.front().second;
+			task_queue.pop();
+			mutex_task.unlock();
 
-			if((current_deal.type > 0) && ( current_deal.type <= max_type))
+			if(input_file->is_open() && output_file->is_open())
 			{
-				if(max_time < current_deal.time)
+				while(input_file->read(reinterpret_cast<char*>(&current_deal), sizeof(deal)))
 				{
-					max_time = current_deal.time;
-					store_deal = true;
-				}
-				else
-				{
-					if((current_deal.time + 2) > max_time)
+					store_deal = false;
+
+					if((current_deal.type > 0) && ( current_deal.type <= max_type))
 					{
-						store_deal = true;
+						if(max_time < current_deal.time)
+						{
+							max_time = current_deal.time;
+							store_deal = true;
+						}
+						else
+						{
+							if((current_deal.time + 2) > max_time)
+							{
+								store_deal = true;
+							}
+						}
+					}
+
+					if(store_deal)
+					{
+						output_file->write(reinterpret_cast<char*>(&current_deal), sizeof(deal));
+						uint32_t read_bytes_msg = 0;
+						uint32_t bytes_to_read = 0;
+						while(read_bytes_msg < current_deal.len)
+						{
+							bytes_to_read = BufferSize < current_deal.len? BufferSize: current_deal.len;
+
+							input_file->read(buffer, bytes_to_read);
+							output_file->write(buffer, bytes_to_read);
+							read_bytes_msg += bytes_to_read;
+						}
+				
+					}
+					else
+					{
+						std::streampos pos = input_file->tellg();
+						input_file->seekg(pos + static_cast<std::streamoff>(current_deal.len));
 					}
 				}
 			}
-
-			if(store_deal)
-			{
-				output_file->write(reinterpret_cast<char*>(&current_deal), sizeof(deal));
-				uint32_t read_bytes_msg = 0;
-				uint32_t bytes_to_read = 0;
-				while(read_bytes_msg < current_deal.len)
-				{
-					bytes_to_read = BufferSize < current_deal.len? BufferSize: current_deal.len;
-
-					input_file->read(buffer, bytes_to_read);
-					output_file->write(buffer, bytes_to_read);
-					read_bytes_msg += bytes_to_read;
-				}
-				
-			}
-			else
-			{
-				std::streampos pos = input_file->tellg();
-				input_file->seekg(pos + static_cast<std::streamoff>(current_deal.len));
-			}
 		}
+		else
+		{
+			mutex_task.unlock();
+			boost::this_thread::yield();
+		}
+		
 	}
+
+
 }
 
 int main() 
@@ -82,7 +112,12 @@ int main()
 	const boost::regex filter("input_(\\d{3}).txt$");
 	boost::filesystem::directory_iterator end_it;
 	boost::thread_group th_group;
-
+	uint32_t count_of_threads = boost::thread::hardware_concurrency() > 2 ? boost::thread::hardware_concurrency() - 1 : 1;
+	for(uint32_t i = 0; i < count_of_threads; i++)
+	{
+		th_group.create_thread(ThreadFunction);
+	}
+	
 	for(boost::filesystem::directory_iterator it(path); it != end_it; it++)
 	{
 		if(boost::filesystem::is_regular_file(it->status()))
@@ -93,14 +128,17 @@ int main()
 			{
 				std::stringstream output_path;
 				output_path << it->path().parent_path().string() << "/output_" << what[1] << ".txt\0"; 
-				boost::thread *th = new boost::thread(ThreadFunction, boost::make_shared<std::ifstream>(it->path().c_str(), std::ifstream::binary),
-																		boost::make_shared<std::ofstream>(output_path.str(), std::ofstream::binary));
-				th_group.add_thread(th);
+				{
+					boost::lock_guard<boost::mutex> lock_task(mutex_task);
+					task_queue.push(std::make_pair<shared_ifstream, shared_ofstream>(boost::make_shared<std::ifstream>(it->path().c_str(), std::ifstream::binary),
+																		boost::make_shared<std::ofstream>(output_path.str(), std::ofstream::binary)));
+				}
+				
 			}
 		}
-		th_group.join_all();
 	}
-	
+	stop_work = true;
+	th_group.join_all();
 		
 	return 0;
 }
