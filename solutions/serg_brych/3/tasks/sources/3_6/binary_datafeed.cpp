@@ -69,13 +69,15 @@ int main()
 	{
 		while(input_file >> current_package)
 		{
-			if(!output_streams[current_package.stock_name].is_open())
+			std::string stock_name(current_package.stock_name, 8);
+			if(!output_streams[stock_name].is_open())
 			{
 				std::stringstream ss;
-				ss << BINARY_DIR"\\output_" << current_package.stock_name << ".txt";
-				output_streams[current_package.stock_name].open(ss.str(), std::ofstream::binary);
+
+				ss << BINARY_DIR"\\output_" << stock_name << ".txt";
+				output_streams[stock_name].open(ss.str(), std::ofstream::binary);
 			}
-			output_streams[current_package.stock_name] << current_package;
+			output_streams[stock_name] << current_package;
 		}
 	}
 	
