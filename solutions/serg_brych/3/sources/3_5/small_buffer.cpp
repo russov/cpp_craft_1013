@@ -68,6 +68,7 @@ void ThreadFunction(shared_ifstream input_file)
 					});
 
 					msg_of_time.clear();
+					all_time++;
 				}
 				
 				if((msg_of_time[current_package.type].free_size - sizeof(Package) + current_package.len) > 0)
@@ -81,7 +82,7 @@ void ThreadFunction(shared_ifstream input_file)
 				std::streampos pos = input_file->tellg();
 				input_file->seekg(pos + static_cast<std::streamoff>(current_package.len));	
 			}
-			all_time++;
+			
 		}
 
 		std::for_each(msg_of_time.begin(), msg_of_time.end(), [&](CountOfSavedMessageTimed::value_type & i)
@@ -127,7 +128,7 @@ int main()
 
 	std::for_each(Result.begin(), Result.end(), [&output_file] (ResultContainer::value_type & i)
 	{
-		output_file.write(reinterpret_cast<const char*>(&(i.first)), sizeof(i.first));
+		output_file.write(reinterpret_cast<const char*>(&i.first), sizeof(i.first));
 		output_file.write(reinterpret_cast<const char*>(&i.second), sizeof(i.second));
 	});
 
