@@ -3,5 +3,5 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	thread
 )
 
-compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries binary_reader )
+compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries Boost )
 
