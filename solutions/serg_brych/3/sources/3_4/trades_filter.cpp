@@ -80,8 +80,8 @@ int main()
 { 
 	const std::string path = BINARY_DIR"\\";
 	const boost::regex filter("input_\\d{3}.txt$");
-
 	boost::filesystem::directory_iterator end_it;
+	boost::thread_group th_group;
 
 	for(boost::filesystem::directory_iterator it(path); it != end_it; it++)
 	{
@@ -93,31 +93,13 @@ int main()
 				std::stringstream output_path;
 				output_path << it->path().parent_path().string() << "\\output" << it->path().leaf().string().substr(5);
 				
-				std::cout << it->path()<< " to "  << std::endl<< output_path.str() << std::endl;
-
-
-
-				ThreadFunction(
-					boost::make_shared<std::ifstream>(it->path().c_str(), std::ifstream::binary),
-					boost::make_shared<std::ofstream>(output_path.str(), std::ofstream::binary));
+				boost::thread *th = new boost::thread(ThreadFunction, boost::make_shared<std::ifstream>(it->path().c_str(), std::ifstream::binary),
+																		boost::make_shared<std::ofstream>(output_path.str(), std::ofstream::binary));
+				th_group.add_thread(th);
 			}
 		}
 	}
-	
-	//uint32_t count_of_threads = boost::thread::hardware_concurrency() > 0 ? boost::thread::hardware_concurrency() : 2;
-	//uint32_t current_threads = 0;
-	//while(true)
-	//{
-	//	if(current_threads < count_of_threads)
-	//	{
-	//		
-	//	}
-	//}
-
-	
-
-	/*ThreadFunction(
-		boost::make_shared<std::ifstream>(BINARY_DIR"\\input.txt",std::ifstream::binary),
-		boost::make_shared<std::ofstream>(BINARY_DIR"\\output.txt",std::ofstream::binary));*/
+	th_group.join_all();
+		
 	return 0;
 }
