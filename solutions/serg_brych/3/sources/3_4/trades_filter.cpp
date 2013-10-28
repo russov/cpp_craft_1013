@@ -79,7 +79,7 @@ void ThreadFunction(shared_ifstream input_file, shared_ofstream output_file)
 int main() 
 { 
 	const std::string path = BINARY_DIR"\\";
-	const boost::regex filter("input_\\d{3}.txt$");
+	const boost::regex filter("input_(\\d{3}).txt$");
 	boost::filesystem::directory_iterator end_it;
 	boost::thread_group th_group;
 
@@ -88,18 +88,19 @@ int main()
 		if(boost::filesystem::is_regular_file(it->status()))
 		{
 			boost::smatch what;
-			if( boost::regex_match(it->path().leaf().string(), filter ) )
+			std::string temp_string = it->path().leaf().string();
+			if( boost::regex_match(temp_string, what, filter ) )
 			{
 				std::stringstream output_path;
-				output_path << it->path().parent_path().string() << "\\output" << it->path().leaf().string().substr(5);
-				
+				output_path << it->path().parent_path().string() << "/output_" << what[1] << ".txt\0"; 
 				boost::thread *th = new boost::thread(ThreadFunction, boost::make_shared<std::ifstream>(it->path().c_str(), std::ifstream::binary),
 																		boost::make_shared<std::ofstream>(output_path.str(), std::ofstream::binary));
 				th_group.add_thread(th);
 			}
 		}
+		th_group.join_all();
 	}
-	th_group.join_all();
+	
 		
 	return 0;
 }
