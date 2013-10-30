@@ -1,4 +1,5 @@
 #include "a_message.h"
+#include <boost/format.hpp>
 
 task4_4::a_message::a_message( std::istream& inp )
 {
@@ -22,5 +23,5 @@ const char task4_4::a_message::type() const
 }
 const std::string task4_4::a_message::str() const
 {
-	return "";
+	return ( boost::format( "a_message(%1%)" ) % std::string( content_, content_size ) ).str();
 }
