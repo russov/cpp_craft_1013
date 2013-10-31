@@ -41,7 +41,7 @@ void MsgBuf::write_type_map(Writer& out) {
     }
 }
 
-void MsgBuf::write_data(const std::vector<Msg> messages, Writer& out) {
+void MsgBuf::write_data(const std::vector<Msg>& messages, Writer& out) {
     for(std::vector<Msg>::const_iterator it = messages.begin(); it != messages.end(); ++it) {
         out.save_binary((*it).get_type());
         out.save_binary((*it).get_time());
