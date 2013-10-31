@@ -22,5 +22,9 @@ const char task4_4::a_message::type() const
 }
 const std::string task4_4::a_message::str() const
 {
-	return "";
+	std::string msg_str("a_message(");
+	for (size_t i = 0; i < content_size; ++i)
+		msg_str.push_back(content_[i]);
+	msg_str.push_back(')');
+	return msg_str;
 }
