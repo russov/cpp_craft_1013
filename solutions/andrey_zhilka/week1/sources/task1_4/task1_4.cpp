@@ -4,23 +4,21 @@
 #include <algorithm>
 #include <vector>
 
-using namespace std;
+void initArray( std::vector< double >&, std::ifstream& );
+void processPasswords( const std::vector< double >&, std::ifstream& );
+bool myBinarySearch( const std::vector< double >&, int, int, double );
+bool find_equal( const std::vector< double >&, double );
 
-void initArray( vector< double >&, ifstream& );
-void processPasswords( vector< double >&, ifstream& );
-bool myBinarySearch( vector< double >, int, int, double );
-bool find_equal( vector< double >, double );
+const static double eps = 0.0001;
 
 int main()
 {
-	const int n = 30;
-	int b[n];
-	vector<double> codes;	
-	ifstream inputFile( SOURCE_DIR "/sources/task1_4/input.txt" );
+	std::vector<double> codes;	
+	std::ifstream inputFile( SOURCE_DIR "/sources/task1_4/input.txt" );
 
-	if ( !inputFile ) 
+	if ( !inputFile.is_open() ) 
 	{
-		cerr << "Failed to open input file" << endl;
+		std::cerr << "Failed to open input file" << std::endl;
 		return 1;
 	}	
 
@@ -31,7 +29,7 @@ int main()
 	return 0;
 }
 
-void initArray( vector< double >& codes, ifstream& inputFile ) 
+void initArray( std::vector< double >& codes, std::ifstream& inputFile ) 
 {
 	int N;
 	double buffer;
@@ -47,14 +45,14 @@ void initArray( vector< double >& codes, ifstream& inputFile )
 	sort(codes.begin(), codes.end());
 }
 
-void processPasswords( vector<double>& codes, ifstream& inputFile ) 
+void processPasswords( const std::vector<double>& codes, std::ifstream& inputFile ) 
 {
-	ofstream outFile( SOURCE_DIR "/tests/task1_4/output.txt" );
+	std::ofstream outFile( SOURCE_DIR "/tests/task1_4/output.txt" );
 
-	if ( !outFile ) 
+	if ( !outFile.is_open() ) 
 	{
-		cerr << "Failed to create output file" << endl;
-		exit( 1 );
+		std::cerr << "Failed to create output file" << std::endl;
+		std::exit( 1 );
 	}
 
 	double nextPassword;
@@ -63,27 +61,25 @@ void processPasswords( vector<double>& codes, ifstream& inputFile )
 	{
 		if ( find_equal(codes, nextPassword) )
 		{
-			outFile << "YES" << endl;
+			outFile << "YES\n";
 		}
 		else
 		{
-			outFile << "NO" << endl;
+			outFile << "NO\n";
 		}
 	}
 
 	outFile.close();
 }
 
-bool find_equal( vector< double > codes, double password) 
+bool find_equal( const std::vector< double >& codes, double password) 
 {
 	return myBinarySearch( codes, 0, codes.size(), password );
 }
 
-bool myBinarySearch( vector< double > codes, int left,
+bool myBinarySearch( const std::vector< double >& codes, int left,
 					int right, double element )
-{
-	double eps = 0.0001;
-	
+{	
 	if ( left >= right ) 
 	{
 		return false;
@@ -94,7 +90,7 @@ bool myBinarySearch( vector< double > codes, int left,
 	if ( left == right - 1 ) 
 	{
 		double difference = fabs( element ) - fabs( codes.at(left) );
-		return (  difference < eps && difference > 0);
+		return (  difference < eps && difference >= 0);
 	}
 	
 	if( element < 0 && element <= codes.at(middle)

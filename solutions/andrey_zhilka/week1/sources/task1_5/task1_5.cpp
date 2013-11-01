@@ -5,24 +5,24 @@
 
 using namespace std;
 
-int calculateIslands( const vector< string > );
-void exploreIsland( int, int, const vector< string >&, bool** );
+int calculateIslands( const std::vector< std::string >& );
+void exploreIsland( unsigned, unsigned, const std::vector< std::string >&, bool** );
 
 int main() 
 {	
-	vector<string> map;
-	string buffer;
+	std::vector<std::string> map;
+	std::string buffer;
 		
-	ofstream outFile;
-	ifstream mapSource( SOURCE_DIR "/sources/task1_5/input.txt" );
+	std::ofstream outFile;
+	std::ifstream mapSource( SOURCE_DIR "/sources/task1_5/input.txt" );
 	
-	if ( !mapSource ) 
+	if ( !mapSource.is_open() ) 
 	{
-		cerr << "Failed to open input file\n";
+		std::cerr << "Failed to open input file\n";
 		return 1;
 	}
 
-	while ( getline(mapSource, buffer) )
+	while ( std::getline(mapSource, buffer) )
 	{
 		map.push_back( buffer );
 	}
@@ -33,24 +33,24 @@ int main()
 
 	outFile.open( SOURCE_DIR "/tests/task1_5/output.txt" );
 	
-	if ( !outFile )
+	if ( !outFile.is_open() )
 	{
-		cerr << "Output File was not created\n";
-		cout << "Number of islands is " << numberOfIslands << endl;
+		std::cerr << "Output File was not created\n";
+		std::cout << "Number of islands is " << numberOfIslands << std::endl;
 		return 1;
 	}
 
-	outFile << numberOfIslands << endl;
+	outFile << numberOfIslands << std::endl;
 
 	outFile.close();
 
 	return 0;
 }
 
-int calculateIslands( const vector< string > map)
+int calculateIslands( const std::vector< std::string >& map)
 {
 	int islandsNumber = 0;
-	int lineSize;
+	unsigned lineSize;
 	if ( map.size() > 0 )
 	{
 		lineSize = map.at(0).length();		
@@ -61,10 +61,10 @@ int calculateIslands( const vector< string > map)
 	}
 
 	bool **isPartVisited = new bool*[map.size()];
-	for ( int i = 0; i < map.size(); i++ )
+	for ( size_t i = 0; i < map.size(); i++ )
 	{		
 		isPartVisited[i] = new bool[lineSize];
-		for ( int j = 0; j < lineSize; j++ )
+		for ( unsigned j = 0; j < lineSize; j++ )
 		{
 			isPartVisited[i][j] = false;
 		}
@@ -72,9 +72,9 @@ int calculateIslands( const vector< string > map)
 
 	
 	// find coast and explore an island
-	for ( int i = 0; i < map.size(); i++ )
+	for ( size_t i = 0; i < map.size(); i++ )
 	{		
-		for ( int j = 0; j < lineSize; j++ )
+		for ( size_t j = 0; j < lineSize; j++ )
 		{
 			char part = map.at(i).at(j);
 			if ( part == 'o' && !isPartVisited[i][j] )
@@ -85,7 +85,7 @@ int calculateIslands( const vector< string > map)
 		}
 	}
 
-	for ( int i = 0; i < map.size(); i++ )
+	for ( size_t i = 0; i < map.size(); i++ )
 	{
 		delete [] isPartVisited[i];
 	}
@@ -93,7 +93,7 @@ int calculateIslands( const vector< string > map)
 	
 	return islandsNumber;
 }
-void exploreIsland( int coordX, int coordY, const vector< string >& map, bool** isVisited)
+void exploreIsland( unsigned coordX, unsigned coordY, const std::vector< std::string >& map, bool** isVisited)
 {
 	isVisited[coordX][coordY] = true;
 
