@@ -11,14 +11,14 @@ namespace task4_5
 	typedef std::vector< std::vector< int > > data_type;
 
     template <typename T>
-    class data_iterator : public std::iterator<std::forward_iterator_tag, T>
+    class magic_iterator : public std::iterator<std::input_iterator_tag, const T>
     {
         const data_type& data_;
         data_type::const_iterator it_;
         size_t index_;
         bool is_end_;
     public:
-        data_iterator( const data_type& data, size_t index) :
+        magic_iterator( const data_type& data, size_t index) :
             data_(data),
             index_(0),
             is_end_(false)
@@ -32,9 +32,14 @@ namespace task4_5
             return is_end_;
         }
 
-        T operator *()
+        reference operator *()
         {
             return (*it_)[index_];
+        }
+
+        pointer operator ->()
+        {
+            return &(*it_)[index_];
         }
 
         void operator+=(size_t x)
@@ -57,10 +62,28 @@ namespace task4_5
             }
         }
 
-        data_iterator& operator++()
+        value_type operator++(int)
         {
             += 1;
             return *this;
+        }
+
+        value_type operator++()
+        {          
+            data_iterator x = *this;
+            += 1;
+            return x;
+        }
+
+        bool operator ==(const magic_iterator& it)
+        {
+            return (is_end_ && it.is_end_) ||
+                (data_ == it.data_ && it_ == it.it_ && index_ == it.index_);
+        }
+
+        bool operator !=(const magic_iterator& it)
+        {
+            return !operator==(it);
         }
 
     };
@@ -74,7 +97,7 @@ namespace task4_5
 
         boost::mutex mtx_;
 
-        void calc_proc(task4_5::data_iterator<int>& it, size_t step);
+        void calc_proc(task4_5::magic_iterator<int>& it, size_t step);
         void calculate();
 	public:
 		explicit solution( const data_type& data );

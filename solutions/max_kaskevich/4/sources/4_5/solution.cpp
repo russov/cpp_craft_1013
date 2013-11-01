@@ -29,7 +29,7 @@ int task4_5::solution::get_max() const
 }
 
 
-void task4_5::solution::calc_proc(task4_5::data_iterator<int>& it, size_t step)
+void task4_5::solution::calc_proc(task4_5::magic_iterator<int>& it, size_t step)
 {
     int min = std::numeric_limits< int >().max();
     int max = std::numeric_limits< int >().min();
@@ -64,7 +64,7 @@ void task4_5::solution::calculate()
     {
         threads.create_thread(
             boost::bind(&task4_5::solution::calc_proc, this,
-            task4_5::data_iterator<int>(data_, n), max_threads));
+            task4_5::magic_iterator<int>(data_, n), max_threads));
 
     }
     threads.join_all();
