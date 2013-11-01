@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <iterator>
+#include <boost/thread.hpp>
+
 
 namespace task4_5
 {
@@ -10,15 +12,14 @@ namespace task4_5
 
 	class solution
 	{
-        static const uint32_t max_threads = 10u;
-        static const uint32_t pref_min_elems_for_thread = 10u;
         const data_type& data_;
         int min_;
         int max_;
         bool need_calculate_;
 
-        int operator[](size_t index);
+        boost::mutex mtx_;
 
+        void calc_proc(task4_5::data_iterator<int> it, size_t step);
         void calculate();
 	public:
 		explicit solution( const data_type& data );
@@ -32,14 +33,17 @@ namespace task4_5
          const data_type& data_;
          data_type::const_iterator it_;
          size_t index_;
-
+         bool is_end_;
     public:
-        data_iterator( const data_type& data, uint64_t index)
+        data_iterator( const data_type& data, size_t index) :
+            data_(data),
+            index_(index),
+            is_end_(false)
         {
             it = data_.cbegin();
             if (it == data_.cend())
             {
-                throw std::out_of_range("empty data");
+                is_end_ = true;
             }
             while (index >= it->size())
             {
@@ -52,7 +56,45 @@ namespace task4_5
                 }
             }        
         }
+
+        bool is_end()
+        {
+            return is_end_;
+        }
+
+        T operator *()
+        {
+            return it_[index_];
+        }
+
+        void operator+=(size_t x)
+        {
+            if(is_end_)
+            {
+                return;
+            }
+            index_ += x;
+            while(index_ >= it_->size())
+            {
+                index_ = index_ - it_->size();
+                ++it_;
+                if(it_ == data_.end())
+                {
+                    is_end_ = true;
+                    return;
+                }
+
+            }
+        }
+
+        data_iterator& operator++()
+        {
+            += 1;
+            return *this;
+        }
+
     };
+
 }
 
 #endif // _TASK4_5_SOLUTION_H_

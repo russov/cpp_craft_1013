@@ -3,6 +3,10 @@
 #include <boost/thread.hpp>
 #include <stdexcept>
 
+static const uint32_t max_threads = 10u;
+static const uint32_t pref_min_elems_for_thread = 10u;
+
+
 task4_5::solution::solution( const data_type& data ) :
     data_(data),
     min_(0),
@@ -28,25 +32,22 @@ int task4_5::solution::get_max() const
     return max_;
 }
 
-int task4_5::solution::operator[](size_t index)
+
+void task4_5::solution::calc_proc(task4_5::data_iterator<int> it, size_t step)
 {
-    data_type::const_iterator it = data_.cbegin();
-    if (it == data_.cend())
-    {
-        throw std::out_of_range("empty data");
-    }
-    while (index >= it->size())
-    {
+    int min = std::numeric_limits< int >().max();
+    int max = std::numeric_limits< int >().min();
 
-        index -= it->size();
-        ++it;
-        if (it == data_.cend())
-        {
-            throw std::out_of_range("out of range");
-        }
+    while(!it.is_end())
+    {
+        min = std::min( min, *it );
+        max = std::max( max, *it );
+        it += step;
     }
+
+    boost::lock_guard<boost::mutex> lock(mtx_);
+
 }
-
 
 void task4_5::solution::calculate()
 {
@@ -54,6 +55,14 @@ void task4_5::solution::calculate()
     {
         return;
     }
+
+
+
+
+
+
+
+
     min_ = std::numeric_limits< int >().max();
     max_ = std::numeric_limits< int >().min();
 
@@ -63,7 +72,7 @@ void task4_5::solution::calculate()
     {
         global_size += subdata.size();
     }
-    uint64_t size_for_every_thread = global_size / max_threads_ + 1;
+    uint64_t size_for_every_thread = global_size / max_threads + 1;
 
 
     for(auto& subdata: data_)
