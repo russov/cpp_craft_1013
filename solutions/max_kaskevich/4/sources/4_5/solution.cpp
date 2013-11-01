@@ -3,10 +3,6 @@
 #include <boost/thread.hpp>
 #include <stdexcept>
 
-static const uint32_t max_threads = 10u;
-static const uint32_t pref_min_elems_for_thread = 10u;
-
-
 task4_5::solution::solution( const data_type& data ) :
     data_(data),
     min_(0),
@@ -33,7 +29,7 @@ int task4_5::solution::get_max() const
 }
 
 
-void task4_5::solution::calc_proc(task4_5::data_iterator<int> it, size_t step)
+void task4_5::solution::calc_proc(task4_5::data_iterator<int>& it, size_t step)
 {
     int min = std::numeric_limits< int >().max();
     int max = std::numeric_limits< int >().min();
@@ -46,6 +42,8 @@ void task4_5::solution::calc_proc(task4_5::data_iterator<int> it, size_t step)
     }
 
     boost::lock_guard<boost::mutex> lock(mtx_);
+    min_ = std::min(min, min_);
+    max_ = std::max(max, max_);
 
 }
 
@@ -55,33 +53,20 @@ void task4_5::solution::calculate()
     {
         return;
     }
-
-
-
-
-
-
-
-
     min_ = std::numeric_limits< int >().max();
     max_ = std::numeric_limits< int >().min();
 
-    uint64_t global_size =  0;
+    boost::thread_group threads;
 
-    for(auto& subdata: data_)
+    uint32_t max_threads = boost::thread::hardware_concurrency();
+    uint32_t n = boost::thread::hardware_concurrency();
+    while(n--)
     {
-        global_size += subdata.size();
-    }
-    uint64_t size_for_every_thread = global_size / max_threads + 1;
+        threads.create_thread(
+            boost::bind(&task4_5::solution::calc_proc, this,
+            task4_5::data_iterator<int>(data_, n), max_threads));
 
-
-    for(auto& subdata: data_)
-    {
-        for(auto& elem: subdata)
-        {
-            min_ = std::min( min_, elem );
-            max_ = std::max( max_, elem );
-        }
     }
+    threads.join_all();
     need_calculate_ = false;
 }

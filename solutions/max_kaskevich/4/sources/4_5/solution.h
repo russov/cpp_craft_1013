@@ -10,51 +10,21 @@ namespace task4_5
 {
 	typedef std::vector< std::vector< int > > data_type;
 
-	class solution
-	{
-        const data_type& data_;
-        int min_;
-        int max_;
-        bool need_calculate_;
-
-        boost::mutex mtx_;
-
-        void calc_proc(task4_5::data_iterator<int> it, size_t step);
-        void calculate();
-	public:
-		explicit solution( const data_type& data );
-		int get_min() const;
-		int get_max() const;
-	};
-
     template <typename T>
     class data_iterator : public std::iterator<std::forward_iterator_tag, T>
     {
-         const data_type& data_;
-         data_type::const_iterator it_;
-         size_t index_;
-         bool is_end_;
+        const data_type& data_;
+        data_type::const_iterator it_;
+        size_t index_;
+        bool is_end_;
     public:
         data_iterator( const data_type& data, size_t index) :
             data_(data),
-            index_(index),
+            index_(0),
             is_end_(false)
         {
-            it = data_.cbegin();
-            if (it == data_.cend())
-            {
-                is_end_ = true;
-            }
-            while (index >= it->size())
-            {
-
-                index -= it->size();
-                ++it;
-                if (it == data_.cend())
-                {
-                    throw std::out_of_range("out of range");
-                }
-            }        
+            it_ = data_.cbegin();
+            operator+=(index); 
         }
 
         bool is_end()
@@ -64,7 +34,7 @@ namespace task4_5
 
         T operator *()
         {
-            return it_[index_];
+            return (*it_)[index_];
         }
 
         void operator+=(size_t x)
@@ -94,6 +64,25 @@ namespace task4_5
         }
 
     };
+
+	class solution
+	{
+        const data_type& data_;
+        int min_;
+        int max_;
+        bool need_calculate_;
+
+        boost::mutex mtx_;
+
+        void calc_proc(task4_5::data_iterator<int>& it, size_t step);
+        void calculate();
+	public:
+		explicit solution( const data_type& data );
+		int get_min() const;
+		int get_max() const;
+	};
+
+
 
 }
 
