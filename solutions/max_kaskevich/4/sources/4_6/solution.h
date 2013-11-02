@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <stdint.h>
 
 namespace task4_6
 {
@@ -23,4 +22,4 @@ namespace task4_6
 	};
 }
 
-#endif // _TASK4_5_SOLUTION_H_
+#endif // _TASK4_6_SOLUTION_H_

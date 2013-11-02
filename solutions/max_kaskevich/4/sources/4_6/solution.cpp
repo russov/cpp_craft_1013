@@ -1,11 +1,14 @@
 #include "solution.h"
+#include "iexprstream.h"
+
 #include <sstream>
 #include <stack>
-#include <boost/assign.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+
 #include <boost/algorithm/string.hpp>
-#include "my_string_stream.h"
+#include <boost/assign.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
+
 
 task4_6::solution::solution( const lines& calulator_lines ) :
     lines_( calulator_lines )
@@ -24,7 +27,7 @@ static const std::map<char, uint32_t> priority = boost::assign::map_list_of
 
 std::string to_rpn(const std::string& expression)
 {
-    my_string_stream input( expression );
+    iexprstream input( expression );
     std::ostringstream output;
 
     std::string token;
@@ -107,18 +110,18 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
              case '+': r = x + y; break;
              case '-': r = x - y; break;
              case '*': r = x * y; break;
-             case '/': r = x / y; 
+             case '/': r = x / y;
                  if ( y == 0 )
                  {
-                     throw std::logic_error("zero div (%1%)");
+                     throw std::logic_error( "zero div (%1%)" );
                  }
                  break;
              default:
-                 throw std::logic_error("not correct expression at %1% line"); 
+                 throw std::logic_error( "not correct expression at %1% line" );
              }
              calc_stack.push( r );
          }
-         else if( ( it = vars_.find(token) ) != vars_.end()) 
+         else if( ( it = vars_.find(token) ) != vars_.end())
          {
              calc_stack.push( it->second );
          }
@@ -130,7 +133,7 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
              }
              catch (std::bad_cast& e)
              {
-             	 throw std::logic_error("not correct expression at %1% line"); 
+             	 throw std::logic_error("not correct expression at %1% line");
              }
          }
      }
@@ -151,7 +154,7 @@ void task4_6::solution::calculate()
             boost::split( strs, lines_[i], boost::is_any_of("=") );
             if ( strs.size() > 2 )
             {
-                throw std::logic_error("not correct expression at %1% line"); 
+                throw std::logic_error("not correct expression at %1% line");
             }
 
             std::string var_name = boost::trim_copy( strs[0] );
