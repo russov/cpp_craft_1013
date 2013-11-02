@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <map>
+#include <stdint.h>
 
 namespace task4_6
 {
@@ -10,6 +12,11 @@ namespace task4_6
 
 	class solution
 	{
+        const lines& lines_;
+        typedef  std::map<const std::string, double> vars_map;
+        vars_map vars_;
+        void calculate();
+        double calculate_rpn(const std::string& rpn_expression);
 	public:
 		explicit solution( const lines& calulator_lines );
 		int result_for( const std::string& key ) const;
