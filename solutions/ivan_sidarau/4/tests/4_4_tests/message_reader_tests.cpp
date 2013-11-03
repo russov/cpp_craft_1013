@@ -31,7 +31,7 @@ void task4_4::tests_::message_reader_read_file_tests()
 		out.close();
 
 		message_reader mr( BINARY_DIR "/file.out" );
-		BOOST_CHECK_NO_THROW( mr.read_file(), std::logic_error );
+		BOOST_CHECK_NO_THROW( mr.read_file() );
 	}
 
 	boost::filesystem::remove( BINARY_DIR "/file.out" );

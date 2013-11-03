@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 
 #include <solution.h>
 

@@ -1,5 +1,7 @@
 #include "test_registrator.h"
 
+#include <stdexcept>
+
 #include <b_message.h>
 
 
