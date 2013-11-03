@@ -45,8 +45,9 @@ namespace task4_5
 	  int maximal_element_;
 
 	  boost::mutex rows_results_guard_;
-	  boost::mutex instance_guard_;
+	  mutable boost::mutex instance_guard_;
 	  boost::thread_group thg_;
+	  mutable boost::condition_variable ready_;
 	  
 	  std::vector<std::pair<int, int> > rows_results_;  
 	  const matrix_type& matrix_;

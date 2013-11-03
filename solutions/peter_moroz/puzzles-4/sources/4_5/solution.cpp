@@ -35,10 +35,11 @@ void FindMinMaxElementsInMatrix::Perform() {
 	  complete_ = true;
 	  return;
   }
-  /* Disallow reenterability for method: No 
-  one client can't invoke it while it works. */
-  boost::mutex::scoped_lock(instance_guard_);
+
+  boost::unique_lock<boost::mutex> lock(instance_guard_);
+
   Reset();
+
   vector<RowProcessorPtr> row_processors;
   for (size_t i = 0; i < matrix_.size(); ++i) {
 	  RowProcessorPtr row_processor(new FindMinMaxElementsInRow(this, matrix_[i]));
@@ -58,19 +59,18 @@ void FindMinMaxElementsInMatrix::Perform() {
   }
 
   complete_ = true;
+  ready_.notify_all();
 }
 int FindMinMaxElementsInMatrix::GetMinElement() const {
-  if (!complete_) {
-    throw logic_error("FindMinMaxElementsInMatrix::GetMinElement() - \
-					  Results aren't ready yet...");
-  }
+  boost::unique_lock<boost::mutex> lock(instance_guard_);
+  while (!complete_)
+	ready_.wait(lock);
   return minimal_element_;
 }
 int FindMinMaxElementsInMatrix::GetMaxElement() const {
-  if (!complete_) {
-    throw logic_error("FindMinMaxElementsInMatrix::GetMaxElement() - \
-					  Results aren't ready yet...");
-  }
+  boost::unique_lock<boost::mutex> lock(instance_guard_);
+  while (!complete_)
+	ready_.wait(lock);
   return maximal_element_;
 }
 
