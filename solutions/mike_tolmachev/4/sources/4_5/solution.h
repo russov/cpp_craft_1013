@@ -16,7 +16,16 @@ namespace task4_5
 		int get_max() const;
 
     private:
+		data_type::const_iterator GetVector();
         void thread_fun();
+
+		data_type data_;
+		data_type::const_iterator cur_it_;
+		boost::mutex mtx_vec_;
+		boost::mutex mtx_minmax_;
+
+		int max_;
+		int min_;
 	};
 }
 
