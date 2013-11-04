@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 	std::cout << "*Hometask 25*" << std::endl;
 
 	std::ifstream iFile;
-	iFile.open( SOURCE_DIR "/sources/25/input_252.txt",
+	iFile.open( SOURCE_DIR "/sources/25/input.txt",
 			std::ios::in | std::ios::binary);
 
 	if (!iFile.is_open()) {
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 	}
 
 	std::ofstream oFile;
-	oFile.open( SOURCE_DIR "/sources/25/output_252.txt", std::ios::out | std::ios::binary);
+	oFile.open( SOURCE_DIR "/sources/25/output.txt", std::ios::out | std::ios::binary);
 
 	if (!oFile.is_open()){
 		std::cout << "cannot open output file" << std::endl;
