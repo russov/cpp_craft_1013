@@ -3,6 +3,13 @@
 
 #include <vector>
 #include <string>
+#include <stack>
+#include <cctype>
+#include <stdint.h>
+#include <sstream>
+#include <stdexcept>
+
+#include <boost/lexical_cast.hpp>
 
 namespace task4_6
 {
@@ -10,10 +17,12 @@ namespace task4_6
 
 	class solution
 	{
+	const lines GetPolishReversString(const lines& expressions);
+	void CalculatePolishExpression(const lines& polish_expressions);
 	public:
 		explicit solution( const lines& calulator_lines );
 		int result_for( const std::string& key ) const;
 	};
 }
 
-#endif // _TASK4_5_SOLUTION_H_
+#endif // _TASK4_6_SOLUTION_H_
