@@ -47,7 +47,7 @@ int main()
 
 				char buf[4096];
 				uint32_t len = 0;
-                for (len = msg.len; len > buf_size; len - buf_size)
+                for (len = msg.len; len > buf_size; len -= buf_size)
                 {
 					in.read(buf, buf_size);
 					out.write(buf, buf_size);
