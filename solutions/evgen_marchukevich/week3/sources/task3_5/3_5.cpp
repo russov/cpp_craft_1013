@@ -41,10 +41,10 @@ private :
 			{
 				int TYPE = *it;
 				RR.BinWriter(TYPE);
-				cout << *it << " " ;
+				
 				double MID_CNT=0;
 				if (kol[*it]!=0) MID_CNT=ans[*it]/(1.0*kol[*it]);
-				cout << MID_CNT << endl;
+				
 				RR.BinWriter(MID_CNT);
 			}
 
