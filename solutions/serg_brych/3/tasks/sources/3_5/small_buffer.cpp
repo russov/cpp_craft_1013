@@ -11,8 +11,8 @@
 #include <boost/regex.hpp>
 
 
-static const int MaxBufferSize = 2048;
-static const int MaxPackageType = 100000;
+static const uint32_t MaxBufferSize = 2048;
+static const uint32_t MaxPackageType = 100000;
 
 struct Package
 {
