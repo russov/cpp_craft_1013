@@ -37,7 +37,7 @@ std::string to_rpn(const std::string& expression)
 
     while( input >> token )
     {
-        if ( token == "(" || token==")" )
+        if ( token == "(" || token == ")" )
         {
             if( token == ")" )
             {
@@ -45,7 +45,7 @@ std::string to_rpn(const std::string& expression)
                 {
                     output << rpnstack.top() << " ";
                     rpnstack.pop();
-                    if(rpnstack.empty())
+                    if( rpnstack.empty() )
                     {
                         throw std::logic_error( "not correct expression at %1% line" );
                     }
@@ -85,7 +85,7 @@ std::string to_rpn(const std::string& expression)
 double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
 {
      std::stack<double> calc_stack;
-     std::istringstream input(rpn_expression);
+     std::istringstream input( rpn_expression );
      std::string token;
      vars_map::iterator it;
      while( input >> token )
@@ -123,7 +123,7 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
              }
              calc_stack.push( r );
          }
-         else if( ( it = vars_.find(token) ) != vars_.end())
+         else if( ( it = vars_.find( token ) ) != vars_.end() )
          {
              calc_stack.push( it->second );
          }
@@ -133,10 +133,11 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
              {
                  calc_stack.push( boost::lexical_cast<double>( token ) );
              }
-             catch (std::bad_cast& e)
+             catch ( const boost::bad_lexical_cast& e )
              {
              	 throw std::logic_error(
-                     ( boost::format( "'%1%' variable not defined at line %2%" ) % token ).str() );
+                     ( boost::format( "'%1%' variable not defined at line %2%" )
+                     % token % "%1%" ).str() );
              }
          }
      }
@@ -154,10 +155,10 @@ void task4_6::solution::calculate()
     {
         try
         {
-            boost::split( strs, lines_[i], boost::is_any_of("=") );
+            boost::split( strs, lines_[i], boost::is_any_of( "=" ) );
             if ( strs.size() > 2 )
             {
-                throw std::logic_error("not correct expression at %1% line");
+                throw std::logic_error( "not correct expression at %1% line" );
             }
 
             std::string var_name = boost::trim_copy( strs[0] );
@@ -166,12 +167,12 @@ void task4_6::solution::calculate()
             {
                 throw std::logic_error(
                     ( boost::format( "such variable '%1%' already exists (%2%)" )
-                    % var_name ).str() ); 
+                    % var_name % "%1%" ).str() ); 
             }
 
             vars_[var_name] = calculate_rpn( to_rpn( expression ) );
         }
-        catch ( std::logic_error& e )
+        catch ( const std::logic_error& e )
         {
             throw std::logic_error( ( boost::format( e.what() ) % ( i + 1 ) ).str() );
         }

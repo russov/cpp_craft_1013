@@ -5,7 +5,7 @@ using namespace boost::spirit::standard;
 using namespace boost::spirit::qi;
 
 
-iexprstream::iexprstream(const std::string& str) :
+iexprstream::iexprstream( const std::string& str ) :
     it_( str.cbegin() ),
     end_ ( str.cend() ),
     fail_( false )
@@ -16,11 +16,11 @@ iexprstream::~iexprstream(void)
 {
 }
 
-static const rule<std::string::const_iterator, std::string(), space_type> var_name = +char_("A-Z");
+static const rule<std::string::const_iterator, std::string(), space_type> var_name = +char_( "A-Z" );
 static const rule<std::string::const_iterator, std::string(), space_type> double_str
-    = +char_("0-9") >> -( char_('.') >> +char_("0-9") );
+    = +char_( "0-9" ) >> -( char_( '.' ) >> +char_( "0-9" ) );
 static const rule<std::string::const_iterator, std::string(), space_type> math_operator
-    = char_("+*/()-");
+    = char_( "+*/()-" );
 static const rule<std::string::const_iterator, std::string(), space_type> token
     = double_str | math_operator | var_name;
 
