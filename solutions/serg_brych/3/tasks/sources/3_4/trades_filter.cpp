@@ -11,7 +11,7 @@
 #include <boost/regex.hpp>
 
 static const uint32_t max_type = 4u;
-static const int BufferSize = 2048;
+static const uint32_t BufferSize = 2048;
 
 struct deal
 {
