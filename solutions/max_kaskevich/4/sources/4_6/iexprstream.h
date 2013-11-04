@@ -2,7 +2,7 @@
 
 #include <boost/spirit/include/qi.hpp>
 
-// its too lazy realize realize own basic_iexprstream or inherit stringstream :(
+// its too lazy realize own basic_iexprstream or inherit stringstream :(
 class iexprstream 
 {   
     std::string::const_iterator it_;

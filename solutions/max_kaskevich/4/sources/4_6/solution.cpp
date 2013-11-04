@@ -18,6 +18,7 @@ task4_6::solution::solution( const lines& calulator_lines ) :
 
 int task4_6::solution::result_for( const std::string& key ) const
 {
+    // poor msvc 2012 not support std::round 8'(
 	return static_cast<int>( vars_.at( key ) + ( vars_.at( key ) >= 0 ? .5 : -.5) );
 }
 
@@ -25,6 +26,7 @@ static const std::string operators = "()+-*/";
 static const std::map<char, uint32_t> priority = boost::assign::map_list_of
     ( '(', 0 ) ( ')', 0 ) ( '+', 1 ) ( '-', 1 ) ( '*', 2 ) ( '/', 2 );
 
+// algorithm http://en.wikipedia.org/wiki/Reverse_Polish_notation
 std::string to_rpn(const std::string& expression)
 {
     iexprstream input( expression );
@@ -133,7 +135,8 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
              }
              catch (std::bad_cast& e)
              {
-             	 throw std::logic_error("not correct expression at %1% line");
+             	 throw std::logic_error(
+                     ( boost::format( "'%1%' variable not defined at line %2%" ) % token ).str() );
              }
          }
      }
