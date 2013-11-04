@@ -4,40 +4,39 @@
 #include <fstream>
 #include <algorithm>
 
-using namespace std;
-
-void adaptString(string&, bool);
-void inverse(string&);
+void adaptString( std::string&, bool );
+void inverse( std::string& );
+bool is_useless( char );
 
 int main()
 {
-	ifstream input( SOURCE_DIR "/sources/task1_3/input.txt");
-	ofstream output( SOURCE_DIR "/tests/task1_3/output.txt");
+	std::ifstream input( SOURCE_DIR "/sources/task1_3/input.txt");
+	std::ofstream output( SOURCE_DIR "/tests/task1_3/output.txt");
 
-	if ( !input )
+	if ( !input.is_open() )
 	{
-		cerr << "Failed to open input file\n";
+		std::cerr << "Failed to open input file\n";
 		return 1;
 	}
-	if ( !output )
+	if ( !output.is_open() )
 	{
-		cerr << "Failed to create output file\n";
+		std::cerr << "Failed to create output file\n";
 		return 1;
 	}
 
-	string text;
-	string key;
+	std::string text;
+	std::string key;
 
 	bool toInvert = false;
-	getline(input, text);
+	std::getline(input, text);
 
 	adaptString(text, toInvert);
 
 	toInvert = true;
-	while( getline( input, key ) )
+	while( std::getline( input, key ) )
 	{
 		adaptString( key, toInvert );
-		if ( text.find( key ) != string::npos)
+		if ( text.find( key ) != std::string::npos)
 		{
 			output << "YES\n";
 		}
@@ -52,27 +51,18 @@ int main()
 	return 0;
 }
 
-void adaptString( string& target, bool toInverse )
+void adaptString( std::string& target, bool toInverse )
 {
-	for ( int i = 0; i < target.size(); i++ )
-	{
-		if ( isalpha(target.at(i)) )
-		{
-			if ( !islower( target.at(i) ) )
-			{
-				target.at(i) = tolower( target.at(i) );
-			}
-		}
-		else if (target.at(i) == ' ' || target.at(i) == '\\'
-			|| target.at(i) == '-' )
-		{
-			target.erase( i, 1 );
-			i--;
-		}
-	}
+	target.erase( std::remove_if(target.begin(), target.end(), is_useless), target.end() );
+	std::transform( target.begin(), target.end(), target.begin(), std::tolower );	
 
 	if (toInverse)
 	{
 		reverse( target.begin(), target.end() );
 	}
+}
+
+bool is_useless( char c )
+{
+	return ( c == ' ' || c == '\\' || c == '-' );
 }
