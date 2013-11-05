@@ -48,7 +48,7 @@ void ThreadFunction(shared_ifstream input_file)
 	CountOfSavedMessage all_saved_message;
 	CountOfSavedMessageTimed msg_of_time;
 	uint32_t all_time = 0;
-
+	bool first_msg = true;
 	Package current_package = {0};
 	uint32_t current_time = 0;
 
@@ -56,6 +56,11 @@ void ThreadFunction(shared_ifstream input_file)
 	{
 		while(input_file->read(reinterpret_cast<char*>(&current_package), sizeof(Package)))
 		{
+			if(first_msg)
+			{
+				first_msg = false;
+				current_time = current_package.time;
+			}
 			if(current_package.type <= MaxPackageType)
 			{
 				if(current_time != current_package.time)
