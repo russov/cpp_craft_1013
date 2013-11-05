@@ -49,6 +49,7 @@ std::ostream& operator<< (std::ostream& s, const Package &p)
 	date = (year - 1) * 372 +  (month  - 1)* 31 + day;
 	
 	s.write(p.stock_name, sizeof(p.stock_name));
+	s << '\0';
 	s.write(reinterpret_cast<const char*>(&date), sizeof(date));
 	s.write(reinterpret_cast<const char*>(&p.vwap), sizeof(p.vwap));
 	s.write(reinterpret_cast<const char*>(&p.volume), sizeof(p.volume));
@@ -62,7 +63,7 @@ int main()
 	OutPutStreams output_streams;
 	Package current_package ={0};
 	
-	std::ifstream input_file(BINARY_DIR"\\input.txt", std::ifstream::binary);
+	std::ifstream input_file(BINARY_DIR"/input.txt", std::ifstream::binary);
 	
 
 	if(input_file.is_open())
@@ -74,7 +75,7 @@ int main()
 			{
 				std::stringstream ss;
 
-				ss << BINARY_DIR"\\output_" << stock_name << ".txt";
+				ss << BINARY_DIR"/output_" << stock_name << ".txt";
 				output_streams[stock_name].open(ss.str(), std::ofstream::binary);
 			}
 			output_streams[stock_name] << current_package;
