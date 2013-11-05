@@ -5,12 +5,11 @@ task4_5::solution::solution( const data_type& data )
 {
 	thread_amount = data.size();
 	this->data_ = data;
-	results.reserve(data_.size());
+//	results.reserve(data_.size());
 	results.assign(data_.size(), std::numeric_limits<int>::max());
 
-	resultsMax.reserve(data_.size());
+//	resultsMax.reserve(data_.size());
 	resultsMax.assign(data_.size(), std::numeric_limits<int>::min());
-
 
 	for( size_t i = 0 ; i < thread_amount ; ++i )
 	{
@@ -49,15 +48,3 @@ int task4_5::solution::get_max() const
 {
 	return maximum;
 }
-/*
-void task4_5::solution::max_routine( data_vector & vec, int & val )
-{
-	val = mini;
-	for(data_vector::iterator it = vec.begin(); it != vec.end(); it++)
-	{
-		if(*it > dMax)
-		{
-			dMax = *it;
-		}
-	}
-}*/
