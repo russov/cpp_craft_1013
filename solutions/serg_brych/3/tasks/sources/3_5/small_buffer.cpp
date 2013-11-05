@@ -49,7 +49,7 @@ void ThreadFunction(shared_ifstream input_file)
 	CountOfSavedMessageTimed msg_of_time;
 	uint32_t all_time = 0;
 
-	Package current_package ={0};
+	Package current_package = {0};
 	uint32_t current_time = 0;
 
 	if(input_file->is_open())
@@ -71,7 +71,7 @@ void ThreadFunction(shared_ifstream input_file)
 					all_time++;
 				}
 				
-				if((msg_of_time[current_package.type].free_size - sizeof(Package) - current_package.len) > 0)
+				if(msg_of_time[current_package.type].free_size > sizeof(Package) + current_package.len)
 				{
 					msg_of_time[current_package.type].free_size -= sizeof(Package) + current_package.len;
 					msg_of_time[current_package.type].count_of_stored_msg += 1;
