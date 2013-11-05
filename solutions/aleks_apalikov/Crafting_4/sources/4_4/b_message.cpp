@@ -2,9 +2,18 @@
 
 task4_4::b_message::b_message( std::istream& inp )
 {
-	inp >> length_;
-	content_ = new char[ length_ ];
+	length_ = 0;
+	if(!inp.eof())
+		inp >> length_;
+	if(length_ > 0)
+	{
+		char c;
+		inp >> c; //space char 0x32
+		content_ = new char[ length_ ];
+	}
 	inp.read( content_, length_ );
+	if ( !inp )
+		throw std::logic_error("bad input stream, a_message cannot be read");
 }
 
 task4_4::message_ptr task4_4::b_message::create_message( std::istream& inp )
@@ -14,7 +23,8 @@ task4_4::message_ptr task4_4::b_message::create_message( std::istream& inp )
 
 task4_4::b_message::~b_message()
 {
-	delete [] content_;
+	if(length_ > 0)
+		delete [] content_;
 }
 
 const char task4_4::b_message::type() const
@@ -23,5 +33,7 @@ const char task4_4::b_message::type() const
 }
 const std::string task4_4::b_message::str() const
 {
-	return std::string();
+	std::string st(content_, length_);
+	st = "b_message(" + length_ + '|' + st + ")";
+	return st;
 }
