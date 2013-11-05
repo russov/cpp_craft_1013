@@ -1,7 +1,7 @@
 @echo off
 
 set SOLUTION_NAME=puzzle_4_week_solutions
-set BOOST_ROOT=F:\boost_1_47_0
+set BOOST_ROOT=F:/boost_1_47_0
 
 set BUILD_TYPE=Debug
 if [%1]==[Release] (
