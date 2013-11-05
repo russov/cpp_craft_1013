@@ -19,7 +19,10 @@ task4_4::b_message::b_message( std::istream& inp )
 	{
 		inp >> c;
 		if(inp.eof())
+		{
+			delete[] content_;
 			throw std::logic_error("bad input stream, b_message cannot be read");
+		}
 		ss << c;
 	}
 	ss.read( content_, length_ );
