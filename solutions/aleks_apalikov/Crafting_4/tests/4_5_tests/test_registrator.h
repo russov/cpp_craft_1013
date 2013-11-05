@@ -7,5 +7,6 @@ namespace task4_5
 		void solution_simple_tests();
 		void solution_full_random_tests();
 		void solution_partially_random_tests();
+		void my_test();
 	}
 }
