@@ -2,24 +2,47 @@
 
 task4_6::solution::solution( const lines& calulator_lines )
 {
+	size_t finded_char = std::string::npos;
+	std::string polish_str, value_name;
+	for(int i = 0; i < calulator_lines.size(); i++)
+	{
+		finded_char = calulator_lines[i].find('=');
+		if(finded_char!= std::string::npos)
+		{
+			polish_str = get_pl_revers(calulator_lines[i].substr(finded_char + 1));
+			value_name = calulator_lines[i].substr(0, finded_char);
+			value_name.erase(remove_if(value_name.begin(), value_name.end(), std::isspace));
+			if(vars.find(value_name) != vars.end())
+			{
+				throw std::logic_error("such variable 'A' already exists (<line_index>)"); // ADD LINE After
+			}
+			vars[value_name] = calc_pl_expr(polish_str);
+		}
+		else
+		{
+			throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
+		}
+	}
+	int h = 1;
 }
 
 int task4_6::solution::result_for( const std::string& key ) const
 {
-	return 0;
+	return static_cast<int>( vars.at( key ) + ( vars.at( key ) >= 0 ? .5 : -.5) );
 }
 
 
-const task4_6::lines task4_6::solution::GetPolishReversString(const task4_6::lines& expressions)
+const std::string task4_6::solution::get_pl_revers(const std::string& expression)
 {
 	std::stack<char> op_stack;
 	std::stringstream revers_polish;
+	lines result;
 	
 	char current_symbol;
 	for(int i = 0; i < expression.size(); i++)
 	{
 		current_symbol = expression[i];
-		if(IsNumber(current_symbol)||std::isalpha(static_cast<int>(current_symbol)))
+		if(is_number(current_symbol)||std::isalpha(static_cast<int>(current_symbol)))
 		{
 			revers_polish << current_symbol; 
 		}
@@ -29,12 +52,12 @@ const task4_6::lines task4_6::solution::GetPolishReversString(const task4_6::lin
 			{
 				op_stack.push(current_symbol);
 			}
-			else if(IsOperation(static_cast<int>(current_symbol)))
+			else if(is_operation(static_cast<int>(current_symbol)))
 			{
 				revers_polish << " ";
 				if(!op_stack.empty())
 				{
-					if( OpPrior(op_stack.top()) > OpPrior(current_symbol))
+					if( operation_priority(op_stack.top()) > operation_priority(current_symbol))
 					{
 						revers_polish << op_stack.top() << " ";
 						op_stack.pop();
@@ -49,7 +72,12 @@ const task4_6::lines task4_6::solution::GetPolishReversString(const task4_6::lin
 				{
 					revers_polish << " " << op_stack.top();
 					op_stack.pop();
+					if(op_stack.empty())
+					{
+						throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
+					}
 				}
+				op_stack.pop();
 			}
 		}
 	}
@@ -60,24 +88,30 @@ const task4_6::lines task4_6::solution::GetPolishReversString(const task4_6::lin
 		op_stack.pop();
 	}
 	return revers_polish.str();
-
 }
-void task4_6::solution::CalculatePolishExpression(const task4_6::lines& polish_expressions)
+
+double task4_6::solution::calc_pl_expr(const std::string& polish_expression)
 {
 	double result = 0.0;
 	std::string value;
 	double value1, value2;
+
 	std::stringstream ss_in(polish_expression);
 	std::stack<double> values_stack;
 
 	while(ss_in >> value)
 	{
-		if(IsOperation(value[0]))
+		if(is_operation(value[0]))
 		{
+			if(values_stack.empty())
+				throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
 			value2 =  values_stack.top();
 			values_stack.pop();
+			if(values_stack.empty())
+				throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
 			value1 =  values_stack.top();
 			values_stack.pop();
+
 			switch (value[0])
 			{
 			case '+':
@@ -103,10 +137,29 @@ void task4_6::solution::CalculatePolishExpression(const task4_6::lines& polish_e
 		}
 		else
 		{
-			values_stack.push(boost::lexical_cast<double>(value));
+			if(is_number(value))
+			{
+				values_stack.push(boost::lexical_cast<double>(value));
+			}
+			else
+			{
+				if(vars.find(value) != vars.end())
+				{
+					values_stack.push(vars[value]);
+				}
+				else
+				{
+					throw std::logic_error("'B' variable not defined at line <line_index>"); // dddddd
+				}
+			}
 		}
 	}
-	
+
+	if(!values_stack.empty())
+	{
+		result = values_stack.top();
+		values_stack.pop();
+	}
 
 	return result;
 }
@@ -114,6 +167,13 @@ void task4_6::solution::CalculatePolishExpression(const task4_6::lines& polish_e
 bool task4_6::solution::is_number(char ch)
 {
 	return (std::isdigit(ch) || ch == '.');
+}
+
+bool task4_6::solution::is_number(const std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && (std::isdigit(*it) || *it == '.')) ++it;
+    return !s.empty() && it == s.end();
 }
 
 bool task4_6::solution::is_operation(char ch)
