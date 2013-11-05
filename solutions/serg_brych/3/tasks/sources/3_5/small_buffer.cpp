@@ -71,7 +71,7 @@ void ThreadFunction(shared_ifstream input_file)
 					all_time++;
 				}
 				
-				if((msg_of_time[current_package.type].free_size - sizeof(Package) + current_package.len) > 0)
+				if((msg_of_time[current_package.type].free_size - sizeof(Package) - current_package.len) > 0)
 				{
 					msg_of_time[current_package.type].free_size -= sizeof(Package) + current_package.len;
 					msg_of_time[current_package.type].count_of_stored_msg += 1;
@@ -103,7 +103,7 @@ void ThreadFunction(shared_ifstream input_file)
 
 int main() 
 { 
-	const std::string path = BINARY_DIR"\\";
+	const std::string path = BINARY_DIR"/";
 	const boost::regex filter("input_(\\d{3}).txt$");
 	boost::filesystem::directory_iterator end_it;
 	boost::thread_group th_group;
@@ -120,11 +120,12 @@ int main()
 				th_group.add_thread(th);
 			}
 		}
-		th_group.join_all();
 	}
 
+	th_group.join_all();
+
 	//Put result to output_file
-	std::ofstream output_file(BINARY_DIR"\\output.txt", std::ifstream::binary);
+	std::ofstream output_file(BINARY_DIR"/output.txt", std::ifstream::binary);
 
 	std::for_each(Result.begin(), Result.end(), [&output_file] (ResultContainer::value_type & i)
 	{
