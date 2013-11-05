@@ -63,17 +63,14 @@ namespace task4_5
 	private:
 		data_type data_;
 		data_vector results;
-
 		data_vector resultsMax;
 		boost::thread_group threads_;
 		size_t thread_amount;
 		int minimum;
 		int maximum;
 	public:
-		mutable boost::mutex min_mut;
-//		int dMin;
-		mutable boost::mutex max_mut;
-//		int dMax;
+//		mutable boost::mutex min_mut;
+//		mutable boost::mutex max_mut;
 //		void min_routine(data_vector & vec, int & val);
 //		void max_routine(data_vector & vec, int & val);
 		explicit solution( const data_type& data );
