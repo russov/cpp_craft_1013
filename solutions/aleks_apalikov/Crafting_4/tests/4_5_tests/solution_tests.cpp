@@ -15,6 +15,21 @@ void task4_5::tests_::solution_simple_tests()
 	BOOST_CHECK_EQUAL( s.get_max(), 0 );
 }
 
+void task4_5::tests_::my_test()
+{
+
+	task4_5::data_type data;
+	data.resize(11);
+	for(int i = 1; i <= 10000; ++i)
+	{
+		data[i/1000].push_back(i);
+	}
+	task4_5::solution s( data ) ;
+
+	BOOST_CHECK_EQUAL( s.get_min(), 1 );
+	BOOST_CHECK_EQUAL( s.get_max(), 10000 );
+}
+
 void task4_5::tests_::solution_full_random_tests()
 {
 	task4_5::data_type data;
