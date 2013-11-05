@@ -23,13 +23,13 @@ task4_5::solution::solution( const data_type& data )
 	}
 	threads_.join_all();
 	minimum = std::numeric_limits<int>::max();
-	for (std::vector<int>::iterator it = results.begin(); it < results.end(); it++)
+	for (std::vector<int>::iterator it = results.begin(); it < results.end(); ++it)
 	{
 		if(*it < minimum)
 			minimum = *it;
 	}
 	maximum = std::numeric_limits<int>::min();
-	for (std::vector<int>::iterator it = resultsMax.begin(); it < resultsMax.end(); it++)
+	for (std::vector<int>::iterator it = resultsMax.begin(); it < resultsMax.end(); ++it)
 	{
 		if(*it > maximum)
 			maximum = *it;
