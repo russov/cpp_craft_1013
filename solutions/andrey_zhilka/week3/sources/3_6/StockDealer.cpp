@@ -1,6 +1,10 @@
 #include "StockDealer.h"
 #include <sstream>
 #include <iostream>
+#include <boost/thread.hpp>
+
+typedef std::vector< StockDealer::StockDeal >::iterator vector_iterator;
+typedef std::map< std::string, std::vector< StockDealer::StockDeal > >::const_iterator const_map_iterator;
 
 StockDealer::StockDealer()
 {
@@ -9,17 +13,10 @@ StockDealer::StockDealer()
 	{
 		throw std::runtime_error( "Failed to open input file" );
 	}
-
-	this->info_output.open( output_file_path, std::ios::binary );
-	if ( !this->info_output.is_open() )
-	{
-		throw std::runtime_error( "Failed to open output file" );
-	}
 }
 
 StockDealer::~StockDealer()
 {
-	this->info_output.close();
 	this->stock_info.close();
 }
 
@@ -65,6 +62,8 @@ bool StockDealer::StockDeal::read_deal( std::ifstream& stock_info )
 
 		stock_info.seekg( 2 * sizeof( double ), std::ios_base::cur );	
 	}
+
+	return true;
 }
 
 void StockDealer::StockDeal::write_deal( std::ofstream& info_output )
@@ -82,6 +81,54 @@ void StockDealer::process_info()
 
 	while ( buffer.read_deal( this->stock_info ) )
 	{
-		buffer.write_deal( this->info_output );
+		this->sort_deal( buffer );
 	}
+
+	this->output_catalogue();
+}
+
+void StockDealer::sort_deal( const StockDealer::StockDeal& deal )
+{
+	std::string stock_name( deal.stock_name );
+
+	if ( this->deals_catalogue.find( stock_name ) == this->deals_catalogue.end() )
+	{
+		std::vector< StockDeal > initial;
+		this->deals_catalogue[ stock_name ] = initial;
+	}
+
+	this->deals_catalogue[ stock_name ].push_back( deal );
+}
+
+void StockDealer::write_stock( std::string stock_name )
+{
+	std::string out_file_path = SOURCE_DIR "/tests/3_6/output_";
+	out_file_path += stock_name + ".txt";
+	
+	std::ofstream out_file ( out_file_path.c_str(), std::ios_base::binary );
+
+	if ( !out_file.is_open() )
+	{
+		std::cerr << "Failed to create file " << out_file_path << std::endl;
+		return;
+	}
+
+	for ( vector_iterator it = this->deals_catalogue[ stock_name ].begin();
+		it != this->deals_catalogue[ stock_name ].end(); it++ )
+	{
+		it->write_deal( out_file );
+	}
+}
+
+void StockDealer::output_catalogue()
+{
+	boost::thread_group output_threads;
+
+	for ( const_map_iterator it = this->deals_catalogue.begin(); 
+		it != this->deals_catalogue.end(); it++ )
+	{
+		output_threads.create_thread( boost::bind( &StockDealer::write_stock, this, it->first ) );
+	}
+
+	output_threads.join_all();
 }
