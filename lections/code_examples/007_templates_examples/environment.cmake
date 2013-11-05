@@ -8,7 +8,7 @@
 
 option( VERBOSE "should we say as much messages as possible" ON )
 option( BUILD_TESTS "Should we build tests for modules" ON )
-option( BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL "boost was compiled with separate address model stage folder" OFF )
+option( BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL "boost was compiled with separate address model stage folder (for example stage_32, stage_64)" OFF )
 if (BUILD_TESTS AND VERBOSE)
 	message(STATUS " -T: Test will be builded")
 endif(BUILD_TESTS AND VERBOSE)
@@ -95,7 +95,7 @@ endif (BUILD_TESTS)
 
 if ( UNIX )
 	if (Debug)
-		add_definitions( " -O0 -g -Wall -std=c++0x" )
+		add_definitions( " -O0 -g -Wall -Werror -std=c++0x  -pedantic -pedantic-errors -W" )
 	else()
 		add_definitions( " -O3 -Wall -Werror -std=c++0x -pedantic -pedantic-errors -W" )
 	endif()
