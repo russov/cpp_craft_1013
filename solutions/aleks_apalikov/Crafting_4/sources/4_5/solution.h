@@ -24,7 +24,7 @@ namespace task4_5
 		}
 		void operator()()
 		{
-			for(data_vector::iterator it = arr.begin(); it != arr.end(); it++)
+			for(data_vector::iterator it = arr.begin(); it != arr.end(); ++it)
 			{
 				if(*it < val)
 				{
@@ -48,7 +48,7 @@ namespace task4_5
 		}
 		void operator()()
 		{
-			for(data_vector::iterator it = arr.begin(); it != arr.end(); it++)
+			for(data_vector::iterator it = arr.begin(); it != arr.end(); ++it)
 			{
 				if(*it > val)
 				{
