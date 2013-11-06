@@ -23,12 +23,18 @@ DealsElem::~DealsElem(void)
 		delete[] Msg;
 }
 
-UINT32 write_uint32( ofstream& ins, UINT32 value)
+UINT32 write_uint32( ofstream& outs, UINT32 value)
 {
 	for (unsigned size = 0; size < sizeof( UINT32 ); ++size)
-		ins.put(value << (8 * size));
+		outs.put(value << (8 * size));
 	return value;
 }
+/*
+{
+	outs.write( reinterpret_cast< const char* >( &value ), sizeof( UINT32 ) );
+	return value;
+}
+*/
 
 void DealsElem::operator<<(ofstream& out)
 {
@@ -46,6 +52,12 @@ UINT32 read_uint32( fstream& ins)
 		value |= ins.get() << (8 * size);
 	return value;
 }
+/*
+{
+	UINT32 value = 0;
+	ins.read( reinterpret_cast< char* >( &value ), sizeof( UINT32 ) );
+	return value;
+} */
 
 void write_double( ofstream& out, double rational ) 
 {

@@ -8,9 +8,9 @@
 
 class buf
 {
-	const int TotalTypes;
-	vector<int> numBytes; //used number of Bytes of idx type
-	vector<int> totalBytes; //total used Bytes
+	const unsigned int TotalTypes;
+	vector<size_t> numBytes; //used number of Bytes of idx type
+	vector<size_t> totalBytes; //total used Bytes
 	fstream in;
 	ofstream out;
 	bool fileErr;
