@@ -6,6 +6,20 @@
 
 namespace task4_6
 {
+    enum TokenValue
+    {
+        END,
+        NAME,
+        NUMBER,
+        PLUS='+',
+        MINUS='-',
+        MUL='*',
+        DIV='/',
+        ASSIGN='=',
+        LP='(',
+        RP=')'
+    };
+
 	typedef std::vector< std::string > lines;
 
 	class solution
@@ -13,6 +27,10 @@ namespace task4_6
 	public:
 		explicit solution( const lines& calulator_lines );
 		int result_for( const std::string& key ) const;
+    private:
+        TokenValue GetToken();
+
+        TokenValue cur_tok;
 	};
 }
 
