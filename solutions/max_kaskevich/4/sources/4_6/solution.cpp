@@ -26,8 +26,8 @@ static const std::string operators = "()+-*/";
 static const std::map<char, uint32_t> priority = boost::assign::map_list_of
     ( '(', 0 ) ( ')', 0 ) ( '+', 1 ) ( '-', 1 ) ( '*', 2 ) ( '/', 2 );
 
-// algorithm http://en.wikipedia.org/wiki/Reverse_Polish_notation
-std::string to_rpn(const std::string& expression)
+// algorithm based on http://en.wikipedia.org/wiki/Reverse_Polish_notation
+std::string task4_6::to_rpn( const std::string& expression )
 {
     iexprstream input( expression );
     std::ostringstream output;
@@ -133,7 +133,7 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
              {
                  calc_stack.push( boost::lexical_cast<double>( token ) );
              }
-             catch ( const boost::bad_lexical_cast& e )
+             catch ( const boost::bad_lexical_cast& )
              {
              	 throw std::logic_error(
                      ( boost::format( "'%1%' variable not defined at line %2%" )
