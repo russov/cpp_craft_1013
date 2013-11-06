@@ -31,7 +31,6 @@ int Datafeed::createOutput()
 		return -1;
 	}
 	int n = 0; //total number of objects
-	UINT32 type, time, len, currentTime = 0;
 	Data* d;
 	char* str = NULL;
 	bool toWrite = false;

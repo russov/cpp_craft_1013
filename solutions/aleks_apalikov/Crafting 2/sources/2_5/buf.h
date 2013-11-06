@@ -4,7 +4,6 @@
 #include <fstream>
 #include <string>
 #include <iostream>
-#include "DealsElem.h"
 #include <vector>
 
 class buf
