@@ -1,6 +1,6 @@
 @echo off
 
-set SOLUTION_NAME=puzzle_2_week_solutions
+set SOLUTION_NAME=puzzle_2_Ivan_solutions
 set BOOST_ROOT=F:\boost_1_47_0
 
 set BUILD_TYPE=Debug

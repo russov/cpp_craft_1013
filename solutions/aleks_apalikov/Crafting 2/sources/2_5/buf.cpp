@@ -1,5 +1,4 @@
 #include "buf.h"
-#define BINARY_DIR ("")
 
 
 buf::buf( string & fileName ):TotalTypes(100000)
@@ -15,8 +14,8 @@ buf::buf( string & fileName ):TotalTypes(100000)
 		fileErr = true;
 		return;
 	}
-	numBytes.resize(TotalTypes+1, 0);
-	totalBytes.resize(TotalTypes+1, 0);
+	numBytes.resize(TotalTypes + 1, 0);
+	totalBytes.resize(TotalTypes + 1, 0);
 
 }
 
@@ -35,7 +34,7 @@ int buf::createOutput()
 		return -1;
 	}
 	int n = 0; //total number of objects
-	UINT32 type, time, len;
+	UINT32 time, len, type;
 	UINT32 curTime = 0;
 	char* str = NULL;
 	bool toWrite = false;
@@ -47,7 +46,7 @@ int buf::createOutput()
 		if(time>curTime)
 		{
 			curTime = time;
-			for(vector<int>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); it++, tb++)
+			for(vector<size_t>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); it++, tb++)
 			{
 				*tb += *it;
 			}
@@ -65,7 +64,7 @@ int buf::createOutput()
 		if(len == 0)
 			continue;
 		str = new char[len+1];
-		for (int i = 0; i < len; i++)
+		for (size_t i = 0; i < len; i++)
 		{
 			in.read(&(str[i]), 1);
 		}
@@ -76,12 +75,12 @@ int buf::createOutput()
 			delete[] str;
 		}
 	}
-	for(vector<int>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); it++, tb++)
+	for(vector<size_t>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); ++it, ++tb)
 	{
 		*tb += *it;
 	}
 	type = 0;
-	for(vector<int>::iterator tb = totalBytes.begin(); tb != totalBytes.end(); tb++)
+	for(vector<size_t>::iterator tb = totalBytes.begin(); tb != totalBytes.end(); ++tb)
 	{
 		if (*tb == 0)
 		{
