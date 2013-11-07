@@ -17,3 +17,4 @@ namespace task4_5
 }
 
 #endif // _TASK4_5_SOLUTION_H_
+

@@ -79,3 +79,4 @@ void task4_5::tests_::solution_partially_random_tests()
 	BOOST_CHECK_EQUAL( s.get_max(), max );
 		
 }
+

@@ -12,6 +12,8 @@ using namespace std;
 
 class Solution
 { 
+	static const unsigned int buffer_size = 2048u;
+
 	binreader in;
 	binwriter out;
        
@@ -42,7 +44,7 @@ public:
 		   in.open(SOURCE_DIR"/input.txt");
 		   out.open(SOURCE_DIR"/output.txt");
 		   if(!in.is_open()||!out.is_open())
-			   throw new exception();
+			   throw logic_error("Input or output can't be opened");
        }
             
        ~Solution()
@@ -58,7 +60,7 @@ public:
 		   Data x;
 		   
 		   in>>x;
-		   if(x.getSize()<=2048)
+		   if(x.getSize()<=buffer_size)
 		   {
 		      takes[x.type]+=x.getSize();
 			  saved[x.type]++;
@@ -82,7 +84,7 @@ public:
 				   diff[x.type]++;
 			   }
 
-			   if(size<=2048)
+			   if(size<=buffer_size)
 			   {
 				   takes[x.type]+=size;
 				   saved[x.type]++;
@@ -104,9 +106,9 @@ int main()
 	{
 		Solution s;
 		s.process();
-	}catch(...)
+	}catch(exception& e)
 	{
-		cerr<<"Can't open files!";
+		cerr<<e.what();
 	}
 	
 	return 0;  

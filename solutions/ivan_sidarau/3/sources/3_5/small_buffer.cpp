@@ -1,7 +1,7 @@
-#include <reader.h>
+#include <stock_data.h>
 
 int main()
 {
-	binary_reader::proxy_function_that_was_created_only_for_compiling_goals();
+	binary_reader::stock_data( "", "", 1, 1, 1,1,1,1,1,1 );
 }
 
