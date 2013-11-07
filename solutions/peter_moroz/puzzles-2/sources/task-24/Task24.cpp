@@ -1,5 +1,5 @@
 #include "Task24.h"
-#include <exception>
+#include <stdexcept>
 #include <sstream>
 
 using namespace std;

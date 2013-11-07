@@ -13,7 +13,7 @@ public:
   }
   
   void Reset();
-  void IncrementCounter(MessageType id);
+  void IncrementCounter(const MessageType id);
   void DumpOnTime(std::ostream& os, boost::uint32_t t);
 
 private:

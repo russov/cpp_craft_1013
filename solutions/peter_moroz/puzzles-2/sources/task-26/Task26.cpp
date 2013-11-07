@@ -1,5 +1,5 @@
 #include "Task26.h"
-#include <exception>
+#include <stdexcept>
 #include <iostream>
 #include <sstream>
 #include "Message.h"
@@ -17,18 +17,14 @@ void Task26::Perform() {
   Message message;
   message.ReadFrom(ifs_);
   while (!ifs_.eof()) {
-    bool success = true;
     try {
       message.CalculateDays();
-    } catch (exception& ex) { 
+      message.WriteTo(ofs_);
+    } catch (const exception& ex) { 
       cerr << "Task26::Perform exception has been caught " 
           << "reason: " << ex.what() << endl;
-      success = false;      
     }
     
-    if (success)
-      message.WriteTo(ofs_);
-
     message.ReadFrom(ifs_);
   }
 }

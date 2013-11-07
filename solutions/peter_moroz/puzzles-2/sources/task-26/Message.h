@@ -16,7 +16,7 @@ public:
   void WriteTo(std::ostream& os) const;
 
 private:
-  char stock_name_[9];
+  char stock_name_[8];
   char date_time_[8];
   double price_;
   double vwap_;
