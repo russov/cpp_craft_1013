@@ -2,12 +2,22 @@
 #define _TASK5_5_VECTOR_H_
 
 #include <cstdlib>
+#include <memory>
+#include <sstream>
 
 namespace task5_5
 {
 	template< typename T >
 	class vector
 	{
+        static const size_t reserved_size_begin = 4;
+        static const size_t reserved_size_rate = 2;
+        size_t reserved_size_;
+        size_t size_;
+        std::unique_ptr< T[] > data_;
+
+        void check_reserve();
+        void check_index( size_t index );
 	public:
 		typedef T* iterator ; // you could change this
 		typedef const T* const_iterator; // you could change this
@@ -36,89 +46,158 @@ namespace task5_5
 		const_iterator end() const;
 	};
 
-	// TODO, please realise the rest methods according to the tests
+	// TODO, please realize the rest methods according to the tests
 
 	template< typename T >
-	vector< T >::vector()
+	vector< T >::vector() :
+        reserved_size_( reserved_size_begin ),
+        size_( 0 ),
+        data_( new T[ reserved_size_ ] )
 	{
 	}
 	template< typename T >
-	vector< T >::vector( const vector< T >&  )
+	vector< T >::vector( const vector< T >&  vec)
 	{
+        reserved_size_ = vec.reserved_size_;
+        size_ = vec.size_;
+        data_.reset( new T[ reserved_size_ ] )
+        std::copy( vec.begin(), vec.end(), begin() );
 	}
 	template< typename T >
-	vector< T >& vector< T >::operator=( const vector< T >&  )
+	vector< T >& vector< T >::operator=( const vector< T >&  vec)
 	{
+        *this = vec;
 		return *this;
 	}
 
 	template< typename T >
-	void vector< T >::push_back( const T& )
+	void vector< T >::push_back( const T& t )
 	{
+        check_reserve();
+        data_[ size_ ] = t;
+        ++size_;
 	}
 
 	template< typename T >
-	void vector< T >::insert( const size_t , const T&  )
+	void vector< T >::insert( const size_t index, const T& t )
 	{
+        check_index( index );
+        check_reserve();
+        for( size_t i = size_; i > index; --i )
+        {
+            data_[ i ] = data_ [ i - 1 ];
+        }
+        data_[ index ] = t;
+        ++size_;
 	}
 
 	template< typename T >
-	T& vector< T >::operator[]( const size_t  )
+	T& vector< T >::operator[]( const size_t index )
 	{
-		return *(new T());
+        check_index( index );
+        return data_[ index ];
 	}
 
 	template< typename T >
-	const T& vector< T >::operator[]( const size_t  ) const
+	const T& vector< T >::operator[]( const size_t index ) const
 	{
-		return *(new T());
+        check_index( index );
+        return data_[ index ];
 	}
 
 	template< typename T >
-	void vector< T >::resize( const size_t  )
+	void vector< T >::resize( const size_t new_size )
 	{
+        if( new_size > reserved_size_)
+        {
+            reserve( new_size );
+        }
+        if( new_size > size_ )
+        {
+            for( size_t i = size_; i < new_size; ++i )
+            {
+                data_[ i ] = T();
+            }
+        }
+        size_ = new_size;
 	}
+
 	template< typename T >
-	void vector< T >::reserve( const size_t  )
+	void vector< T >::reserve( const size_t new_reserve_size )
 	{
+        if ( new_reserve_size <= reserved_size_ )
+        {
+            reserved_size_ = new_reserve_size;
+            if ( size_ > reserved_size_ )
+            {
+                size_ = reserved_size_;
+            }
+        }
+        else
+        {
+            reserved_size_ = new_reserve_size;
+            T* new_data = new T[ reserved_size_ ];
+            std::copy( begin(), end(), new_data );
+            data_.reset( new_data );
+        }
 	}
 
 	template< typename T >
 	size_t vector< T >::size() const
 	{
-		return 0ul;
+		return size_;
 	}
 	template< typename T >
 	size_t vector< T >::capacity() const
 	{
-		return 0ul;
+		return reserved_size_;
 	}
 	template< typename T >
 	bool vector< T >::empty() const
 	{
-		return false;
+		return !size_;
 	}
 	template< typename T >
 	typename vector< T >::iterator vector< T >::begin()
 	{
-		return new T;
+		return data_.get();
 	}
 	template< typename T >
 	typename vector< T >::iterator vector< T >::end()
 	{
-		return new T;
+		return data_.get() + size_;
 	}
 	
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::begin() const
 	{
-		return new T;
+		return data_.get();
 	}
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::end() const
 	{
-		return new T;
+		return data_.get() + size_;
 	}
+
+    template< typename T >
+    void vector< T >::check_reserve()
+    {
+        if( size_ == reserved_size_ )
+        {
+            reserve( reserved_size_ * reserved_size_rate );
+        }
+    }
+
+    template< typename T >
+    void vector< T >::check_index( size_t index ) const
+    {
+        if ( index >= size_ )
+        {
+            std::ostringstream msg;
+            msg << index << " position is out of " << size_ << " size vector";
+            throw std::out_of_range( msg.str() );
+        }
+    }
 }
 
 #endif // _TASK5_5_VECTOR_H_

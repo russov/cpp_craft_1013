@@ -58,7 +58,7 @@ void task5_5::tests_::vector_tests()
 		BOOST_CHECK_EQUAL( iv.capacity(), 8ul );
 		for ( size_t i = 0 ; i < 4 ; ++i )
 			iv.push_back( 45 );
-		BOOST_CHECK_EQUAL( iv.size(), 8ul );
+		BOOST_CHECK_EQUAL( iv.size(), 9ul );
 		BOOST_CHECK_EQUAL( iv.capacity(), 16ul );
 	}
 	{
@@ -80,8 +80,8 @@ void task5_5::tests_::vector_tests()
 		vector< int > iv;
 		for ( size_t i = 0 ; i < 9 ; ++i )
 			iv.push_back( 23 );
-		iv.resize( 3 );
-		BOOST_CHECK_EQUAL( iv.size(), 3ul );
+		iv.resize( 4 );
+		BOOST_CHECK_EQUAL( iv.size(), 4ul );
 		BOOST_CHECK_EQUAL( iv.capacity(), 16ul );
 		iv.resize( 19 );
 		BOOST_CHECK_EQUAL( iv.size(), 19ul );
@@ -102,7 +102,7 @@ void task5_5::tests_::vector_tests()
 		vector< int > iv;
 		for ( int i = 0 ; i < 150 ; ++i )
 			iv.push_back( i );
-		BOOST_CHECK_EQUAL( std::accumulate( iv.begin(), iv.end() , 0 ), 150 * ( ( 149 + 0 ) / 2 ) );
+		BOOST_CHECK_EQUAL( std::accumulate( iv.begin(), iv.end() , 0 ), 150 * ( ( 149.0 + 0 ) / 2 ) );
 		for ( vector< int >::iterator i = iv.begin() ; i != iv.end() ; ++i )
 			*i = 10;
 		BOOST_CHECK_EQUAL( std::accumulate( iv.begin(), iv.end() , 0 ), 10 * 150 );
