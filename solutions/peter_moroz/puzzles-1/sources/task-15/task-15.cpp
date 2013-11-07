@@ -1,22 +1,23 @@
-#include <algorithm>
-#include <exception>
 #include <fstream>
-#include <functional>
+#include <iomanip>
 #include <iostream>
-#include "Island.h"
-#include "EarthSurface.h"
+#include <set>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 using namespace std;
 
 static const char* InputFilename = "Input.txt";
 static const char* OutputFilename = "Output.txt";
 
-int CountIslands(const EarthSurface& earth_surface);
-vector<Point> GetNeighborhood(const Point& pt, const EarthSurface& earth_surface);
-vector<Point> PickIslandParts(const Point& pt, const EarthSurface& earth_surface);
+const char kLandPiece = 'o';
+const char kWaterPiece = '~';
 
-template<class T>
-void CopyUnique(vector<T>& dst, const vector<T>& src, int& count);
+void ReadLandscape(ifstream& ifs, vector<string>& landscape);
+void ExploreLandscape(const vector<string>& landscape_in, 
+					  vector< vector<int> >& landscape_out);
+int CountIslands(const vector< vector<int> >& landscape);
 
 int main() {
 
@@ -26,138 +27,144 @@ int main() {
     return -1;
   }
 
-  EarthSurface earth_surface;
+  vector<string> raw_landscape;
   try {
-    earth_surface.ReadFromStream(ifs);
-  } catch (exception& ex) {
-    cerr << "EarthSurface::ReadFromStream failed. "
+    ReadLandscape(ifs, raw_landscape);
+  } catch (const exception& ex) {
+    cerr << "ReadLandscape failed. "
          << "Reason: " << ex.what() << endl;
-    ifs.close();
     return -1;
   }
   ifs.close();
 
+  vector< vector<int> > landscape;
+  try {
+    ExploreLandscape(raw_landscape, landscape);
+  } catch (const exception& ex) {
+    cerr << "ExploreLandscape failed. "
+         << "Reason: " << ex.what() << endl;
+    return -1;
+  }
+  
   ofstream ofs(OutputFilename);
   if (!ofs.good()) {
     cerr << "Can't create file: " << OutputFilename << endl;
     return -1;
   }
 
-  ofs << CountIslands(earth_surface);
+  try {
+    ofs << CountIslands(landscape);
+  } catch (const exception& ex) {
+    cerr << "CountIslands failed. "
+         << "Reason: " << ex.what() << endl;
+    return -1;
+  }
+
   ofs.close();
 
   return 0;
 }
 
-class PointBelongsToIsland 
-  : public binary_function<Point, Island, bool> {
-public:
-  bool operator()(const Point& p, const Island& island) const {
-    return island.Contains(p);
+void ReadLandscape(ifstream& ifs, vector<string>& landscape) {
+  landscape.clear();
+  while (!ifs.eof()) {
+    string line;
+    getline(ifs, line);
+    landscape.push_back(line);
   }
-};
+}
+void ExploreLandscape(const vector<string>& landscape_in, 
+                      vector< vector<int> >& landscape_out) {
+  landscape_out.clear();
 
-int CountIslands(const EarthSurface& earth_surface) {
-  vector<Island> islands;
-  int rows_count = earth_surface.GetRowsCount();
-  int cols_count = earth_surface.GetColsCount();
-  int row = 0;
-  while (row < rows_count) {
-    int col = 0;
-    while (col < cols_count) {
-      Point pt(row, col);
-      if (earth_surface.IsLand(pt)) {
+  size_t height = landscape_in.size();
+  size_t width = 0;
+  for (size_t i = 0; i < landscape_in.size(); ++i) {
+    if (landscape_in[i].length() > width)
+      width = landscape_in[i].length();
+    vector<int> id_row(landscape_in[i].length(), 0);
+    landscape_out.push_back(id_row);
+  }
 
-        if (find_if(islands.begin(), islands.end(), 
-              bind1st(PointBelongsToIsland(), pt)) == islands.end()) {
-          /* find all land parts around point,
-           if it hasn't belonged any island yet */
-          vector<Point> parts = PickIslandParts(pt, earth_surface);
-          Island island;
-          for (size_t i = 0; i < parts.size(); ++i)
-            island.AddPart(parts[i]);
-          islands.push_back(island);
-        } // if (find_if(islands.begin(), islands.end(), 
+  int land_id = 0;
+  bool land = false;
+  for (size_t i = 0; i < width; ++i) {
+    if (landscape_in[height - 1][i] == kLandPiece) {
+      if (land == false) {
+        ++land_id;
+        land = true;
+      }
+      landscape_out[height - 1][i] = land_id;
+    } else if (landscape_in[height - 1][i] == kWaterPiece) {
+      land = false;
+    }
+  }
 
-      } // if (earth_surface.IsLand(pt))
+  size_t row = height - 2;
+  while (row >= 0) {
+
+    size_t col = 0;
+    while (col < width) {
+      if (landscape_in[row][col] == kLandPiece) {
+
+        size_t lpos = col;
+        while (col < width && landscape_in[row][col] == kLandPiece) ++col;
+        size_t rpos = col;
+
+        int id = 0;
+        size_t col1 = lpos;
+        while (col1 < rpos) {
+          if (landscape_out[row + 1][col1] != 0) {
+            id = landscape_out[row + 1][col1];
+            break;
+          }
+          ++col1;
+        } // while (col1 < rpos)
+
+        if (col1 == rpos) {
+          ++land_id;
+          id = land_id;
+        }
+
+        for (col1 = lpos; col1 < rpos; ++col1)
+          landscape_out[row][col1] = id;
+
+      } // if (landscape_in[row][col] == kLandPiece)
       ++col;
-    } // while (col < cols_count)
-    ++row;
-  } // while (row < rows_count)
-  return static_cast<int>(islands.size());
+    } // while (col < width)
+
+    size_t row1 = row;
+    while (row1 < height - 1) {
+      col = 0;
+      while (col < width) {
+        if (landscape_out[row1][col] != 0 && landscape_out[row1 + 1][col] != 0 &&
+            landscape_out[row1][col] != landscape_out[row1 + 1][col]) {
+          size_t lpos = col;
+          size_t rpos = col;
+          while (landscape_out[row1 + 1][lpos] != 0 && lpos >= 0) --lpos;
+          while (landscape_out[row1 + 1][rpos] != 0 && rpos < width) ++rpos;
+          ++lpos;
+          while (lpos != rpos) {
+            landscape_out[row1 + 1][lpos] = landscape_out[row1][col];
+            ++lpos;
+          }
+        }
+        ++col;
+      } // while (col < width)
+
+      ++row1;
+    } // while (row1 < height - 2)
+
+    if (row == 0)
+      break;
+    --row;
+  } // while (row >= 0)
 }
-vector<Point> GetNeighborhood(const Point& pt, const EarthSurface& earth_surface) {
-  vector<Point> neighborhood;
-
-  if (earth_surface.IsLand(pt)) {
-    Point p;
-    p = Point(pt.row(), pt.col() - 1);
-    if (p.col() >= 0 && p.col() < earth_surface.GetColsCount() &&
-        p.row() >= 0 && p.row() < earth_surface.GetRowsCount() &&
-        earth_surface.IsLand(p)) {
-      neighborhood.push_back(p);
-    }
-    p = Point(pt.row(), pt.col() + 1);
-    if (p.col() >= 0 && p.col() < earth_surface.GetColsCount() &&
-        p.row() >= 0 && p.row() < earth_surface.GetRowsCount() &&
-        earth_surface.IsLand(p)) {
-      neighborhood.push_back(p);
-    }
-    p = Point(pt.row() - 1, pt.col());
-    if (p.col() >= 0 && p.col() < earth_surface.GetColsCount() &&
-        p.row() >= 0 && p.row() < earth_surface.GetRowsCount() &&
-        earth_surface.IsLand(p)) {
-      neighborhood.push_back(p);
-    }
-    p = Point(pt.row() + 1, pt.col());
-    if (p.col() >= 0 && p.col() < earth_surface.GetColsCount() &&
-        p.row() >= 0 && p.row() < earth_surface.GetRowsCount() &&
-        earth_surface.IsLand(p)) {
-      neighborhood.push_back(p);
-    }
-  } // if (earth_surface.IsLand(pt))
-  
-  return neighborhood;
-}
-
-vector<Point> PickIslandParts(const Point& pt, const EarthSurface& earth_surface) {
-  vector<Point> seed_points = GetNeighborhood(pt, earth_surface);
-  vector<Point> work_points;
-
-  bool done = false;
-  while (!done) {
-    /* get new land parts at each iteration, until no one part will be got */
-    int vain_step_count = 0;
-    for (size_t i = 0; i < seed_points.size(); ++i) {
-      vector<Point> step_points = GetNeighborhood(seed_points[i], earth_surface);
-
-      /* exclude initial point from iteration results */
-      vector<Point>::iterator it = find(step_points.begin(), step_points.end(), pt);
-      if (it != step_points.end())
-        step_points.erase(it);
-
-      int count = 0;
-      CopyUnique(work_points, step_points, count);
-      /* step, based on i-th seed hasn't given us any new part */
-      if (count == 0)
-        ++vain_step_count;
-    } // for (size_t i = 0; i < seed_points.size(); ++i)
-    /* stop, if all steps were fruitless */
-    done = (vain_step_count == static_cast<int>(seed_points.size()));
-    seed_points = work_points;
-  } // while (!done)
-
-  work_points.push_back(pt);
-  return work_points;
-}
-
-template<class T>
-void CopyUnique(vector<T>& dst, const vector<T>& src, int& count) {
-  count = 0;
-  for (vector<T>::const_iterator it = src.begin(); it != src.end(); ++it) {
-    if (find(dst.begin(), dst.end(), *it) == dst.end()) {
-      dst.push_back(*it);
-      ++count;
-    }
-  } // for (vector<T>::const_iterator it = src.begin(); it != src.end(); ++it)
+int CountIslands(const vector< vector<int> >& landscape) {
+  set<int> lands_ids;
+  for (size_t i = 0; i < landscape.size(); ++i)
+    for (size_t j = 0; j < landscape[i].size(); ++j)
+      if (landscape[i][j] != 0)
+        lands_ids.insert(landscape[i][j]);
+  return static_cast<int>(lands_ids.size());
 }

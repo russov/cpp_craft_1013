@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <exception>
+#include <stdexcept>
 #include <fstream>
 #include <functional>
 #include <sstream>
