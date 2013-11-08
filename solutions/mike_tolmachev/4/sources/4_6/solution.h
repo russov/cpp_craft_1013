@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <map>
+#include <sstream>
 
 namespace task4_6
 {
@@ -29,8 +31,16 @@ namespace task4_6
 		int result_for( const std::string& key ) const;
     private:
         TokenValue GetToken();
+        double Expr(bool get);
+        double Term(bool get);
+        double Prim(bool get);
 
         TokenValue cur_tok;
+        std::map<std::string, int> names;
+
+        double number_val;
+        std::string name_val;
+        std::istringstream str;
 	};
 }
 
