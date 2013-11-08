@@ -11,6 +11,7 @@
 #include <map>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp> 
 
 namespace task4_6
 {

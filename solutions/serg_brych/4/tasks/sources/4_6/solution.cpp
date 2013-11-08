@@ -9,18 +9,25 @@ task4_6::solution::solution( const lines& calulator_lines )
 		finded_char = calulator_lines[i].find('=');
 		if(finded_char!= std::string::npos)
 		{
-			polish_str = get_pl_revers(calulator_lines[i].substr(finded_char + 1));
-			value_name = calulator_lines[i].substr(0, finded_char);
+			try
+			{
+				polish_str = get_pl_revers(calulator_lines[i].substr(finded_char + 1));
+				value_name = calulator_lines[i].substr(0, finded_char);
+			}
+			catch(const std::logic_error &er)
+			{
+				throw std::logic_error( (boost::format(er.what()) % i).str());
+			}
 			value_name.erase(remove_if(value_name.begin(), value_name.end(), std::isspace));
 			if(vars.find(value_name) != vars.end())
 			{
-				throw std::logic_error("such variable 'A' already exists (<line_index>)"); // ADD LINE After
+				throw std::logic_error( (boost::format("such variable '%1%' already exists %2%") % value_name % i).str() ); 
 			}
 			vars[value_name] = calc_pl_expr(polish_str);
 		}
 		else
 		{
-			throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
+			throw std::logic_error((boost::format("not correct expression at %1% line")% i).str()); 
 		}
 	}
 	int h = 1;
@@ -74,7 +81,7 @@ const std::string task4_6::solution::get_pl_revers(const std::string& expression
 					op_stack.pop();
 					if(op_stack.empty())
 					{
-						throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
+						throw std::logic_error("not correct expression at %1% line"); 
 					}
 				}
 				op_stack.pop();
@@ -104,11 +111,11 @@ double task4_6::solution::calc_pl_expr(const std::string& polish_expression)
 		if(is_operation(value[0]))
 		{
 			if(values_stack.empty())
-				throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
+				throw std::logic_error("not correct expression at %1% line"); 
 			value2 =  values_stack.top();
 			values_stack.pop();
 			if(values_stack.empty())
-				throw std::logic_error("not correct expression at <line_index> line"); // ADD LINE After
+				throw std::logic_error("not correct expression at %1% line"); 
 			value1 =  values_stack.top();
 			values_stack.pop();
 
@@ -126,7 +133,7 @@ double task4_6::solution::calc_pl_expr(const std::string& polish_expression)
 			case '/':
 				if(value2 == 0.0)
 				{
-					throw std::logic_error("zero div MUST ADD LINE");
+					throw std::logic_error("zero div (%1%)");
 				}
 				result = value1 / value2;
 				break;
@@ -149,7 +156,8 @@ double task4_6::solution::calc_pl_expr(const std::string& polish_expression)
 				}
 				else
 				{
-					throw std::logic_error("'B' variable not defined at line <line_index>"); // dddddd
+					
+					throw std::logic_error((boost::format("'%1%' variable not defined at line %2%") % value % "%1%").str()); 
 				}
 			}
 		}
