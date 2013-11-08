@@ -11,6 +11,8 @@
 #include "reader.h"
 #include "writer.h"
 
+using boost::uint32_t;
+
 using binary_reader::Reader;
 using binary_writer::Writer;
 
@@ -83,7 +85,7 @@ class MsgBuf {
         bool is_full(const uint32_t type) const;
         void read(Reader&);
         void write_type_map(Writer&);
-        static void write_data(std::vector<Msg> messages, Writer& out); 
+        static void write_data(std::vector<Msg> const& messages, Writer& out); 
     private:
         MsgBuf(const MsgBuf&);
         void operator=(const MsgBuf&);

@@ -51,7 +51,7 @@ public:
 		   in.open(SOURCE_DIR"/input.txt");
 		   out.open(SOURCE_DIR"/output.txt");
 		   if(!in.is_open()||!out.is_open())
-			   throw new exception();
+			   throw logic_error("Input or output can't be opened");
        }
             
        ~Solution()
@@ -103,10 +103,10 @@ int main()
 	{
 		Solution s;
 		s.process();
-	}catch(...)
+	}catch(exception& e)
 	{
-		cerr<<"Can't open files!";
+		cerr<<e.what();
 	}
-	
+
 	return 0;  
 }
