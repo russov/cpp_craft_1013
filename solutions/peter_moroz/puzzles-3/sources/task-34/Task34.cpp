@@ -1,6 +1,5 @@
 #include "Task34.h"
 #include "Message.h"
-#include <exception>
 #include <fstream>
 #include <iostream>
 #include <sstream>

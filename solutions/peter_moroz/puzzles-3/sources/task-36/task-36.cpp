@@ -13,7 +13,7 @@ int main() {
   try {
     task.Initialize();
     task.Perform();
-  } catch (exception& ex) {
+  } catch (const exception& ex) {
     cout << "An exception has been caught. "
       << "Reason: " << ex.what() << endl;
     return -1;
