@@ -45,8 +45,8 @@ double MultilineCalculator::CalculateExpression(const std::string& expr) {
   return value;
 }
 double MultilineCalculator::GetValueOf(const std::string& variable_name) const {
-  std::map<std::string, double>::const_iterator 
-	  it = names_table_.find(variable_name);
+  std::map<std::string, double>::const_iterator it;
+  it = names_table_.find(variable_name);
   if (it == names_table_.end()) {
     std::stringstream msg;
     msg << "There are no variable with name: " << variable_name;
