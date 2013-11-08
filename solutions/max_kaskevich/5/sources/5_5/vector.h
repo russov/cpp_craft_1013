@@ -17,10 +17,10 @@ namespace task5_5
         std::unique_ptr< T[] > data_;
 
         void check_reserve();
-        void check_index( size_t index );
+        void check_index( size_t index ) const;
 	public:
-		typedef T* iterator ; // you could change this
-		typedef const T* const_iterator; // you could change this
+		typedef T* iterator ;
+		typedef const T* const_iterator;
 	public:
 		explicit vector();
 		vector( const vector& copy );
@@ -46,8 +46,6 @@ namespace task5_5
 		const_iterator end() const;
 	};
 
-	// TODO, please realize the rest methods according to the tests
-
 	template< typename T >
 	vector< T >::vector() :
         reserved_size_( reserved_size_begin ),
@@ -55,18 +53,20 @@ namespace task5_5
         data_( new T[ reserved_size_ ] )
 	{
 	}
+
 	template< typename T >
 	vector< T >::vector( const vector< T >&  vec)
 	{
-        reserved_size_ = vec.reserved_size_;
-        size_ = vec.size_;
-        data_.reset( new T[ reserved_size_ ] )
-        std::copy( vec.begin(), vec.end(), begin() );
+        *this = vec;
 	}
+
 	template< typename T >
 	vector< T >& vector< T >::operator=( const vector< T >&  vec)
 	{
-        *this = vec;
+        reserved_size_ = vec.reserved_size_;
+        size_ = vec.size_;
+        data_.reset( new T[ reserved_size_ ] );
+        std::copy( vec.begin(), vec.end(), begin() );
 		return *this;
 	}
 
@@ -125,15 +125,7 @@ namespace task5_5
 	template< typename T >
 	void vector< T >::reserve( const size_t new_reserve_size )
 	{
-        if ( new_reserve_size <= reserved_size_ )
-        {
-            reserved_size_ = new_reserve_size;
-            if ( size_ > reserved_size_ )
-            {
-                size_ = reserved_size_;
-            }
-        }
-        else
+        if ( new_reserve_size > reserved_size_ )
         {
             reserved_size_ = new_reserve_size;
             T* new_data = new T[ reserved_size_ ];
