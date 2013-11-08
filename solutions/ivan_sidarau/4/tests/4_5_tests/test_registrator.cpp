@@ -2,7 +2,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-boost::unit_test_framework::test_suite* init_unit_test_suite( int argc, char* argv[] )
+boost::unit_test_framework::test_suite* init_unit_test_suite( int, char* [] )
 {
 	using boost::unit_test_framework::test_case;
 

@@ -1,6 +1,7 @@
 #include "test_registrator.h"
 
 #include <iostream>
+#include <stdexcept>
 
 #include <a_message.h>
 

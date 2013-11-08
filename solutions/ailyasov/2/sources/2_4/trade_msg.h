@@ -12,6 +12,8 @@
 using binary_reader::Reader;
 using binary_writer::Writer;
 
+using boost::uint32_t;
+
 enum TYPES {
     MARKET_OPEN = 1,
     TRADE = 2,

@@ -1,6 +1,7 @@
 #include "message_reader.h"
 
 #include <string>
+#include <stdexcept>
 
 #include "a_message.h"
 #include "b_message.h"
