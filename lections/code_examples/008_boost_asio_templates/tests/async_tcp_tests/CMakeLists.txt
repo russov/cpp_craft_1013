@@ -4,6 +4,7 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	date_time
 	chrono
 	thread
+	regex
 )
 
 compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} Boost )

@@ -4,7 +4,9 @@ namespace sync_tcp
 {
 	namespace tests_
 	{
-		void tcp_client_constructor();
-		void tcp_server_constructor();
+		void tcp_client_constructor_tests();
+		void tcp_server_constructor_tests();
+		//
+		void tcp_sync_full_cyrcle_tests();
 	}
 }
