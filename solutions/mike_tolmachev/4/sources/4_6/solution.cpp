@@ -4,9 +4,16 @@ task4_6::solution::solution( const lines& calulator_lines )
 {
     for (auto it = calulator_lines.begin(); it != calulator_lines.end(); ++it)
     {
-        str.clear();
-        str.str(*it);
-        Expr(true);
+        sstr.clear();
+        sstr.str(*it);
+		try
+		{
+			Expr(false);
+		}
+		catch(const std::string& str)
+		{
+			throw std::logic_error((boost::format(str) % std::distance(calulator_lines.begin(), it)).str());
+		}
     }
 }
 
@@ -28,12 +35,17 @@ task4_6::TokenValue task4_6::solution::GetToken()
 
     do
     {
-        str.get(ch);
-        if (str.bad())
+        sstr.get(ch);
+        if (sstr.bad())
         {
             ch = 0;
         }
-    } while (isspace(ch) && str.good());
+	} while (isspace(ch) && sstr.good());
+
+	if (sstr.eof())
+	{
+		ch = 0;
+	}
 
     switch (ch)
     {
@@ -52,19 +64,19 @@ task4_6::TokenValue task4_6::solution::GetToken()
     default:
         if (isdigit(ch))
         {
-            str.putback(ch);
-            str >> number_val;
+            sstr.putback(ch);
+            sstr >> number_val;
             cur_tok = NUMBER;
         }
         else if (isalpha(ch))
         {
             name_val.clear();
-            while(str.good() && isalnum(ch))
+            while(sstr.good() && isalnum(ch))
             {
                 name_val.push_back(ch);
-                str.get(ch);
+                sstr.get(ch);
             }
-            str.putback(ch);
+            sstr.putback(ch);
             cur_tok = NAME;
         }
     }
@@ -72,55 +84,62 @@ task4_6::TokenValue task4_6::solution::GetToken()
     return cur_tok;
 }
 
-double task4_6::solution::Expr(bool get)
+double task4_6::solution::Expr(bool from_rec)
 {
-    double left = Term(get);
+    double left = Term();
 
     while (true)
     {
         switch (cur_tok)
         {
         case PLUS:
-            left += Term(true);
+            left += Term();
             break;
         case MINUS:
-            left -= Term(true);
+            left -= Term();
             break;
         default:
+			if (!from_rec && cur_tok != END)
+			{
+				std::string err_str = "not correct expression at %1% line";
+				throw err_str;
+			}
             return left;
         }
     }
 }
 
-double task4_6::solution::Term(bool get)
+double task4_6::solution::Term()
 {
-    double left = Prim(get);
+    double left = Prim();
 
     while (true)
     {
         switch(cur_tok)
         {
         case MUL:
-            left *= Prim(true);
+            left *= Prim();
             break;
         case DIV:
-            if (double d = Prim(true))
+            if (double d = Prim())
             {
                 left /= d;
                 break;
             }
+			else
+			{
+				std::string err_str = "zero div (%1%)";
+				throw err_str;
+			}
         default:
             return left;
         }
     }
 }
 
-double task4_6::solution::Prim(bool get)
+double task4_6::solution::Prim()
 {
-    if (get)
-    {
-        GetToken();
-    }
+    GetToken();
 
     switch (cur_tok)
     {
@@ -134,9 +153,10 @@ double task4_6::solution::Prim(bool get)
         {
             std::string cur_name = name_val;
             auto it = names.find(cur_name);
+			GetToken();
             if (it == names.end())
             {
-                if (GetToken() == ASSIGN)
+				if (cur_tok == ASSIGN)
                 {
                     double v2 = Expr(true);
                     names[cur_name] = v2 > 0 ? v2 + 0.5 : v2 - 0.5;
@@ -144,23 +164,34 @@ double task4_6::solution::Prim(bool get)
                 }
                 else
                 {
-                    throw "'B' variable not defined at line %1%";
+					std::string err_str = (boost::format("'%1%' variable not defined at line %2%" ) % cur_name % "%1%").str();
+                    throw err_str;
                 }
             }
-
-            GetToken();
+			else if (cur_tok == ASSIGN)
+			{
+				std::string err_str = (boost::format("such variable '%1%' already exists (%2%)") % cur_name % "%1%").str();
+                throw err_str;
+			}
+            
             return it->second;
         }
     case MINUS:
-        return -Prim(true);
+        return -Prim();
     case LP:
         {
             double e = Expr(true);
-            //if (cur_tok != RP)
+            if (cur_tok != RP)
+			{
+				std::string err_str = "not correct expression at %1% line";
+				throw err_str;
+			}
             GetToken();
             return e;
         }
     default:
+		std::string err_str = "not correct expression at %1% line";
+		throw err_str;
         return 0;
     }
 }
