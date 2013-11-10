@@ -6,6 +6,8 @@
 #include <boost/thread.hpp>
 #include <boost/cstdint.hpp>
 
+#include <boost/array.hpp>
+
 namespace sync_tcp
 {
 	namespace tests_
