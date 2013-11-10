@@ -33,15 +33,16 @@ std::string task4_6::to_rpn( const std::string& expression )
     std::ostringstream output;
 
     std::string token;
-    std::stack<char> rpnstack;
+    std::stack< char > rpnstack;
 
     while( input >> token )
     {
         if ( token == "(" || token == ")" )
         {
+            // token is bracket
             if( token == ")" )
             {
-                while(rpnstack.top() != '(')
+                while( rpnstack.top() != '(' )
                 {
                     output << rpnstack.top() << " ";
                     rpnstack.pop();
@@ -84,7 +85,7 @@ std::string task4_6::to_rpn( const std::string& expression )
 
 double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
 {
-     std::stack<double> calc_stack;
+     std::stack< double > calc_stack;
      std::istringstream input( rpn_expression );
      std::string token;
      vars_map::iterator it;
@@ -92,6 +93,7 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
      {
          if( token.length() == 1 && operators.find( token[0] ) != token.npos )
          {
+             // token is operator
              double r = 0;
 
              if( calc_stack.empty() )
@@ -125,10 +127,12 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
          }
          else if( ( it = vars_.find( token ) ) != vars_.end() )
          {
+              // token is var
              calc_stack.push( it->second );
          }
          else
          {
+             // maybe token is number
              try
              {
                  calc_stack.push( boost::lexical_cast<double>( token ) );
@@ -150,7 +154,7 @@ double task4_6::solution::calculate_rpn( const std::string& rpn_expression )
 
 void task4_6::solution::calculate()
 {
-    std::vector<std::string> strs;
+    std::vector< std::string > strs;
     for ( int i = 0; i < lines_.size(); ++i )
     {
         try
@@ -170,7 +174,7 @@ void task4_6::solution::calculate()
                     % var_name % "%1%" ).str() ); 
             }
 
-            vars_[var_name] = calculate_rpn( to_rpn( expression ) );
+            vars_[ var_name ] = calculate_rpn( to_rpn( expression ) );
         }
         catch ( const std::logic_error& e )
         {

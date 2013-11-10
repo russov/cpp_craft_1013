@@ -12,15 +12,18 @@ task4_6::iexprstream::iexprstream( const std::string& str ) :
 {
 }
 
-task4_6::iexprstream::~iexprstream(void)
+task4_6::iexprstream::~iexprstream( void )
 {
 }
 
 static const rule< std::string::const_iterator, std::string(), space_type > var_name = +char_( "A-Z" );
+
 static const rule< std::string::const_iterator, std::string(), space_type > double_str
     = +char_( "0-9" ) >> -( char_( '.' ) >> +char_( "0-9" ) );
+
 static const rule< std::string::const_iterator, std::string(), space_type > math_operator
     = char_( "+*/()-" );
+
 static const rule< std::string::const_iterator, std::string(), space_type > token
     = double_str | math_operator | var_name;
 

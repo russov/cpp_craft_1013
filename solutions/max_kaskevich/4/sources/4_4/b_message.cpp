@@ -6,11 +6,11 @@ task4_4::b_message::b_message( std::istream& inp ) :
 {
     
 	inp >> length_;
-	content_.reset(new char[ length_ ]);
+	content_.reset( new char[ length_ ] );
     inp.ignore();
-	inp.read( content_.get(), length_);
-    if ( !inp)
-        throw std::logic_error("bad input stream, a_message cannot be readed");
+	inp.read( content_.get(), length_ );
+    if ( !inp )
+        throw std::logic_error( "bad input stream, a_message cannot be readed" );
 }
 
 task4_4::message_ptr task4_4::b_message::create_message( std::istream& inp )

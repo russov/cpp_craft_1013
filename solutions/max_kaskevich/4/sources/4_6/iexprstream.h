@@ -4,7 +4,7 @@
 
 namespace task4_6
 {
-    // its too lazy realize realize own basic_iexprstream or inherit stringstream :(
+    // its too lazy realize own basic_iexprstream or inherit stringstream :(
     class iexprstream 
     {   
         std::string::const_iterator it_;
@@ -14,7 +14,7 @@ namespace task4_6
         friend iexprstream& operator >> ( iexprstream& input, std::string& str );
     public:
         explicit iexprstream( const std::string& str );
-        ~iexprstream(void);
+        ~iexprstream( void );
         operator bool();
     };
 
