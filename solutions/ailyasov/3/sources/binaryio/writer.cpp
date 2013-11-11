@@ -2,6 +2,9 @@
 #include <cstddef>
 #include <vector>
 #include <stdexcept>
+
+#include <boost/thread/thread.hpp>
+
 #include "writer.h"
 
 namespace binaryio {
@@ -9,6 +12,7 @@ namespace binaryio {
     Writer::Writer(const std::string filename) {
         out.open(filename.c_str(), std::ios::out | std::ios::binary);
 #ifndef NDEBUG
+        boost::mutex::scoped_lock lock ( cout_protector_ );
         std::cout << "Output: " << filename << std::endl;
 #endif
     }

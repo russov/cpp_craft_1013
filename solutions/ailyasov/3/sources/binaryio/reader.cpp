@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include <boost/cstdint.hpp>
+#include <boost/thread/thread.hpp>
 
 #include "reader.h"
 
@@ -12,6 +13,7 @@ namespace binaryio {
 
     Reader::Reader(const std::string filename)  {
 #ifndef NDEBUG
+        boost::mutex::scoped_lock lock ( cout_protector_ );
         std::cout << "Input: " << filename << std::endl;
 #endif
         in.open(filename.c_str(), std::ios::in | std::ios::binary);
