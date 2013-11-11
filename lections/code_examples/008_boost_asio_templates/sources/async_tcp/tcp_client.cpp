@@ -4,6 +4,22 @@
 
 using namespace async_tcp;
 
+tcp_client_manager::tcp_client_manager()
+	: buffer_( NULL )
+{
+}
+tcp_client_manager::~tcp_client_manager() 
+{
+	delete [] buffer_;
+	buffer_ = NULL;
+}
+char* tcp_client_manager::get_buffer( const size_t size )
+{
+	delete [] buffer_;
+	buffer_ = new char[ size ];
+	return buffer_;
+}
+
 tcp_client::tcp_client( tcp_client_manager& manager, const std::string& ip_address, const unsigned short port )
 	: manager_( manager )
 	, io_service_()
@@ -29,7 +45,8 @@ void tcp_client::read_string_length_handler_( const boost::system::error_code& e
 {
 	if ( er )
 		return;
-	socket_.async_receive( boost::asio::buffer( manager_.get_buffer( length_ ), length_ ), boost::bind( &tcp_client::read_string_handler_, this, _1 ) );
+	char* buffer = manager_.get_buffer( length_ );
+	socket_.async_receive( boost::asio::buffer( buffer, length_ ), boost::bind( &tcp_client::read_string_handler_, this, _1 ) );
 }
 void tcp_client::read_string_handler_( const boost::system::error_code& er )
 {

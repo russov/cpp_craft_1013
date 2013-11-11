@@ -15,16 +15,10 @@ namespace async_tcp
 		friend class tcp_client;
 		char* buffer_;
 
-	public:		
-		virtual ~tcp_client_manager() 
-		{
-			delete [] buffer_;
-		}
-		char* get_buffer( const size_t size )
-		{
-			buffer_ = new char[ size ];
-			return buffer_;
-		}
+	public:
+		explicit tcp_client_manager();		
+		virtual ~tcp_client_manager();		
+		char* get_buffer( const size_t size );		
 		virtual void message_read() = 0;
 		virtual void message_sent() = 0;		
 	};

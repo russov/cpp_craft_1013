@@ -85,6 +85,7 @@ namespace async_tcp
 				tcp_client client( tcp_manager, "127.0.0.1", port );
 				boost::this_thread::sleep( boost::posix_time::milliseconds( 10 ) );
 				BOOST_CHECK_NO_THROW( helper.send() );
+				boost::this_thread::sleep( boost::posix_time::milliseconds( 100 ) );
 				BOOST_CHECK_NO_THROW( helper.check_connection() );
 				boost::this_thread::sleep( boost::posix_time::milliseconds( 10 ) );
 				BOOST_CHECK_NO_THROW( helper.close_socket() );
