@@ -1,5 +1,5 @@
 #include "Task25.h"
-#include <exception>
+#include <stdexcept>
 #include <sstream>
 
 using namespace std;
@@ -38,7 +38,7 @@ void Task25::Perform() {
 
   try {
     statistics_.DumpOnTime(ofs_, message.time());
-  } catch (exception& ex) {
+  } catch (const exception& ex) {
     error_text << "Task25::Perform() : exception has been caught. "
       << "Reason: " << ex.what() << endl;
     throw logic_error(error_text.str());
