@@ -96,7 +96,7 @@ void task5_6::tests_::thread_safe_queue_tests()
 		BOOST_CHECK_EQUAL( tsq.empty() , false );
 
 		int res;
-		BOOST_CHECK_EQUAL( tsq.pop( res ), true );
+		BOOST_CHECK_EQUAL( tsq.pop( res ), false ); // my correction
 		BOOST_CHECK_EQUAL( res, 54 );
 		BOOST_CHECK_EQUAL( tsq.size() , 0ul );
 		BOOST_CHECK_EQUAL( tsq.empty() , false );
