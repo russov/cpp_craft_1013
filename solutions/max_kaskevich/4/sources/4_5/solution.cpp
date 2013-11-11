@@ -29,7 +29,7 @@ int task4_5::solution::get_max() const
 }
 
 
-void task4_5::solution::calc_proc(task4_5::magic_iterator<int>& it, size_t step)
+void task4_5::solution::calc_proc( task4_5::magic_iterator<int>& it, size_t step )
 {
     int local_min = std::numeric_limits< int >().max();
     int local_max = std::numeric_limits< int >().min();
@@ -41,7 +41,7 @@ void task4_5::solution::calc_proc(task4_5::magic_iterator<int>& it, size_t step)
         it += step;
     }
 
-    boost::lock_guard<boost::mutex> lock(mtx_);
+    boost::mutex::scoped_lock lock( mtx_ );
     min_ = std::min( local_min, min_ );
     max_ = std::max( local_max, max_ );
 
@@ -59,6 +59,7 @@ void task4_5::solution::calculate()
     boost::thread_group threads;
 
     uint32_t n = boost::thread::hardware_concurrency();
+    n = ( n ? n : 4 );
     const uint32_t step = n;
     while( n-- )
     {
