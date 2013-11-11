@@ -33,7 +33,7 @@ void BinRW :: BinWriter(msg &a)
 }
 
 
-void BinRW :: BinWriter(int &a)
+void BinRW :: BinWriter(unsigned int &a)
 {
 	f2.write(reinterpret_cast<char*>(&(a)),sizeof (a));		
 }

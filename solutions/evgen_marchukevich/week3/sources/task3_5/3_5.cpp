@@ -24,22 +24,22 @@ class Solution
 
 private :	
 
-		map<int,int> kol,u;		
-		map<int,double> ans;
+		map<unsigned int,unsigned int> kol,u;		
+		map<unsigned int,double> ans;
 		static int file_id;
 		static const int file_cnt = 999;
 		static const size_t threads_count = 4;		
-		vector<int> all_types;
+		vector<unsigned int> all_types;
 		BinRW RR;
 		boost :: mutex Mutex,mtx;
 
 		void writer()
 		{
 			sort(all_types.begin(),all_types.end());
-			vector<int> :: iterator it;
+			vector<unsigned int> :: iterator it;
 			for(it=all_types.begin();it!=all_types.end();it++)
 			{
-				int TYPE = *it;
+				unsigned int TYPE = *it;
 				RR.BinWriter(TYPE);
 				
 				double MID_CNT=0;
@@ -107,8 +107,8 @@ public :
 			}
 				
 			if (!open_file) return;
-			map<int,size_t> BUFFER;
-			map<int,int> TIME;			
+			map<unsigned int,size_t> BUFFER;
+			map<unsigned int,unsigned int> TIME;			
 			while (1)
 			{
 				BinRW :: msg x;
@@ -117,14 +117,14 @@ public :
 				if (TIME.count(x.type)==0 || TIME[x.type]!=x.time)				
 				{					
 					BUFFER[x.type]=0;
-					if (get_msg_size(x) <= 2048)
+					if (get_msg_size(x) <= 2048u)
 					{
 						boost :: mutex :: scoped_lock lock(mtx);
 						kol[x.type]++;
 					} else
-						TIME[x.type]=-1;
+						TIME[x.type]=0;
 				}
-				if (BUFFER[x.type]+get_msg_size(x) <= 2048)
+				if (BUFFER[x.type]+get_msg_size(x) <= 2048u)
 				{
 					boost :: mutex :: scoped_lock lock(mtx);
 					TIME[x.type]=x.time;

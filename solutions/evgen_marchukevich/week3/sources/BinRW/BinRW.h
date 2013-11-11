@@ -27,9 +27,9 @@ bool error;
 public :
 	
 struct msg{
-		int type;
-		int time;
-		int len;
+		unsigned int type;
+		unsigned int time;
+		unsigned int len;
 		string m;
 		};
 void BinOpen_inFile(const char*);
@@ -40,7 +40,7 @@ bool Bin_isOpen_inFile();
 bool Bin_isOpen_outFile();
 bool Bin_nice();
 void BinReader(msg &);
-void BinWriter(int&);
+void BinWriter(unsigned int&);
 void BinWriter(double&);
 void BinWriter(msg &);
 };

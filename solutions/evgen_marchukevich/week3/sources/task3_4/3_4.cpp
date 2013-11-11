@@ -29,11 +29,11 @@ private:
 	bool error;
 	boost :: mutex Mutex;
 
-	bool check(const BinRW ::msg &t, const int max)
+	bool check(const BinRW ::msg &t, const unsigned int max,bool first)
 		{
 			if (t.type<1 || t.type>4) return 0;
-			if (max==-1) return 1;
-			if (t.time <=max-2) return 0;
+			if (first) return 1;
+			if (t.time+2 <=max) return 0;
 			return 1;
 		}
 
@@ -97,7 +97,8 @@ public:
 				}
 			}
 			if (!open_file) return;
-			int T = -1;
+			unsigned int T = 0;
+			bool first = true;
 			vector<BinRW :: msg> ans;						
 			ans.clear();
 			while (1)
@@ -105,7 +106,8 @@ public:
 				BinRW :: msg x;
 				RR.BinReader(x);
 				if (!RR.Bin_nice()) break;
-				if (!check(x,T)) continue;
+				if (!check(x,T,first)) continue;
+				first = false;
 				ans.push_back(x);
 				T=max(T,x.time);
 			}		
