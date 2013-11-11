@@ -12,6 +12,9 @@ boost::unit_test_framework::test_suite* init_unit_test_suite( int , char* [] )
 	using namespace async_tcp::tests_;
 
 	ts1->add( BOOST_TEST_CASE( &async_tests_work ) );
+	//
+	ts1->add( BOOST_TEST_CASE( &async_tcp_server_constructor_tests ) );
+	ts1->add( BOOST_TEST_CASE( &async_tcp_server_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif
