@@ -31,3 +31,8 @@ void task5_4::instantiation_test()
 	std::map< int*, int* > m4;
 	clear_container< true, true >( m4 );
 }	
+
+/*template< bool delete_first, typename Container >
+void task5_4::clear_container( Container& c)
+{
+}*/
