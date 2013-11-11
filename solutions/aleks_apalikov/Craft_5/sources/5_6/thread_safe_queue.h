@@ -3,12 +3,16 @@
 
 #include <cstdlib>
 #include <boost/thread.hpp>
+#include <queue>
+#include <deque>
 
 namespace task5_6
 {
 	template< typename T >
 	class thread_safe_queue
 	{
+		std::deque<T> deq;
+		std::queue<T> que;
 	public:
 		boost::mutex protector;
 		explicit thread_safe_queue();
@@ -24,6 +28,8 @@ namespace task5_6
 	template< typename T >
 	thread_safe_queue< T >::thread_safe_queue()
 	{
+		boost::mutex::scoped_lock constructor(protector);
+		que = std::queue<T>(deq);
 	}
 
 	template< typename T >
@@ -32,28 +38,33 @@ namespace task5_6
 	}
 
 	template< typename T >
-	void thread_safe_queue< T >::push( const T&  )
+	void thread_safe_queue< T >::push( const T& new_element )
 	{
 		boost::mutex::scoped_lock push_lock(protector);
+		que.push(new_element);
 	}
 
 	template< typename T >
-	bool thread_safe_queue< T >::pop( T& )
+	bool thread_safe_queue< T >::pop( T& result )
 	{
 		boost::mutex::scoped_lock pop_lock(protector);
+		if(que.empty())
+			return false;
+		result = que.front();
+		que.pop();
 		return true;
 	}
 
 	template< typename T >
 	bool thread_safe_queue< T >::empty() const
 	{
-		return false;
+		return que.empty();
 	}
 
 	template< typename T >
 	size_t thread_safe_queue< T >::size() const
 	{
-		return 0ul;
+		return que.size();
 	}
 
 }
