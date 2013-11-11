@@ -5,6 +5,8 @@
 #include <fstream>
 #include <stdexcept>
 
+#include <boost/thread/mutex.hpp>
+
 namespace binaryio
 {
     class Writer {
@@ -19,6 +21,7 @@ namespace binaryio
             void save_string(std::string const &);
             ~Writer();
         private:
+            boost::mutex cout_protector_;
             std::ofstream out;
             Writer();
             Writer(Writer const &);

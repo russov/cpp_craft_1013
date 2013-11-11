@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include <boost/cstdint.hpp>
+#include <boost/thread/mutex.hpp>
 
 namespace binaryio {
     class Reader {
@@ -22,6 +23,7 @@ namespace binaryio {
             std::string get_string(size_t);
             ~Reader();
         private:
+            boost::mutex cout_protector_;
             static const size_t STR_BUF_SIZE = 102400;
             std::ifstream in;
             Reader();
