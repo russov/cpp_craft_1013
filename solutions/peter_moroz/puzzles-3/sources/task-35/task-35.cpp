@@ -16,7 +16,7 @@ int main() {
     task.set_number_of_files(kLastFileNumber - kFirstFileNumber + 1);
     task.Initialize();
     task.Perform();
-  } catch (exception& ex) {
+  } catch (const exception& ex) {
     cout << "An exception has been caught. "
       << "Reason: " << ex.what() << endl;
     return -1;
