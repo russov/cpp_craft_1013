@@ -15,7 +15,8 @@ void startWorkDataThread(const std::string &input)
 
 	if (reader.isOpenedFile())
 	{
-		std::ofstream outputFile((std::string(SOURCE_DIR) + "/output_" + input + ".txt").c_str());
+		std::ofstream outputFile((std::string(SOURCE_DIR) + "/output_" + input + ".txt").c_str()
+		, std::ios_base::binary|std::ios_base::out|std::ios_base::trunc);
 
 		MessageData tradesData;
 
