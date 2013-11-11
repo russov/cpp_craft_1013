@@ -43,10 +43,11 @@ namespace async_tcp
 				read( socket, buffer( buff_length, sizeof( size_t ) ) );				
 				const size_t answer_size = *reinterpret_cast< const size_t* >( buff_length );
 				BOOST_CHECK_EQUAL( answer_size, 2 );
-				char* buff_answer[ 2 ];
-				read( socket, buffer( buff_answer, 2 ) );
-				const std::string answer( "ok" );
-				BOOST_CHECK_EQUAL( memcmp( answer.c_str(), buff_answer, answer.size() ), 0 );
+				char* buff_answer = new char[ answer_size ];
+				read( socket, buffer( buff_answer, answer_size ) );
+				const std::string expected_answer( "ok" );
+				BOOST_CHECK_EQUAL( memcmp( expected_answer.c_str(), buff_answer, expected_answer.size() ), 0 );
+				delete [] buff_answer;
 			}
 		}
 	}
