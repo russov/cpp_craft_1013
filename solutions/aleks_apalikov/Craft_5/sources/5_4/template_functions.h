@@ -21,7 +21,7 @@ namespace task5_4
 			}
 		}
 	}*/
-	template<bool delete_first, typename Container> void clear_container(Container & c, char(*)[delete_first == true] = 0) 
+	template<bool delete_first, typename Container> void clear_container(Container & c, char(*)[delete_first] = 0) 
 	{
 		for(Container::const_iterator it = c.begin(); it != c.end(); )
 		{
@@ -29,15 +29,15 @@ namespace task5_4
 			it = c.erase (it) ;
 		}
 	}
-	template<bool delete_first, typename Container> void clear_container(Container & c, char(*)[delete_first == false] = 0) 
+	template<bool delete_first, typename Container> void clear_container(Container & c, char(*)[!delete_first] = 0) 
 	{
 		for(Container::const_iterator it = c.begin(); it != c.end(); )
 		{
 			it = c.erase (it) ;
 		}
 	}
-	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first == true] = 0,
-		char(*)[delete_second == true] = 0) 
+	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first] = 0,
+		char(*)[delete_second] = 0) 
 	{
 		for(Container::const_iterator it = c.begin(); it != c.end(); )
 		{
@@ -46,8 +46,8 @@ namespace task5_4
 			it = c.erase (it) ;
 		}
 	}
-	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first == true] = 0,
-		char(*)[delete_second == false] = 0) 
+	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first] = 0,
+		char(*)[!delete_second] = 0) 
 	{
 		for(Container::const_iterator it = c.begin(); it != c.end(); )
 		{
@@ -55,8 +55,8 @@ namespace task5_4
 			it = c.erase (it) ;
 		}
 	}
-	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first == false] = 0,
-		char(*)[delete_second == true] = 0) 
+	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[!delete_first ] = 0,
+		char(*)[delete_second] = 0) 
 	{
 		for(Container::const_iterator it = c.begin(); it != c.end(); )
 		{
@@ -64,8 +64,8 @@ namespace task5_4
 			it = c.erase (it) ;
 		}
 	}
-	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first == false] = 0,
-		char(*)[delete_second == false] = 0) 
+	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[!delete_first ] = 0,
+		char(*)[!delete_second ] = 0) 
 	{
 		for(Container::const_iterator it = c.begin(); it != c.end(); )
 		{

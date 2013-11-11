@@ -2,19 +2,24 @@
 #define _TASK5_5_VECTOR_H_
 
 #include <cstdlib>
+#include <stdexcept>
 
 namespace task5_5
 {
 	template< typename T >
 	class vector
 	{
+	private:
+		T* mem;
+		size_t len;
+		size_t cap;
 	public:
 		typedef T* iterator ; // you could change this
 		typedef const T* const_iterator; // you could change this
-	public:
-		explicit vector();
+	explicit vector();
 		vector( const vector& copy );
 		vector& operator=( const vector& copy_from );
+		~vector();
 
 		void push_back( const T& value );
 		void insert( const size_t index, const T& value );
@@ -36,88 +41,165 @@ namespace task5_5
 		const_iterator end() const;
 	};
 
-	// TODO, please realise the rest methods according to the tests
+	//  please realise the rest methods according to the tests
 
 	template< typename T >
 	vector< T >::vector()
 	{
+		len = 0;
+		cap = 4;
+		mem = new T[cap];
 	}
 	template< typename T >
-	vector< T >::vector( const vector< T >&  )
+	vector< T >::vector( const vector< T >& copy )
 	{
+		operator=(copy);
 	}
 	template< typename T >
-	vector< T >& vector< T >::operator=( const vector< T >&  )
+	vector< T >& vector< T >::operator=( const vector< T >& copy_from )
 	{
+		len = copy_from.size();
+		cap = copy_from.capacity();
+		mem = new T[cap];
+		int i = 0;
+		for( vector<T>::const_iterator it = copy_from.begin(); it != copy_from.end(); ++it, ++i)
+		{
+			mem[i] = *it;
+		}
 		return *this;
 	}
-
 	template< typename T >
-	void vector< T >::push_back( const T& )
+	vector<T>::~vector()
 	{
+
 	}
 
 	template< typename T >
-	void vector< T >::insert( const size_t , const T&  )
+	void vector< T >::push_back( const T& t)
 	{
+		if(len < cap)
+		{
+			mem[len] = t;
+			len++;
+		}
+		else
+		{
+			cap *= 4;
+			T* newMem = new T[cap];
+			for(size_t i = 0; i < len; ++i)
+			{
+				newMem[i] = mem[i];
+			}
+			delete[] mem;
+			newMem[len] = t;
+			mem = newMem;
+			len++;
+		}
 	}
 
 	template< typename T >
-	T& vector< T >::operator[]( const size_t  )
+	void vector< T >::insert( const size_t index, const T& value )
 	{
-		return *(new T());
+		if(index > len)
+		{
+			throw std::out_of_range("error in []");
+		}
+		if(cap == len )
+		{
+			reserve(cap*4);
+		}
+		for(size_t i = index; i < len; ++i)
+		{
+			mem[i+1] = mem[i];
+		}
+		mem[index] = value;		
 	}
 
 	template< typename T >
-	const T& vector< T >::operator[]( const size_t  ) const
+	T& vector< T >::operator[]( const size_t index )
 	{
-		return *(new T());
+		if(index >= len)
+		{
+			throw std::out_of_range("error in []");
+		}
+		return mem[index];
 	}
 
 	template< typename T >
-	void vector< T >::resize( const size_t  )
+	const T& vector< T >::operator[]( const size_t index ) const
 	{
+		if(index >= len)
+		{
+			throw std::out_of_range("error in cosnt []");
+		}
+		return mem[index];
+	}
+
+	template< typename T >
+	void vector< T >::resize( const size_t amount )
+	{
+		cap = amount;
+		T* newMem = new T[cap];
+		for(size_t i = 0; i < len; ++i)
+		{
+			newMem[i] = mem[i];
+		}
+		for(size_t i = len; i < cap; ++i)
+		{
+			newMem[i] = T();
+		}
+		len = cap;
+		delete[] mem;
+		mem = newMem;
 	}
 	template< typename T >
-	void vector< T >::reserve( const size_t  )
+	void vector< T >::reserve( const size_t amount)
 	{
+		cap = amount;
+		T* newMem = new T[cap];
+		for(size_t i = 0; i < len; ++i)
+		{
+			newMem[i] = mem[i];
+		}
+		delete[] mem;
+		mem = newMem;
 	}
 
 	template< typename T >
 	size_t vector< T >::size() const
 	{
-		return 0ul;
+		return len;
 	}
 	template< typename T >
 	size_t vector< T >::capacity() const
 	{
-		return 0ul;
+		return cap;
 	}
 	template< typename T >
 	bool vector< T >::empty() const
 	{
-		return false;
+		return (len == 0);
 	}
 	template< typename T >
 	typename vector< T >::iterator vector< T >::begin()
 	{
-		return new T;
+		return &mem[0];
 	}
 	template< typename T >
 	typename vector< T >::iterator vector< T >::end()
 	{
-		return new T;
+		return &mem[len];
 	}
 	
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::begin() const
 	{
-		return new T;
+		return &mem[0];
 	}
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::end() const
 	{
-		return new T;
+		return &mem[len];
 	}
 }
 
