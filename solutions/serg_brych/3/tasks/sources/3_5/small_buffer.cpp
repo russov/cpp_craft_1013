@@ -60,6 +60,7 @@ void ThreadFunction(shared_ifstream input_file)
 			{
 				first_msg = false;
 				current_time = current_package.time;
+				all_time++;
 			}
 			if(current_package.type <= MaxPackageType)
 			{
