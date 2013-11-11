@@ -43,7 +43,7 @@ namespace task5_5
 	};
 	template< typename T >
 	const size_t vector<T>::times = 2;
-	//  please realise the rest methods according to the tests
+	//  please release the rest methods according to the tests
 
 	template< typename T >
 	vector< T >::vector()
@@ -105,14 +105,14 @@ namespace task5_5
 	{
 		if(index > len)
 		{
-			throw std::out_of_range("error in []");
+			throw std::out_of_range("error in insert");
 		}
 		if(cap == len )
 		{
 			reserve(cap*times);
 		}
-		size_t i = len - 1;
-		while(i>=index)
+		int i = len - 1;
+		while(i >= (int)index)
 		{
 			mem[i+1] = mem[i];
 			--i;
