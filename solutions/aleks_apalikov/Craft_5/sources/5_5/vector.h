@@ -14,6 +14,7 @@ namespace task5_5
 		size_t len;
 		size_t cap;
 	public:
+		static const size_t times;
 		typedef T* iterator ; // you could change this
 		typedef const T* const_iterator; // you could change this
 	explicit vector();
@@ -40,7 +41,8 @@ namespace task5_5
 		const_iterator begin() const;
 		const_iterator end() const;
 	};
-
+	template< typename T >
+	const size_t vector<T>::times = 2;
 	//  please realise the rest methods according to the tests
 
 	template< typename T >
@@ -71,7 +73,8 @@ namespace task5_5
 	template< typename T >
 	vector<T>::~vector()
 	{
-
+		if(mem)
+		delete[] mem;
 	}
 
 	template< typename T >
@@ -84,7 +87,7 @@ namespace task5_5
 		}
 		else
 		{
-			cap *= 4;
+			cap *= times;
 			T* newMem = new T[cap];
 			for(size_t i = 0; i < len; ++i)
 			{
@@ -106,13 +109,16 @@ namespace task5_5
 		}
 		if(cap == len )
 		{
-			reserve(cap*4);
+			reserve(cap*times);
 		}
-		for(size_t i = index; i < len; ++i)
+		size_t i = len - 1;
+		while(i>=index)
 		{
 			mem[i+1] = mem[i];
+			--i;
 		}
-		mem[index] = value;		
+		mem[index] = value;	
+		++len;
 	}
 
 	template< typename T >
@@ -138,6 +144,19 @@ namespace task5_5
 	template< typename T >
 	void vector< T >::resize( const size_t amount )
 	{
+		if(amount < cap) 
+		{
+			len = amount;
+			for(size_t i = 0; i < amount; ++i)
+			{
+				mem[i] = mem[i];
+			}
+			for(size_t i = len; i < cap; ++i)
+			{
+				mem[i] = T();
+			}
+			return;
+		}
 		cap = amount;
 		T* newMem = new T[cap];
 		for(size_t i = 0; i < len; ++i)
@@ -155,6 +174,7 @@ namespace task5_5
 	template< typename T >
 	void vector< T >::reserve( const size_t amount)
 	{
+		if(amount < cap) return;
 		cap = amount;
 		T* newMem = new T[cap];
 		for(size_t i = 0; i < len; ++i)
