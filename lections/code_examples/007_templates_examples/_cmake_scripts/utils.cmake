@@ -166,6 +166,11 @@ macro( compile_project project_name source_pattern header_pattern build_type sol
 		endforeach( dependencie )	
 	endif()
 
+	if ( UNIX )
+        target_link_libraries( ${project_name} pthread )
+        target_link_libraries( ${project_name} rt )
+	endif( UNIX )
+
 	set_property(TARGET ${project_name} PROPERTY FOLDER ${solution_folder})
 
 endmacro( compile_project )
