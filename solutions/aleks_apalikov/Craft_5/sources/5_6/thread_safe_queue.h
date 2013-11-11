@@ -2,6 +2,7 @@
 #define _TASK5_6_THREAD_SAFE_QUEUE_H_
 
 #include <cstdlib>
+#include <boost/thread.hpp>
 
 namespace task5_6
 {
@@ -9,6 +10,7 @@ namespace task5_6
 	class thread_safe_queue
 	{
 	public:
+		boost::mutex protector;
 		explicit thread_safe_queue();
 		~thread_safe_queue();
 
@@ -32,11 +34,13 @@ namespace task5_6
 	template< typename T >
 	void thread_safe_queue< T >::push( const T&  )
 	{
+		boost::mutex::scoped_lock push_lock(protector);
 	}
 
 	template< typename T >
 	bool thread_safe_queue< T >::pop( T& )
 	{
+		boost::mutex::scoped_lock pop_lock(protector);
 		return true;
 	}
 
