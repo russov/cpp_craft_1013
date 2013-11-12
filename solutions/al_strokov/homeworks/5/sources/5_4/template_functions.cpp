@@ -10,10 +10,10 @@ namespace task5_4
 void task5_4::instantiation_test()
 {
 	std::vector< int > v1;
-	clear_container< false >( v1 );
+	clear_container/*< false >*/( v1 );
 
 	std::vector< int* > v2;
-	clear_container< true >( v2 );
+	clear_container/*< true >*/( v2 );
 
 // uncomment to see compilation problem
 //		std::vector< int > v3;
