@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <map>
 
-static const int MaxBufferSize = 2048;
 static const int MaxPackageType = 100000;
 
 struct Package

@@ -23,9 +23,13 @@ namespace templates
 		static no& check_helper( ... );
 
 	public:
-		static const bool check = ( sizeof( check_helper< T >( NULL ) ) == sizeof( yes ) );
+		static const bool check;
 
 	};
+
+	template< typename T >
+	const bool inheritance_test< T >::check = ( sizeof( inheritance_test< T >::check_helper< T >( NULL ) ) == sizeof( inheritance_test< T >::yes ) );
+
 
 	struct A1 : public inheritance_from
 	{
