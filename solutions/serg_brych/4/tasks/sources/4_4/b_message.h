@@ -2,6 +2,7 @@
 #define _TASK4_4_B_MESSAGE_H_
 
 #include "message.h"
+#include <memory>
 
 namespace task4_4
 {
@@ -9,7 +10,7 @@ namespace task4_4
 	class b_message : public message
 	{
 		size_t length_;
-		char *content_;
+		std::unique_ptr<char[]> content_;
 
 		explicit b_message( std::istream& inp );
 	public:
