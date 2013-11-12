@@ -47,21 +47,24 @@ bool StockDealer::StockDeal::read_deal( std::ifstream& stock_info )
 	{
 		return false;
 	}
-	this->stock_name[8] = 0;
-	stock_info.read( day_buffer, 8 );
-	sscanf( day_buffer, "%4d%2d%2d", &years, &monthes, &days );
+	else 
+	{
+		this->stock_name[8] = 0;
+		stock_info.read( day_buffer, 8 );
+		sscanf( day_buffer, "%4d%2d%2d", &years, &monthes, &days );
 
-	this->date = ( years - 1 ) * 372 + ( monthes - 1) * 31 + days;
+		this->date = ( years - 1 ) * 372 + ( monthes - 1) * 31 + days;
 
-	stock_info.seekg( sizeof( double ), std::ios_base::cur );
-	stock_info.read( reinterpret_cast< char* > ( &this->price ), sizeof( double ) );
+		stock_info.seekg( sizeof( double ), std::ios_base::cur );
+		stock_info.read( reinterpret_cast< char* > ( &this->price ), sizeof( double ) );
 
-	stock_info.read( reinterpret_cast< char* > ( &this->volume ), sizeof( unsigned ) );
+		stock_info.read( reinterpret_cast< char* > ( &this->volume ), sizeof( unsigned ) );
 
-	stock_info.seekg( 2 * sizeof( double ), std::ios_base::cur );
-	stock_info.read( reinterpret_cast< char* > ( &this->f2 ), sizeof( double ) );
+		stock_info.seekg( 2 * sizeof( double ), std::ios_base::cur );
+		stock_info.read( reinterpret_cast< char* > ( &this->f2 ), sizeof( double ) );
 
-	stock_info.seekg( 2 * sizeof( double ), std::ios_base::cur );	
+		stock_info.seekg( 2 * sizeof( double ), std::ios_base::cur );	
+	}
 }
 
 void StockDealer::StockDeal::write_deal( std::ofstream& info_output )
