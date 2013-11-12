@@ -15,12 +15,12 @@ void task5_4::tests_::template_functions_vector_tests()
 
 		BOOST_CHECK_NO_THROW( clear_container< false >( v1 ) );
 		BOOST_CHECK_EQUAL( v1.empty(), true );
-
-		int v1_content[] = { 15, 18, 43, 76 };
-		std::copy( v1_content, v1_content + 4, std::back_inserter( v1 ) );
-
-		BOOST_CHECK_NO_THROW( clear_container< false >( v1 ) );
-		BOOST_CHECK_EQUAL( v1.empty(), true );
+//
+//		int v1_content[] = { 15, 18, 43, 76 };
+//		std::copy( v1_content, v1_content + 4, std::back_inserter( v1 ) );
+//
+//		BOOST_CHECK_NO_THROW( clear_container< false >( v1 ) );
+//		BOOST_CHECK_EQUAL( v1.empty(), true );
 	}
 	{
 		std::vector< int* > v2;
