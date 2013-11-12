@@ -1,10 +1,12 @@
-﻿#include <iostream> 
+#include <iostream> 
 #include <fstream> 
 #include <algorithm>
 #include <stdint.h>
 #include <map>
+#include <sstream>
 
-static const int MaxPackageType = 100000;
+typedef std::map<std::string, std::ofstream > OutPutStreams;
+
 
 struct Package
 {
@@ -47,6 +49,7 @@ std::ostream& operator<< (std::ostream& s, const Package &p)
 	date = (year - 1) * 372 +  (month  - 1)* 31 + day;
 	
 	s.write(p.stock_name, sizeof(p.stock_name));
+	s << '\0';
 	s.write(reinterpret_cast<const char*>(&date), sizeof(date));
 	s.write(reinterpret_cast<const char*>(&p.vwap), sizeof(p.vwap));
 	s.write(reinterpret_cast<const char*>(&p.volume), sizeof(p.volume));
@@ -55,19 +58,27 @@ std::ostream& operator<< (std::ostream& s, const Package &p)
 	return s;
 }
 
-
 int main() 
 { 
+	OutPutStreams output_streams;
 	Package current_package ={0};
 	
-	std::ifstream input_file(BINARY_DIR"\\input.txt", std::ifstream::binary);
-	std::ofstream output_file(BINARY_DIR"\\output.txt", std::ifstream::binary);
+	std::ifstream input_file(BINARY_DIR"/input.txt", std::ifstream::binary);
+	
 
-	if(input_file.is_open() && output_file.is_open())
+	if(input_file.is_open())
 	{
 		while(input_file >> current_package)
 		{
-			output_file << current_package;
+			std::string stock_name(current_package.stock_name, 8);
+			if(!output_streams[stock_name].is_open())
+			{
+				std::stringstream ss;
+
+				ss << BINARY_DIR"/output_" << stock_name << ".txt";
+				output_streams[stock_name].open(ss.str(), std::ofstream::binary);
+			}
+			output_streams[stock_name] << current_package;
 		}
 	}
 	
