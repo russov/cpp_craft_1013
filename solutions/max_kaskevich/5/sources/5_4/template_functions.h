@@ -10,7 +10,7 @@ namespace task5_4
     template< typename Container, bool delete_first >
     struct clear_container_class
     {
-        static void clear_container( Container& container)
+        static void clear_container( Container& container )
         {
         }
     };
@@ -18,7 +18,7 @@ namespace task5_4
     template<  typename Container>
     struct clear_container_class< Container, true >
     {
-        static void clear_container( Container& container)
+        static void clear_container( Container& container )
         {
             for( auto& elem: container )
             {
@@ -31,7 +31,7 @@ namespace task5_4
 	template< bool delete_first, typename Container >
 	void clear_container( Container& container)
     {
-        clear_container_class< Container, delete_first >::clear_container(container);
+        clear_container_class< Container, delete_first >::clear_container( container );
         container.clear();
     }
 
@@ -40,7 +40,7 @@ namespace task5_4
     template< typename Container, bool delete_first, bool delete_second >
     struct clear_assoc_container_class
     {
-        static void clear_container( Container& container)
+        static void clear_container( Container& container )
         {
         }
     };
@@ -48,7 +48,7 @@ namespace task5_4
     template<  typename Container>
     struct clear_assoc_container_class< Container, true, false >
     {
-        static void clear_container( Container& container)
+        static void clear_container( Container& container )
         {
             for( auto& pair: container )
             {
@@ -60,9 +60,9 @@ namespace task5_4
     template<  typename Container>
     struct clear_assoc_container_class< Container, false, true >
     {
-        static void clear_container( Container& container)
+        static void clear_container( Container& container )
         {
-            for(auto& pair: container)
+            for( auto& pair: container )
             {
                 delete pair.second;
             }
@@ -72,7 +72,7 @@ namespace task5_4
     template<  typename Container>
     struct clear_assoc_container_class< Container, true, true >
     {
-        static void clear_container( Container& container)
+        static void clear_container( Container& container )
         {
             for( auto& pair: container )
             {
@@ -83,9 +83,10 @@ namespace task5_4
     };
 
 	template< bool delete_first, bool delete_second, typename Container >
-	void clear_container( Container& container)
+	void clear_container( Container& container )
 	{
-        clear_assoc_container_class< Container, delete_first, delete_second >::clear_container( container );
+        clear_assoc_container_class< Container, delete_first, delete_second >::
+            clear_container( container );
         container.clear();
 	}
 }

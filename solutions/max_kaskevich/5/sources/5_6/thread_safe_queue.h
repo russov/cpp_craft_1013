@@ -13,17 +13,17 @@ namespace task5_6
 	{
         struct node
         {
-            std::shared_ptr<node> next;
+            std::shared_ptr< node > next;
             const T data;
-            node(const T& t) :
-                data(t)
+            node( const T& t ) :
+                data( t )
             {
 
             }
         };
 
-        std::shared_ptr<node> first_;
-        std::shared_ptr<node> last_;
+        std::shared_ptr< node > first_;
+        std::shared_ptr< node > last_;
         size_t size_;
         boost::mutex mtx_;
 
@@ -55,7 +55,7 @@ namespace task5_6
 	void thread_safe_queue< T >::push( const T&  elem )
 	{
         boost::mutex::scoped_lock lock(mtx_);
-        std::shared_ptr< node > push_node( new node(elem) );
+        std::shared_ptr< node > push_node( new node( elem ) );
         if ( last_ )
         {
             last_->next = push_node;
