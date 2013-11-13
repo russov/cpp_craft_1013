@@ -100,7 +100,7 @@ int main()
 	}
 	groupSmallBuffer.join_all();
 	
-	std::ofstream outputFile(SOURCE_DIR "/output.txt" );
+	std::ofstream outputFile(SOURCE_DIR "/output.txt", std::ios_base::binary|std::ios_base::out|std::ios_base::trunc );
 	
 	for (iteratorResultMessages = resultMessages.begin(); iteratorResultMessages != resultMessages.end(); ++iteratorResultMessages)
 	{
