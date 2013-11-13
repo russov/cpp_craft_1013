@@ -20,14 +20,14 @@ void task5_4::instantiation_test()
 //		clear_container< false, true >( v3 );
 
 	std::map< int, int > m1;
-	clear_container< false, false >( m1 );
+	clear_container/*< false, false >*/( m1 );
 
 	std::map< int, int* > m2;
-	clear_container< false, true >( m2 );
+	clear_container/*< false, true >*/( m2 );
 
 	std::map< int*, int > m3;
-	clear_container< true, false >( m3 );
+	clear_container/*< true, false >*/( m3 );
 
 	std::map< int*, int* > m4;
-	clear_container< true, true >( m4 );
+	clear_container/*< true, true >*/( m4 );
 }	

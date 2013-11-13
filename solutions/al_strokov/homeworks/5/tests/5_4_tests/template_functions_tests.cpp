@@ -36,42 +36,42 @@ void task5_4::tests_::template_functions_vector_tests()
 }
 void task5_4::tests_::template_functions_map_tests()
 {
-//	{
-//		std::map< int, std::string > m1;
-//		m1[ 14 ] = "just a string";
-//		m1[ 140 ] = "just another string";
-//		m1[ 314 ] = "just a test string";
-//
-//		BOOST_CHECK_NO_THROW( ( clear_container< false, false >( m1 ) ) );
-//		BOOST_CHECK_EQUAL( m1.empty(), true );
-//	}
-//	{
-//		std::map< int*, std::string > m2;
-//		m2[ new int( 45 ) ] = "just a string";
-//		m2[ new int( 140 ) ] = "just a test string";
-//		m2[ new int( 314 ) ] = "just another string";
-//
-//		BOOST_CHECK_NO_THROW( ( clear_container< true, false >( m2 ) ) );
-//		BOOST_CHECK_EQUAL( m2.empty(), true );
-//	}
-//	{
-//		std::map< int, std::string* > m3;
-//		m3[ 82 ] = new std::string( "heap string" );
-//		m3[ 140 ] = new std::string( "another heap string" );
-//		m3[ 314 ] = new std::string( "say hello to 5_4 task" );
-//
-//		BOOST_CHECK_NO_THROW( ( clear_container< false, true >( m3 ) ) );
-//		BOOST_CHECK_EQUAL( m3.empty(), true );
-//	}
-//	{
-//		std::map< double*, std::string* > m3;
-//		m3[ new double(82.23) ] = new std::string( "heap string" );
-//		m3[ new double(140.65) ] = new std::string( "another heap string" );
-//		m3[ new double(314.34) ] = new std::string( "say hello to 5_4 task" );
-//
-//		BOOST_CHECK_NO_THROW( ( clear_container< true, true >( m3 ) ) );
-//		BOOST_CHECK_EQUAL( m3.empty(), true );
-//	}
+	{
+		std::map< int, std::string > m1;
+		m1[ 14 ] = "just a string";
+		m1[ 140 ] = "just another string";
+		m1[ 314 ] = "just a test string";
+
+		BOOST_CHECK_NO_THROW( ( clear_container/*< false, false >*/( m1 ) ) );
+		BOOST_CHECK_EQUAL( m1.empty(), true );
+	}
+	{
+		std::map< int*, std::string > m2;
+		m2[ new int( 45 ) ] = "just a string";
+		m2[ new int( 140 ) ] = "just a test string";
+		m2[ new int( 314 ) ] = "just another string";
+
+		BOOST_CHECK_NO_THROW( ( clear_container/*< true, false >*/( m2 ) ) );
+		BOOST_CHECK_EQUAL( m2.empty(), true );
+	}
+	{
+		std::map< int, std::string* > m3;
+		m3[ 82 ] = new std::string( "heap string" );
+		m3[ 140 ] = new std::string( "another heap string" );
+		m3[ 314 ] = new std::string( "say hello to 5_4 task" );
+
+		BOOST_CHECK_NO_THROW( ( clear_container/*< false, true >*/( m3 ) ) );
+		BOOST_CHECK_EQUAL( m3.empty(), true );
+	}
+	{
+		std::map< double*, std::string* > m3;
+		m3[ new double(82.23) ] = new std::string( "heap string" );
+		m3[ new double(140.65) ] = new std::string( "another heap string" );
+		m3[ new double(314.34) ] = new std::string( "say hello to 5_4 task" );
+
+		BOOST_CHECK_NO_THROW( ( clear_container/*< true, true >*/( m3 ) ) );
+		BOOST_CHECK_EQUAL( m3.empty(), true );
+	}
 }
 void task5_4::tests_::template_functions_list_tests()
 {
