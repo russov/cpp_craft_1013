@@ -1,5 +1,7 @@
 #include "test_registrator.h"
 
+#include <iostream>
+
 #include <thread_safe_queue.h>
 
 #include <stdexcept>
@@ -39,41 +41,50 @@ task5_6::tests_::detail::thread_safe_queue_many_thread_helper::thread_safe_queue
 
 	for( size_t i = 0 ; i < write_threads_amount ; ++ i )
 		writers.create_thread( boost::bind( &thread_safe_queue_many_thread_helper::write_thread, this ) );
+	//std::cout << "writers count: " << writers.size() << std::endl;
 
 	for( size_t i = 0 ; i < read_threads_amount ; ++ i )
 		readers.create_thread( boost::bind( &thread_safe_queue_many_thread_helper::read_thread, this ) );
+	//std::cout << "readers count: " << readers.size() << std::endl;
 
 	writers.join_all();
 	readers.join_all();
 
 	size_t amount = 0;
+	std::cout << "q size:" << queue.size() << std::endl;
 	while ( !queue.empty() )
 	{
 		int data;
-		if ( !queue.pop( data ) )
+		if ( queue.pop( data ) )
 			++amount;
 	}
+	std::cout << "amout:" << amount << std::endl;
 
 	BOOST_CHECK_EQUAL( writen_size_, readed_size_ + amount );
 }
 void task5_6::tests_::detail::thread_safe_queue_many_thread_helper::write_thread()
 {
 	const int size = rand() % 1000 + 1000;
+	//std::cout << "q w sz" << size << std::endl;
 	for( int i = 0 ; i < size ; ++i )
 		queue.push( i );
 
+	//std::cout << "q fackt sz" << queue.size() << std::endl;
 	boost::mutex::scoped_lock increase_size( protect_size_ );
 	writen_size_ += size;
 }
 void task5_6::tests_::detail::thread_safe_queue_many_thread_helper::read_thread()
 {
 	size_t amount = 0;
+	std::cout << "q r fackt sz" << queue.size() << std::endl;
 	while ( !queue.empty() )
 	{
 		int data;
-		if ( !queue.pop( data ) )
+		if ( queue.pop( data ) ){
 			++amount;
+        }
 	}
+	std::cout << "r a " << amount << std::endl;
 	boost::mutex::scoped_lock increase_size( protect_size_ );
 	readed_size_ += amount;
 }
@@ -99,7 +110,7 @@ void task5_6::tests_::thread_safe_queue_tests()
 		BOOST_CHECK_EQUAL( tsq.pop( res ), true );
 		BOOST_CHECK_EQUAL( res, 54 );
 		BOOST_CHECK_EQUAL( tsq.size() , 0ul );
-		BOOST_CHECK_EQUAL( tsq.empty() , false );
+		BOOST_CHECK_EQUAL( tsq.empty() , true );
 
 		res = 4265624;
 		BOOST_CHECK_EQUAL( tsq.pop( res ), false );

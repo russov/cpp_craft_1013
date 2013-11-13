@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 #include <queue>
+#include <boost/thread.hpp>
 
 namespace task5_6
 {
@@ -13,6 +14,7 @@ namespace task5_6
 	class thread_safe_queue
 	{
 	private:
+		boost::mutex mtx_;
 		std::queue<T> q_;
 	public:
 		explicit thread_safe_queue();
@@ -22,8 +24,8 @@ namespace task5_6
 		bool pop( T& result );
 		bool pop();
 
-		bool empty() const;
-		size_t size() const;
+		bool empty();
+		size_t size();
 	};
 
 	template< typename T >
@@ -39,14 +41,17 @@ namespace task5_6
 	template< typename T >
 	void thread_safe_queue< T >::push( const T&  value)
 	{
+		boost::lock_guard<boost::mutex> lg(mtx_);
 		q_.push(value);
 	}
 
 	template< typename T >
 	bool thread_safe_queue< T >::pop( T& value )
 	{
+		boost::lock_guard<boost::mutex> lg(mtx_);
 		if(!q_.empty()){
 			value = q_.front();
+			q_.pop();
 			return true;
 		}
 		return false;
@@ -55,6 +60,7 @@ namespace task5_6
 	template< typename T >
 	bool thread_safe_queue< T >::pop()
 	{
+		boost::lock_guard<boost::mutex> lg(mtx_);
 		if(!q_.empty()){
 			q_.pop();
 			return true;
@@ -63,14 +69,16 @@ namespace task5_6
 	}
 
 	template< typename T >
-	bool thread_safe_queue< T >::empty() const
+	bool thread_safe_queue< T >::empty()
 	{
+		boost::lock_guard<boost::mutex> lg(mtx_);
 		return q_.empty();
 	}
 
 	template< typename T >
-	size_t thread_safe_queue< T >::size() const
+	size_t thread_safe_queue< T >::size()
 	{
+		boost::lock_guard<boost::mutex> lg(mtx_);
 		return q_.size();
 	}
 
