@@ -93,7 +93,7 @@ namespace task36
                 std::string out_name(BINARY_DIR "/output_");
                 out_name.append(stock);
                 out_name.append(".txt");
-                out.open(out_name);
+                out.open(out_name, std::ios::binary);
             }
             
             if (out.good())
