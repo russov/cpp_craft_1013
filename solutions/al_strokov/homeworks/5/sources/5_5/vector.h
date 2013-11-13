@@ -2,12 +2,16 @@
 #define _TASK5_5_VECTOR_H_
 
 #include <cstdlib>
+#include <vector>
+#include <stdexcept>
 
 namespace task5_5
 {
 	template< typename T >
 	class vector
 	{
+	private:
+		std::vector<T> v_;
 	public:
 		typedef T* iterator ; // you could change this
 		typedef const T* const_iterator; // you could change this
@@ -36,62 +40,82 @@ namespace task5_5
 		const_iterator end() const;
 	};
 
-	// TODO, please realise the rest methods according to the tests
-
 	template< typename T >
 	vector< T >::vector()
 	{
+		v_.reserve(4);
 	}
 	template< typename T >
-	vector< T >::vector( const vector< T >&  )
+	vector< T >::vector( const vector< T >&  that)
 	{
+		v_.clear();
+		for(vector<T>::const_iterator it = that.begin(); it != that.end(); ++it){
+			v_.push_back(*it);
+		}
 	}
 	template< typename T >
-	vector< T >& vector< T >::operator=( const vector< T >&  )
+	vector< T >& vector< T >::operator=( const vector< T >&  that)
 	{
+		v_.clear();
+		for(vector<T>::const_iterator it = that.begin(); it != that.end(); ++it){
+			v_.push_back(*it);
+		}
+
 		return *this;
 	}
 
 	template< typename T >
-	void vector< T >::push_back( const T& )
+	void vector< T >::push_back( const T& value)
 	{
+		v_.push_back(value);
 	}
 
 	template< typename T >
-	void vector< T >::insert( const size_t , const T&  )
+	void vector< T >::insert( const size_t position, const T& value )
 	{
+		v_.insert(v_.begin() + position, value);
 	}
 
 	template< typename T >
-	T& vector< T >::operator[]( const size_t  )
+	T& vector< T >::operator[]( const size_t index )
 	{
-		return *(new T());
+		if(index < v_.size()){
+			return v_[index];
+		}
+
+		throw std::out_of_range("wrong vector index");
 	}
 
 	template< typename T >
-	const T& vector< T >::operator[]( const size_t  ) const
+	const T& vector< T >::operator[]( const size_t  index) const
 	{
-		return *(new T());
+		if(index < v_.size()){
+			return v_[index];
+		}
+
+		throw std::out_of_range("wrong vector index");
 	}
 
 	template< typename T >
-	void vector< T >::resize( const size_t  )
+	void vector< T >::resize( const size_t  size)
 	{
+		v_.resize(size);
 	}
 	template< typename T >
-	void vector< T >::reserve( const size_t  )
+	void vector< T >::reserve( const size_t  size)
 	{
+		v_.reserve(size);
 	}
 
 	template< typename T >
 	size_t vector< T >::size() const
 	{
-		return 0ul;
+		return v_.size();
 	}
 	template< typename T >
 	size_t vector< T >::capacity() const
 	{
-		return 0ul;
+		return v_.capacity();
 	}
 	template< typename T >
 	bool vector< T >::empty() const
@@ -101,23 +125,23 @@ namespace task5_5
 	template< typename T >
 	typename vector< T >::iterator vector< T >::begin()
 	{
-		return new T;
+		return &(*v_.begin());
 	}
 	template< typename T >
 	typename vector< T >::iterator vector< T >::end()
 	{
-		return new T;
+		return &(*v_.end());
 	}
 	
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::begin() const
 	{
-		return new T;
+		return &(*v_.begin());
 	}
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::end() const
 	{
-		return new T;
+		return &(*v_.end());
 	}
 }
 
