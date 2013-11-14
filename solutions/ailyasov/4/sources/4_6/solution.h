@@ -176,7 +176,7 @@ namespace task4_6
 	public: 
 		OpAssign(Calc& calc) : Operator(calc){}	
 		void eval();
-		TokPtr apply(OperandPtr op1, OperandPtr op2){return 0;}
+		TokPtr apply(OperandPtr op1, OperandPtr op2){return TokPtr(reinterpret_cast<Token*>(0));}
 		uint8_t priority() const
 		{
 			return 0;

@@ -128,26 +128,29 @@ namespace task4_6
 			return TokPtr(new Operand( calc, val ) );
 		} catch(boost::bad_lexical_cast&)
 		{ 
-			char const c = *(str.begin());
-			switch(c)
-			{
-			case '+':
-				return TokPtr(new OpPlus(calc));
-			case '-':
-				return TokPtr(new OpMinus(calc));
-			case '*':
-				return TokPtr(new OpMultiply(calc));
-			case '/':
-				return TokPtr(new OpDivide(calc));
-			case '=':
-				return TokPtr(new OpAssign(calc));
-			case '(':
-				return TokPtr(new LeftParens(calc));
-			case ')':
-				return TokPtr(new RightParens(calc));
-			default:
-				return VariablePtr(new Variable(calc, str));
-			}
+            for(std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+            {
+                char const c = *it;
+                switch(c)
+                {
+                    case '+':
+                        return TokPtr(new OpPlus(calc));
+                    case '-':
+                        return TokPtr(new OpMinus(calc));
+                    case '*':
+                        return TokPtr(new OpMultiply(calc));
+                    case '/':
+                        return TokPtr(new OpDivide(calc));
+                    case '=':
+                        return TokPtr(new OpAssign(calc));
+                    case '(':
+                        return TokPtr(new LeftParens(calc));
+                    case ')':
+                        return TokPtr(new RightParens(calc));
+                    default:
+                        return VariablePtr(new Variable(calc, str));
+                }
+            }
 		} 
 	} 
 
@@ -229,15 +232,29 @@ namespace task4_6
 		for(lines::const_iterator it = calculator_lines.begin(); it != calculator_lines.end(); ++it)
 		{
 			Calc calc(variables_);
-			std::istringstream ss ( *it );
-			std::string token;
-			while(std::getline(ss, token, ' '))
-			{
-				TokPtr t = boost::shared_ptr<Token>(Token::createToken(calc, token)); 
-				t->add( t );				
-			}
+            std::string line = *it;
+            std::stringstream ss(line);
+            while(ss.good())
+            { 
+                char c = ss.get();
+                if(std::isalnum(c) || std::ispunct(c))
+                {
+                    std::string token;
+                    if(std::isdigit(c))
+                    {
+                        ss.unget();
+                        float i;
+                        ss >> i;
+                        token = boost::lexical_cast<std::string>(i);
+                    } else 
+                    {
+                        token = std::string(1, c);
+                    }
+                    TokPtr t = boost::shared_ptr<Token>(Token::createToken(calc, token)); 
+                    t->add( t );				
+                }
+            }
 			calc.eval();
-			this->variables_;
 		}
 	}
 
