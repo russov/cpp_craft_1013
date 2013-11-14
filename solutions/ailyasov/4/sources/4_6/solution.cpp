@@ -128,28 +128,27 @@ namespace task4_6
             return TokPtr(new Operand( calc, val ) );
         } catch(boost::bad_lexical_cast&)
         { 
-            for(std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+            if(str.size() != 1)
+                throw std::logic_error("Unknown token " + str);
+            char const c = str.at(0);
+            switch(c)
             {
-                char const c = *it;
-                switch(c)
-                {
-                    case '+':
-                        return TokPtr(new OpPlus(calc));
-                    case '-':
-                        return TokPtr(new OpMinus(calc));
-                    case '*':
-                        return TokPtr(new OpMultiply(calc));
-                    case '/':
-                        return TokPtr(new OpDivide(calc));
-                    case '=':
-                        return TokPtr(new OpAssign(calc));
-                    case '(':
-                        return TokPtr(new LeftParens(calc));
-                    case ')':
-                        return TokPtr(new RightParens(calc));
-                    default:
-                        return VariablePtr(new Variable(calc, str));
-                }
+                case '+':
+                    return TokPtr(new OpPlus(calc));
+                case '-':
+                    return TokPtr(new OpMinus(calc));
+                case '*':
+                    return TokPtr(new OpMultiply(calc));
+                case '/':
+                    return TokPtr(new OpDivide(calc));
+                case '=':
+                    return TokPtr(new OpAssign(calc));
+                case '(':
+                    return TokPtr(new LeftParens(calc));
+                case ')':
+                    return TokPtr(new RightParens(calc));
+                default:
+                    return VariablePtr(new Variable(calc, str));
             }
         } 
     } 

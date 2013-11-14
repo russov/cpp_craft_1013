@@ -10,7 +10,7 @@ namespace task4_4
 
 	class b_message : public message
 	{
-		size_t length_;
+		int length_;
 		boost::shared_array<char> content_;
 
 		explicit b_message( std::istream& inp );
