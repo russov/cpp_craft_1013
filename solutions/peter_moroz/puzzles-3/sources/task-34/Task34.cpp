@@ -1,9 +1,9 @@
 #include "Task34.h"
 #include "Message.h"
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
                                                                                                
 using namespace std;
@@ -79,22 +79,16 @@ void Task34::Perform() {
   unsigned curr_file_number = start_file_number_;
   while (curr_file_number < finish_file_number) {
     stringstream msg;
-    string file_number;
-    try {
-      file_number = boost::lexical_cast<string>(curr_file_number);
-    } catch (boost::bad_lexical_cast& ex) {
-      msg << "Error of conversion " << curr_file_number
-        << " into string. Reason: " << ex.what();
-      PrintMessage(msg.str());
-      ++curr_file_number;
-      continue;
-    }
+    stringstream file_number;
+
+    file_number << setw(3) << setfill('0') << curr_file_number;
+
     msg << "launch of processing file #" 
-      << curr_file_number << " ...\n";
+      << file_number.str() << " ...\n";
     PrintMessage(msg.str());
     ++curr_file_number;
 
-    thg.create_thread(boost::bind(&ProcessFile, file_number));
+    thg.create_thread(boost::bind(&ProcessFile, file_number.str()));
   }
 
   thg.join_all();
