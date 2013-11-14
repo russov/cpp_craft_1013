@@ -4,6 +4,7 @@ set( CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "Configurations"
 project( ${SOLUTION_NAME} )
 include( environment.cmake required )
 
+modules( bad_alloc )
 binaries( msvc_example vld_example )
 
 compile()
