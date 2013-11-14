@@ -19,33 +19,40 @@ namespace sync_tcp
 				boost::asio::ip::tcp::socket socket_;
 				boost::thread thread_;
 			public:
-				explicit tcp_client_test_helper( const unsigned short port )
-					: io_service_()
-					, acceptor_( io_service_, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4() , port ) )
-					, socket_( io_service_ )
-				{
-					thread_ = boost::thread( boost::bind( &tcp_client_test_helper::open_socket_wait_for_connect_, this ) );
-				}
-				void check_connection()
-				{
-					thread_.join();
-					BOOST_CHECK_EQUAL( socket_.is_open(), true );
-				}
-				void close_socket()
-				{
-					BOOST_CHECK_NO_THROW( socket_.close() );
-					BOOST_CHECK_NO_THROW( acceptor_.close() );
-				}
+				explicit tcp_client_test_helper( const unsigned short port );
+				void check_connection();
+				void close_socket();
 			private:
-				void open_socket_wait_for_connect_()
-				{
-					acceptor_.accept( socket_ );
-				}
+				void open_socket_wait_for_connect_();
 			};
 		}
 	}
 }
 
+sync_tcp::tests_::detail::tcp_client_test_helper::tcp_client_test_helper( const unsigned short port )
+	: io_service_()
+	, acceptor_( io_service_, boost::asio::ip::tcp::endpoint( boost::asio::ip::tcp::v4() , port ) )
+	, socket_( io_service_ )
+{
+	thread_ = boost::thread( boost::bind( &tcp_client_test_helper::open_socket_wait_for_connect_, this ) );
+}
+void sync_tcp::tests_::detail::tcp_client_test_helper::check_connection()
+{
+	thread_.join();
+	BOOST_CHECK_EQUAL( socket_.is_open(), true );
+}
+void sync_tcp::tests_::detail::tcp_client_test_helper::close_socket()
+{
+	BOOST_CHECK_NO_THROW( socket_.close() );
+	BOOST_CHECK_NO_THROW( acceptor_.close() );
+}
+void sync_tcp::tests_::detail::tcp_client_test_helper::open_socket_wait_for_connect_()
+{
+	acceptor_.accept( socket_ );
+}
+
+
+//
 void sync_tcp::tests_::tcp_client_constructor_tests() 
 {
 	// this test dependent on tcp port availability, please be sure that 50000 port is free

@@ -2,22 +2,34 @@
 
 #include <boost/test/unit_test.hpp>
 
-boost::unit_test_framework::test_suite* init_unit_test_suite( int , char* [] )
+#ifdef BOOST_TEST_DYN_LINK
+	bool init_unit_test_suite()
+#else
+	boost::unit_test_framework::test_suite* init_unit_test_suite( int, char*[] )
+#endif
 {
 	using boost::unit_test_framework::test_case;
-
-    boost::unit_test_framework::test_suite* ts1 = BOOST_TEST_SUITE( "async udp tests" );
-	boost::unit_test::unit_test_log.set_threshold_level( boost::unit_test::log_messages );
+	boost::unit_test_framework::test_suite& master_test_suite = boost::unit_test::framework::master_test_suite();
 
 	using namespace async_udp::tests_;
 
-	//ts1->add( BOOST_TEST_CASE( &template_functions_vector_tests ) );	
-	//ts1->add( BOOST_TEST_CASE( &template_functions_map_tests ) );	
-	//ts1->add( BOOST_TEST_CASE( &template_functions_list_tests ) );	
-	//ts1->add( BOOST_TEST_CASE( &template_functions_set_tests ) );	
+	master_test_suite.add( BOOST_TEST_CASE( &udp_listener_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif
 
-	return ts1;
+#ifdef BOOST_TEST_DYN_LINK
+	return true;
+#else
+	return NULL;
+#endif
 }
+
+#ifdef BOOST_TEST_DYN_LINK
+
+int main( int argc, char* argv[] )
+{
+    return ::boost::unit_test::unit_test_main( &init_unit_test_suite, argc, argv );
+}
+
+#endif
