@@ -11,10 +11,7 @@ namespace sync_tcp
 	{
 		namespace detail
 		{
-			void tcp_server_accept( tcp_server& server )
-			{
-				server.wait_for_connection();
-			}
+			void tcp_server_accept( tcp_server& server );
 			class tcp_server_test_helper : protected virtual boost::noncopyable
 			{
 				boost::asio::io_service io_service_;
@@ -27,6 +24,11 @@ namespace sync_tcp
 			};
 		}
 	}
+}
+
+void sync_tcp::tests_::detail::tcp_server_accept( tcp_server& server )
+{
+	server.wait_for_connection();
 }
 
 sync_tcp::tests_::detail::tcp_server_test_helper::tcp_server_test_helper()

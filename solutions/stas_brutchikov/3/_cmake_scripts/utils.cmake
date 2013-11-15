@@ -1,13 +1,3 @@
-
-macro( list_regex_contains var value)
-  set(${var})
-  foreach (iterator ${ARGN})
-    if ( iterator MATCHES "${value}" )
-      set(${var} TRUE)
-    endif( iterator MATCHES "${value}" )
-  endforeach (iterator)
-endmacro( list_regex_contains )
-
 macro( list_contains var value)
   set(${var})
   foreach (value2 ${ARGN})
@@ -33,7 +23,7 @@ endfunction(test_variable_on_equal_to_one_of_the_list)
 
 macro(create_string_from_list str)
 	foreach(VALUE ${ARGN})
-		if ("${VALUE}" STREQUAL "${ARGV0}")
+		if ("${VALUE}" STREQUAL "${ARGV1}")
 			set(result "${VALUE}")
 		else()
 			set(result "${result} ${VALUE}")
@@ -100,10 +90,6 @@ macro( compile )
 endmacro( compile )
 
 macro( compile_tests )
-	if ( NOT BOOST_STATIC )
-		add_definitions( -DBOOST_TEST_DYN_LINK -DBOOST_TEST_NO_LIB )
-	endif( NOT BOOST_STATIC )
-
 	if (${RUN_PERFORMANCE_TESTS})
 		add_definitions( -DRUN_PERFORMANCE_TESTS )
 	endif(${RUN_PERFORMANCE_TESTS})
@@ -137,6 +123,7 @@ macro( compile_project project_name source_pattern header_pattern build_type sol
 		message(STATUS "* Creating project: ${project_name}(${build_type}) with '${solution_folder}' (${PROJECT_SOURCE_DIR}) from: ${source_pattern}, ${header_pattern}.")
 	endif(${VERBOSE})
 
+	add_definitions( -D_SCL_SECURE_NO_WARNINGS )
 	add_definitions( -DSOURCE_DIR="${CMAKE_SOURCE_DIR}" )
 	add_definitions( -DBINARY_DIR="${BINARIES_DIRECTORY}" )
 
@@ -172,19 +159,11 @@ macro( compile_project project_name source_pattern header_pattern build_type sol
 
 	if (NOT "${build_type}" STREQUAL "STATIC")
 		foreach( dependencie ${ARGN} )
-			target_link_libraries( ${project_name} ${${dependencie}_LIBRARIES} )
+			target_link_libraries( ${project_name} ${${dependencie}_LIBRARIES} )	
 			if(${VERBOSE})
 				message(STATUS "   - Adding library dependencie: ${${dependencie}_LIBRARIES}")
 			endif(${VERBOSE})
 		endforeach( dependencie )	
-	endif()
-
-	if ( NOT "${Boost_LIBRARIES}" STREQUAL "" )
-		list_regex_contains( boost_thread_in_dependencies "(.*)boost_thread(.*)" ${Boost_LIBRARIES} )
-		if ( boost_thread_in_dependencies AND UNIX )
-    	    target_link_libraries( ${project_name} pthread )
-	        target_link_libraries( ${project_name} rt )
-		endif()
 	endif()
 
 	set_property(TARGET ${project_name} PROPERTY FOLDER ${solution_folder})
