@@ -18,7 +18,7 @@ inline bool IsAllowedMessageType(MessageType type) {
 }
 
 inline void PrintMessage(const string& msg) {
-  boost::mutex::scoped_lock(cout_guard);
+  boost::mutex::scoped_lock lock(cout_guard);
   cout << msg << endl;
 }
 
