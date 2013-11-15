@@ -8,6 +8,8 @@
 
 option( VERBOSE "should we say as much messages as possible" ON )
 option( BUILD_TESTS "Should we build tests for modules" ON )
+option( BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL "boost was compiled with separate address model stage folder" OFF )
+
 if (BUILD_TESTS AND VERBOSE)
 	message(STATUS " -T: Test will be builded")
 endif(BUILD_TESTS AND VERBOSE)
@@ -65,7 +67,7 @@ if(WIN32)
         set(CMAKE_ADDRESS_MODEL 32)
     endif(CMAKE_CL_64)
 elseif(UNIX)
-    ADD_DEFINITIONS (-D_LINUX -pthread -D_XOPEN_SOURCE=600)
+    ADD_DEFINITIONS (-D_LINUX)
 
     if(${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "x86_64")
         set(CMAKE_ADDRESS_MODEL 64) 
@@ -94,9 +96,9 @@ endif (BUILD_TESTS)
 
 if ( UNIX )
 	if (Debug)
-		add_definitions( " -O0 -g -Wall" )
+		add_definitions( " -O0 -g -Wall -std=c++0x -pedantic -pedantic-errors -W " )
 	else()
-		add_definitions( " -O3 -Wall -Werror" )
+		add_definitions( " -O3 -Wall -Werror -std=c++0x -pedantic -pedantic-errors -W " )
 	endif()
 
 	set(output_path ${PROJECT_BINARY_DIR}/bin_${CMAKE_ADDRESS_MODEL}/${CMAKE_BUILD_TYPE})
@@ -117,16 +119,11 @@ set( BINARIES_DIRECTORY ${PROJECT_BINARY_DIR}/bin_${CMAKE_ADDRESS_MODEL}/${CMAKE
 # search for boost
 # --------------------------------------------------------------------------------
 
-set( Boost_USE_STATIC_LIBS ON )
 set( Boost_USE_MULTITHREADED ON )
-if (WIN32)
+if (BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL)
+	set( Boost_USE_STATIC_LIBS ON )
 	set( BOOST_LIBRARYDIR "$ENV{BOOST_ROOT}/stage_${CMAKE_ADDRESS_MODEL}/lib" )
-endif(WIN32)
-
-add_definitions( -DBOOST_FILESYSTEM_VERSION=2 )
-if (${VERBOSE})
-	message( STATUS " -T: Using Boost filesystem version: 2" )
-endif(${VERBOSE})
+endif(BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL)
 
 # --------------------------------------------------------------------------
 # use_folders, saving configuration to the build

@@ -20,8 +20,7 @@ void MessagesBuffer::Flush() {
   ClearSpaceCounters();
 }
 void MessagesBuffer::ClearSpaceCounters() {
-  map<MessageType, size_t>::iterator it 
-    = occupied_space_counters_.begin();
+  map<MessageType, size_t>::iterator it = occupied_space_counters_.begin();
   while (it != occupied_space_counters_.end()) {
     (*it).second = 0;
     ++it;

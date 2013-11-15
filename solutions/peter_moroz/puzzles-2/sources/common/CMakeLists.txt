@@ -1,3 +1,5 @@
-
-compile_project( ${module_name} "*.cpp" "*.h" STATIC common )
+find_package(Boost ${SEARCH_PARAMETERS} COMPONENTS
+	system
+)
+compile_project( ${module_name} "*.cpp" "*.h" STATIC common Boost)
 

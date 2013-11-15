@@ -4,8 +4,8 @@
 
 using namespace std;
 
-static const char* kInputFilename = "2.6_example.in";
-static const char* kOutputFilename = "2.6_results.out";
+static const char* kInputFilename = "input.txt";
+static const char* kOutputFilename = "output.txt";
 
 int main() {
 
@@ -14,7 +14,7 @@ int main() {
   try {
     task.Initialize();
     task.Perform();
-  } catch (exception& ex) {
+  } catch (const exception& ex) {
     cout << "An exception has been caught. "
       << "Reason: " << ex.what() << endl;
     return -1;

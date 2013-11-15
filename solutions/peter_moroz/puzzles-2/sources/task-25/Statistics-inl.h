@@ -1,7 +1,7 @@
 #ifndef STATISTICS_INL_H_
 #define STATISTICS_INL_H_
 
-inline void Statistics::IncrementCounter(MessageType id) {
+inline void Statistics::IncrementCounter(const MessageType id) {
   ++counters_[id];
 }
 

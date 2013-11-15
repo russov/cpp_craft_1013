@@ -21,7 +21,7 @@ void Task35::Initialize() {
     string file_number;
     try {
       file_number = boost::lexical_cast<string>(curr_file_number);
-    } catch (boost::bad_lexical_cast& ex) {
+    } catch (const boost::bad_lexical_cast& ex) {
       cout << "Task35::Initialize(): Error of conversion " << curr_file_number
         << " into string. Reason: " << ex.what() << endl;
       ++curr_file_number;
@@ -37,7 +37,7 @@ void Task35::Initialize() {
 	    pmp->set_in_fname(in_fname);
 	    pmp->set_statistics(&statistics_);
 	    workers_.push_back(pmp);
-	  } catch (bad_alloc& ex) {
+	  } catch (const bad_alloc& ex) {
 	    cout << "Task35::Initialize(): Insufficient memory. "
 		    << "Details: " << ex.what() << endl;
 	    ++curr_file_number;

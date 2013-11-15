@@ -1,13 +1,10 @@
 #ifndef _TASK4_6_SOLUTION_H_
 #define _TASK4_6_SOLUTION_H_
 
-#include <exception>
 #include <map>
 #include <vector>
 #include <string>
-//#include <boost/noncopyable.hpp>
-
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace task4_6
 {
