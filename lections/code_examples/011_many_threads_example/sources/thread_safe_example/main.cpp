@@ -98,12 +98,12 @@ int main()
 
 	thread_group.join_all();
 
-	std::cout << "01 " << s1 << std::endl;
-	std::cout << "02 " << s2 << std::endl;
-	std::cout << "03 " << s3 << std::endl;
-	std::cout << "04 " << s4 << std::endl;
+//	std::cout << "01 " << s1 << std::endl;
+//	std::cout << "02 " << s2 << std::endl;
+//	std::cout << "03 " << s3 << std::endl;
+//	std::cout << "04 " << s4 << std::endl;
 
-	std::cout << "d01 " << s2 - s1 << std::endl;
-	std::cout << "d01 " << s4 - s3 << std::endl;
+//	std::cout << "d01 " << s2 - s1 << std::endl;
+//	std::cout << "d01 " << s4 - s3 << std::endl;
 
 }

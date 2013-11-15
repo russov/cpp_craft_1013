@@ -4,7 +4,7 @@
 void worker( boost::asio::io_service& service )
 {
 	service.run();
-};
+}
 
 int main()
 {
