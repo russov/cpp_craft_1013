@@ -76,13 +76,13 @@ namespace task5_6
 	bool thread_safe_queue< T >::pop( T& poped_el )
 	{
 
-		if ( this->empty() )
+		boost::mutex::scoped_lock protect_queue( queue_ );
+		if ( begin_ == end_ )
 		{
 			return true;
 		}
 		else 
 		{
-			boost::mutex::scoped_lock protect_queue( queue_ );
 			std::memcpy( &poped_el, &(begin_->val_), sizeof(T) );
 			Node_* poped = begin_;
 			begin_ = begin_->next_;
