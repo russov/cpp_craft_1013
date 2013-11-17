@@ -135,7 +135,7 @@ namespace templates
 		: end_( NULL )
 		, stack_size_( 0ul )
 	{
-		for( C::const_iterator i = container.begin() ; i != container.end() ; ++i )
+		for( typename C::const_iterator i = container.begin() ; i != container.end() ; ++i )
 			push_back( *i );
 	}
 	//
