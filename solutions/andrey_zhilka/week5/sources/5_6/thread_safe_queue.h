@@ -13,7 +13,7 @@ namespace task5_6
 		struct Node_
 		{
 			T val_;
-			Node* next_;
+			Node_* next_;
 
 			Node_()
 			{
@@ -24,7 +24,6 @@ namespace task5_6
 
 		mutable boost::mutex queue_;
 		mutable boost::mutex empty_;
-		boost::condition wait_not_empty_;
 
 		Node_* begin_;
 		Node_* end_;
@@ -65,26 +64,30 @@ namespace task5_6
 	template< typename T >
 	void thread_safe_queue< T >::push( const T& el )
 	{
-		std::memcpy( &end->val_, &el, sizeof(T) );
+		boost::mutex::scoped_lock protect_queue( queue_ );
 
-		end_->next = new Node();
-		end_ = end_->next;
+		std::memcpy( &end_->val_, &el, sizeof(T) );
+
+		end_->next_ = new Node_();
+		end_ = end_->next_;
 	}
 
 	template< typename T >
 	bool thread_safe_queue< T >::pop( T& poped_el )
 	{
+
 		if ( this->empty() )
 		{
 			return true;
 		}
 		else 
 		{
-			memcpy( &poped_el, &(begin->val), sizeof(T) );
+			boost::mutex::scoped_lock protect_queue( queue_ );
+			std::memcpy( &poped_el, &(begin_->val_), sizeof(T) );
 			Node_* poped = begin_;
 			begin_ = begin_->next_;
 
-			delete cur;
+			delete poped;
 			return false;
 		}
 	}
@@ -92,21 +95,25 @@ namespace task5_6
 	template< typename T >
 	bool thread_safe_queue< T >::empty() const
 	{
+		boost::mutex::scoped_lock protect_queue( queue_ );
 		return begin_ == end_;
 	}
 
 	template< typename T >
 	size_t thread_safe_queue< T >::size() const
 	{
+		boost::mutex::scoped_lock protect_queue( queue_ );
 		Node_* tracker = begin_;
 		
 		size_t size = 0;
 
-		while( tracker->next )
+		while( tracker->next_ )
 		{
 			size++;
-			tracker = tracker->next;
+			tracker = tracker->next_;
 		}
+
+		return size;
 	}
 
 }
