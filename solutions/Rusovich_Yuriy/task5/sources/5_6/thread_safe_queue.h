@@ -67,7 +67,7 @@ namespace task5_6
 	template< typename T >
 	size_t thread_safe_queue< T >::size() const
 	{
-		//boost::mutex::scoped_lock lock(mQueue);
+		boost::mutex::scoped_lock lock(mQueue);
 		return q.size();
 	}
 
