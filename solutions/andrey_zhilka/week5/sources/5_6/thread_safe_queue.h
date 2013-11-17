@@ -2,13 +2,34 @@
 #define _TASK5_6_THREAD_SAFE_QUEUE_H_
 
 #include <cstdlib>
+#include <boost/thread.hpp>
 
 namespace task5_6
 {
 	template< typename T >
 	class thread_safe_queue
 	{
-	public:
+	private :
+		struct Node_
+		{
+			T val_;
+			Node* next_;
+
+			Node_()
+			{
+				val_ = T();
+				next_ = NULL;
+			}
+		};
+
+		mutable boost::mutex queue_;
+		mutable boost::mutex empty_;
+		boost::condition wait_not_empty_;
+
+		Node_* begin_;
+		Node_* end_;
+
+	public :
 		explicit thread_safe_queue();
 		~thread_safe_queue();
 
@@ -22,34 +43,70 @@ namespace task5_6
 	template< typename T >
 	thread_safe_queue< T >::thread_safe_queue()
 	{
+		begin_ = new Node_();
+		end_ = begin_;
 	}
 
 	template< typename T >
 	thread_safe_queue< T >::~thread_safe_queue()
 	{
+		Node_* cur = begin_;
+		
+		while ( cur != end_ )
+		{
+			begin_ = begin_->next_;
+			delete cur;
+			cur = begin_;
+		}
+		delete begin_;
 	}
 
 	template< typename T >
-	void thread_safe_queue< T >::push( const T&  )
+	void thread_safe_queue< T >::push( const T& el )
 	{
+		Node_* new_el = new Node_();
+		std::memcpy( &new_el.val_, &el, sizeof(T) );
+
+		end_->next_ = new_el;
+		end_ = end_->next_;
 	}
 
 	template< typename T >
-	bool thread_safe_queue< T >::pop( T& )
+	bool thread_safe_queue< T >::pop( T& poped_el )
 	{
-		return true;
+		if ( this->empty() )
+		{
+			return true;
+		}
+		else 
+		{
+			memcpy( &poped_el, &(begin->val), sizeof(T) );
+			Node_* poped = begin_;
+			begin_ = begin_->next_;
+
+			delete cur;
+			return false;
+		}
 	}
 
 	template< typename T >
 	bool thread_safe_queue< T >::empty() const
 	{
-		return false;
+		return begin_ == end_;
 	}
 
 	template< typename T >
 	size_t thread_safe_queue< T >::size() const
 	{
-		return 0ul;
+		Node_* tracker = begin_;
+		
+		size_t size = 0;
+
+		while( tracker->next )
+		{
+			size++;
+			tracker = tracker->next;
+		}
 	}
 
 }
