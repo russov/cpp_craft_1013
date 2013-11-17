@@ -58,17 +58,17 @@ namespace task5_6
 			delete cur;
 			cur = begin_;
 		}
-		delete begin_;
+
+		delete cur;
 	}
 
 	template< typename T >
 	void thread_safe_queue< T >::push( const T& el )
 	{
-		Node_* new_el = new Node_();
-		std::memcpy( &new_el.val_, &el, sizeof(T) );
+		std::memcpy( &end->val_, &el, sizeof(T) );
 
-		end_->next_ = new_el;
-		end_ = end_->next_;
+		end_->next = new Node();
+		end_ = end_->next;
 	}
 
 	template< typename T >
