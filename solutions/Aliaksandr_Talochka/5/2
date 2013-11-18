@@ -1,0 +1,20 @@
+CMake Error at c:/Program Files (x86)/CMake 2.8/share/cmake-2.8/Modules/FindBoost.cmake:1106 (message):
+  Unable to find the requested Boost libraries.
+
+  Boost version: 1.54.0
+
+  Boost include path: d:/Install/Programming/boost_1_54_0
+
+  The following Boost libraries could not be found:
+
+          boost_system
+          boost_unit_test_framework
+          boost_filesystem
+
+  No Boost libraries were found.  You may need to set BOOST_LIBRARYDIR to the
+  directory containing Boost libraries or BOOST_ROOT to the location of
+  Boost.
+Call Stack (most recent call first):
+  tests/5_4_tests/CMakeLists.txt:1 (find_package)
+
+
