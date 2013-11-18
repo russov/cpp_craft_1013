@@ -20,20 +20,20 @@ void Task24::Perform() {
   }
 
   boost::uint32_t max_time = 0;
-  boost::uint32_t allowed_time = 0;
   Message message;
   message.ReadFrom(ifs_);
   while (!ifs_.eof()) {
     // filter messages here
     if (IsAllowedMessageType(message.type())) {
-      if (message.time() > max_time) {
+      if (message.time() > max_time)
         max_time = message.time();
-        allowed_time = max_time > 2 ? max_time - 2 : max_time;
-        message.WriteTo(ofs_);
-      } else {
-        if (message.time() > allowed_time)
+      if (max_time < 2) {
+        if (message.time() == max_time)
           message.WriteTo(ofs_);
-      }
+      } else {
+        if (message.time() > (max_time - 2))
+          message.WriteTo(ofs_);
+      } // if (max_time < 2)
     } // if (IsAllowedMessageType(message.type()))
     message.ReadFrom(ifs_);
   }

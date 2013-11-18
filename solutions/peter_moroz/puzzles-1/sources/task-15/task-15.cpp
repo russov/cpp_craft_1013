@@ -78,6 +78,9 @@ void ExploreLandscape(const vector<string>& landscape_in,
   landscape_out.clear();
 
   size_t height = landscape_in.size();
+  if (height == 0)
+    return;
+
   size_t width = 0;
   for (size_t i = 0; i < landscape_in.size(); ++i) {
     if (landscape_in[i].length() > width)
@@ -99,6 +102,9 @@ void ExploreLandscape(const vector<string>& landscape_in,
       land = false;
     }
   }
+
+  if (height == 1)
+    return;
 
   size_t row = height - 2;
   while (row >= 0) {
@@ -141,8 +147,8 @@ void ExploreLandscape(const vector<string>& landscape_in,
             landscape_out[row1][col] != landscape_out[row1 + 1][col]) {
           size_t lpos = col;
           size_t rpos = col;
-          while (landscape_out[row1 + 1][lpos] != 0 && lpos >= 0) --lpos;
-          while (landscape_out[row1 + 1][rpos] != 0 && rpos < width) ++rpos;
+          while (lpos >= 0 && landscape_out[row1 + 1][lpos] != 0) --lpos;
+          while (rpos < width && landscape_out[row1 + 1][rpos] != 0) ++rpos;
           ++lpos;
           while (lpos != rpos) {
             landscape_out[row1 + 1][lpos] = landscape_out[row1][col];
