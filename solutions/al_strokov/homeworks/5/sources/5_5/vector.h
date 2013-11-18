@@ -130,7 +130,7 @@ namespace task5_5
 	template< typename T >
 	typename vector< T >::iterator vector< T >::end()
 	{
-		return &(*v_.end());
+		return &(*v_.begin()) + v_.size();
 	}
 	
 	template< typename T >
@@ -141,7 +141,7 @@ namespace task5_5
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::end() const
 	{
-		return &(*v_.end());
+		return &(*v_.begin()) + v_.size();
 	}
 }
 
