@@ -21,8 +21,8 @@ namespace task5_6
 		void push( const T& new_element );
 		bool pop( T& result );
 
-		bool empty() const;
-		size_t size() const;
+		bool empty() ;
+		size_t size() ;
 	};
 
 	template< typename T >
@@ -56,14 +56,16 @@ namespace task5_6
 	}
 
 	template< typename T >
-	bool thread_safe_queue< T >::empty() const
+	bool thread_safe_queue< T >::empty() 
 	{
+		boost::mutex::scoped_lock push_lock(protector);
 		return que.empty();
 	}
 
 	template< typename T >
-	size_t thread_safe_queue< T >::size() const
+	size_t thread_safe_queue< T >::size() 
 	{
+		boost::mutex::scoped_lock push_lock(protector);
 		return que.size();
 	}
 
