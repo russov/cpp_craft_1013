@@ -2,12 +2,22 @@
 #define _TASK5_6_THREAD_SAFE_QUEUE_H_
 
 #include <cstdlib>
+#include <boost\thread.hpp>
 
 namespace task5_6
 {
 	template< typename T >
 	class thread_safe_queue
 	{
+		struct node
+		{
+			T data_;
+			node(const T& data) : data_(data), next_(NULL)
+			{
+			}
+
+			std::shared_ptr<node> next_;
+		};
 	public:
 		explicit thread_safe_queue();
 		~thread_safe_queue();
@@ -17,10 +27,18 @@ namespace task5_6
 
 		bool empty() const;
 		size_t size() const;
+
+	private:
+		std::shared_ptr<node> head_;
+		std::shared_ptr<node> tail_;
+
+		size_t size_;
+
+		mutable boost::mutex mtx_;
 	};
 
 	template< typename T >
-	thread_safe_queue< T >::thread_safe_queue()
+	thread_safe_queue< T >::thread_safe_queue() : size_(0), head_(NULL), tail_(NULL)
 	{
 	}
 
@@ -30,26 +48,62 @@ namespace task5_6
 	}
 
 	template< typename T >
-	void thread_safe_queue< T >::push( const T&  )
+	void thread_safe_queue< T >::push( const T& data )
 	{
+		boost::unique_lock<boost::mutex> lock(mtx_);
+
+		std::shared_ptr<node> new_node(new node(data));
+		
+		if (tail_ == NULL && head_ == NULL)
+		{
+			head_ = new_node;			
+		}
+		else
+		{
+			tail_->next_ = new_node;
+		}
+		tail_ = new_node;
+
+		++size_;
 	}
 
 	template< typename T >
-	bool thread_safe_queue< T >::pop( T& )
+	bool thread_safe_queue< T >::pop( T& data )
 	{
-		return true;
+		boost::unique_lock<boost::mutex> lock(mtx_);
+
+		bool res = false;
+		if (head_)
+		{
+			data = head_->data_;			
+			head_ = head_->next_;
+
+			if (head_ == NULL)
+			{
+				tail_.reset();
+			}
+						
+			--size_;
+			res = true;
+		}
+
+		return res;
 	}
 
 	template< typename T >
 	bool thread_safe_queue< T >::empty() const
 	{
-		return false;
+		boost::unique_lock<boost::mutex> lock(mtx_);
+
+		return (size_ == 0);
 	}
 
 	template< typename T >
 	size_t thread_safe_queue< T >::size() const
 	{
-		return 0ul;
+		boost::unique_lock<boost::mutex> lock(mtx_);
+
+		return size_;
 	}
 
 }

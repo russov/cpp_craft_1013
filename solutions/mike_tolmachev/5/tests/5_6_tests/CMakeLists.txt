@@ -4,9 +4,9 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	filesystem
 	date_time
 	thread
-#	chrono
+	chrono
 )
 
 compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} Boost )
-register_test( ${tests_name} 5 4 )
+register_test( ${tests_name} 15 14 )
 
