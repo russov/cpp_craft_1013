@@ -32,19 +32,12 @@ void ProcessFile(const string& file_number) {
   out_fname.append(".txt");
 
   ifstream ifs(in_fname.c_str(), ios_base::binary);
-  if (!ifs.is_open()) {
-    msg << "Can't open file " << in_fname 
-      << " thread terminated." << endl;
-    PrintMessage(msg.str());
+  if (!ifs.is_open())
     return;
-  }
+
   ofstream ofs(out_fname.c_str(), ios_base::binary);
-  if (!ofs.is_open()) {
-    msg << "Can't open file " << out_fname
-      << " thread terminated." << endl;
-    PrintMessage(msg.str());
+  if (!ofs.is_open())
     return;
-  }
 
   boost::uint32_t max_time = 0;
   Message message;
@@ -82,10 +75,6 @@ void Task34::Perform() {
     stringstream file_number;
 
     file_number << setw(3) << setfill('0') << curr_file_number;
-
-    msg << "launch of processing file #" 
-      << file_number.str() << " ...\n";
-    PrintMessage(msg.str());
     ++curr_file_number;
 
     thg.create_thread(boost::bind(&ProcessFile, file_number.str()));
