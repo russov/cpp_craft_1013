@@ -1,10 +1,9 @@
 #include <boost/test/test_tools.hpp>
 
-namespace async_udp
+namespace task5_5
 {
 	namespace tests_
 	{
-		void udp_listener_tests();
-		void udp_writer_tests();
+		void vector_tests();
 	}
 }
