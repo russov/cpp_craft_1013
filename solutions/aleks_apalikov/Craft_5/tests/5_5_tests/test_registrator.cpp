@@ -2,19 +2,37 @@
 
 #include <boost/test/unit_test.hpp>
 
-boost::unit_test_framework::test_suite* init_unit_test_suite( int, char* [] )
+#ifdef BOOST_TEST_DYN_LINK
+	bool init_unit_test_suite()
+#else
+	boost::unit_test_framework::test_suite* init_unit_test_suite( int, char*[] )
+#endif
 {
 	using boost::unit_test_framework::test_case;
+	boost::unit_test_framework::test_suite& master_test_suite = boost::unit_test::framework::master_test_suite();
 
-    boost::unit_test_framework::test_suite* ts1 = BOOST_TEST_SUITE( "task 5_5 tests" );
-	boost::unit_test::unit_test_log.set_threshold_level( boost::unit_test::log_messages );
+	using namespace async_tcp::tests_;
 
-	using namespace task5_5::tests_;
+	master_test_suite.add( BOOST_TEST_CASE( &async_tests_work ) );
+	master_test_suite.add( BOOST_TEST_CASE( &async_tcp_server_constructor_tests ) );
 
-	ts1->add( BOOST_TEST_CASE( &vector_tests ) );	
+	master_test_suite.add( BOOST_TEST_CASE( &async_tcp_server_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif
 
-	return ts1;
+#ifdef BOOST_TEST_DYN_LINK
+	return true;
+#else
+	return NULL;
+#endif
 }
+
+#ifdef BOOST_TEST_DYN_LINK
+
+int main( int argc, char* argv[] )
+{
+    return ::boost::unit_test::unit_test_main( &init_unit_test_suite, argc, argv );
+}
+
+#endif
