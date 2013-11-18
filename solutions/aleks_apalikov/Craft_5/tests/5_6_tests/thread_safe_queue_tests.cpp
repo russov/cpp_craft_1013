@@ -50,7 +50,7 @@ task5_6::tests_::detail::thread_safe_queue_many_thread_helper::thread_safe_queue
 	while ( !queue.empty() )
 	{
 		int data;
-		if ( !queue.pop( data ) )
+		if ( queue.pop( data ) )
 			++amount;
 	}
 
@@ -71,7 +71,7 @@ void task5_6::tests_::detail::thread_safe_queue_many_thread_helper::read_thread(
 	while ( !queue.empty() )
 	{
 		int data;
-		if ( !queue.pop( data ) )
+		if ( queue.pop( data ) )
 			++amount;
 	}
 	boost::mutex::scoped_lock increase_size( protect_size_ );
@@ -96,10 +96,10 @@ void task5_6::tests_::thread_safe_queue_tests()
 		BOOST_CHECK_EQUAL( tsq.empty() , false );
 
 		int res;
-		BOOST_CHECK_EQUAL( tsq.pop( res ), false ); // my correction
+		BOOST_CHECK_EQUAL( tsq.pop( res ), true );
 		BOOST_CHECK_EQUAL( res, 54 );
 		BOOST_CHECK_EQUAL( tsq.size() , 0ul );
-		BOOST_CHECK_EQUAL( tsq.empty() , false );
+		BOOST_CHECK_EQUAL( tsq.empty() , true );
 
 		res = 4265624;
 		BOOST_CHECK_EQUAL( tsq.pop( res ), false );
