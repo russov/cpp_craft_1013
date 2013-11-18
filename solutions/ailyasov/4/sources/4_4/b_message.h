@@ -1,6 +1,8 @@
 #ifndef _TASK4_4_B_MESSAGE_H_
 #define _TASK4_4_B_MESSAGE_H_
 
+#include <boost/shared_array.hpp>
+
 #include "message.h"
 
 namespace task4_4
@@ -8,9 +10,8 @@ namespace task4_4
 
 	class b_message : public message
 	{
-		size_t length_;
-		boost::shared_ptr<char> content_;
-		//char *content_;
+		int length_;
+		boost::shared_array<char> content_;
 
 		explicit b_message( std::istream& inp );
 	public:
