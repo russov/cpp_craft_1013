@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <vector>
-#include <boost\thread.hpp>
+#include <boost/thread.hpp>
 
 
 using namespace std;
@@ -100,10 +100,10 @@ public :
 		}
 	}	
 	
-	string Get_out_file(char* t)
+	string get_out_file(char* t)
 	{
 		string s=SOURCE_DIR;
-		s+="/output";
+		s+="/output_";
 		s+=t;
 		s+=".txt";
 		return s;	
@@ -111,7 +111,7 @@ public :
 	
 	void write_flow(msg &x)
 	{
-			f2.open(Get_out_file(x.name).c_str(), std::ios_base :: app | std::ios_base :: binary);
+			f2.open(get_out_file(x.name).c_str(), std::ios_base :: app | std::ios_base :: binary);
 			writer(x);
 			f2.close();
 	}

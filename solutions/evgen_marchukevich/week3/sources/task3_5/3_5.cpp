@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <vector>
 #include "BinRW.h"
-#include <boost\thread.hpp>
-#include <boost\lexical_cast.hpp>
+#include <boost/thread.hpp>
+#include <boost/lexical_cast.hpp>
 
 
 using namespace std;
@@ -55,7 +55,7 @@ private :
 			return (sizeof(x.time)+sizeof(x.type)+sizeof(x.len)+sizeof(char)*x.len);
 		}		
 		
-		string Get_in_file(int id)
+		string get_in_file(int id)
 		{
 			char s[4];
 			sprintf(s,"%03d",id);			
@@ -68,10 +68,13 @@ public :
 
 		void flows()
 		{
-			boost::thread_group threads_group;
-			for( size_t i = 0; i < threads_count; ++i )
-				threads_group.create_thread( boost::bind( &Solution::process, this ));
-			threads_group.join_all();
+			while(file_id<=file_cnt )
+			{
+				boost::thread_group threads_group;
+				for( size_t i = 0; i < threads_count; ++i )
+					threads_group.create_thread( boost::bind( &Solution::process, this ));
+				threads_group.join_all();
+			}
 			RR.BinOpen_outFile(SOURCE_DIR"/output.txt");
 			writer();
 			RR.BinClose_out();
@@ -94,7 +97,7 @@ public :
 				boost :: mutex :: scoped_lock lock(Mutex);
 				while(file_id<=file_cnt)
 				{			
-					RR.BinOpen_inFile((SOURCE_DIR+Get_in_file(file_id)).c_str());				
+					RR.BinOpen_inFile((SOURCE_DIR+get_in_file(file_id)).c_str());				
 					if (!RR.Bin_isOpen_inFile())  
 						{
 							file_id++;
