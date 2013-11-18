@@ -12,9 +12,6 @@ namespace task5_6
 		struct node
 		{
 			T data_;
-			node(const T& data) : data_(data), next_(NULL)
-			{
-			}
 
 			std::shared_ptr<node> next_;
 		};
@@ -34,7 +31,7 @@ namespace task5_6
 
 		size_t size_;
 
-		mutable boost::mutex mtx_;
+		mutable boost::shared_mutex mtx_;
 	};
 
 	template< typename T >
@@ -50,9 +47,10 @@ namespace task5_6
 	template< typename T >
 	void thread_safe_queue< T >::push( const T& data )
 	{
-		boost::unique_lock<boost::mutex> lock(mtx_);
+		boost::unique_lock<boost::shared_mutex> lock(mtx_);
 
-		std::shared_ptr<node> new_node(new node(data));
+		std::shared_ptr<node> new_node(new node);
+        new_node->data_ = data;
 		
 		if (tail_ == NULL && head_ == NULL)
 		{
@@ -70,7 +68,7 @@ namespace task5_6
 	template< typename T >
 	bool thread_safe_queue< T >::pop( T& data )
 	{
-		boost::unique_lock<boost::mutex> lock(mtx_);
+		boost::unique_lock<boost::shared_mutex> lock(mtx_);
 
 		bool res = false;
 		if (head_)
@@ -93,7 +91,7 @@ namespace task5_6
 	template< typename T >
 	bool thread_safe_queue< T >::empty() const
 	{
-		boost::unique_lock<boost::mutex> lock(mtx_);
+		boost::shared_lock<boost::shared_mutex> lock(mtx_);
 
 		return (size_ == 0);
 	}
@@ -101,7 +99,7 @@ namespace task5_6
 	template< typename T >
 	size_t thread_safe_queue< T >::size() const
 	{
-		boost::unique_lock<boost::mutex> lock(mtx_);
+		boost::shared_lock<boost::shared_mutex> lock(mtx_);
 
 		return size_;
 	}
