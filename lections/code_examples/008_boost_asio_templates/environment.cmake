@@ -6,9 +6,10 @@
 # should we create configuration for tests
 # --------------------------------------------------------------------------------
 
-option( VERBOSE "should we say as much messages as possible" ON )
+option( VERBOSE "should we say as much messages as possible" OFF )
 option( BUILD_TESTS "Should we build tests for modules" ON )
 option( BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL "boost was compiled with separate address model stage folder" OFF )
+option( BOOST_STATIC "boost was compiled with static link" ON )
 
 if (BUILD_TESTS AND VERBOSE)
 	message(STATUS " -T: Test will be builded")
@@ -103,6 +104,7 @@ if ( UNIX )
 
 	set(output_path ${PROJECT_BINARY_DIR}/bin_${CMAKE_ADDRESS_MODEL}/${CMAKE_BUILD_TYPE})
 elseif( WIN32 )
+	add_definitions( -D_SCL_SECURE_NO_WARNINGS )
 	add_definitions( -D_CRT_SECURE_NO_WARNINGS )
 	add_definitions( -D_WIN32_WINNT=0x0501 )
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa") 
@@ -119,11 +121,15 @@ set( BINARIES_DIRECTORY ${PROJECT_BINARY_DIR}/bin_${CMAKE_ADDRESS_MODEL}/${CMAKE
 # search for boost
 # --------------------------------------------------------------------------------
 
-set( Boost_USE_MULTITHREADED ON )
-if (BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL)
+if ( BOOST_STATIC )
 	set( Boost_USE_STATIC_LIBS ON )
+else()
+#	add_definitions( -DBOOST_ALL_NO_LIB )
+endif( BOOST_STATIC )
+set( Boost_USE_MULTITHREADED ON )
+if ( BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL )
 	set( BOOST_LIBRARYDIR "$ENV{BOOST_ROOT}/stage_${CMAKE_ADDRESS_MODEL}/lib" )
-endif(BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL)
+endif( BOOST_STAGE_FOLDER_WITH_ADDRESS_MODEL )
 
 # --------------------------------------------------------------------------
 # use_folders, saving configuration to the build
