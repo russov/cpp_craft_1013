@@ -79,7 +79,7 @@ namespace task5_6
 		boost::mutex::scoped_lock protect_queue( queue_ );
 		if ( begin_ == end_ )
 		{
-			return true;
+			return false;
 		}
 		else 
 		{
@@ -88,7 +88,7 @@ namespace task5_6
 			begin_ = begin_->next_;
 
 			delete poped;
-			return false;
+			return true;
 		}
 	}
 
