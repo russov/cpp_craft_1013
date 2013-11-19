@@ -38,7 +38,7 @@ void async_tcp::tests_::async_tcp_server_tests()
 		char* buff_length[ sizeof( size_t ) ];
 		read( socket, buffer( buff_length, sizeof( size_t ) ) );				
 		const size_t answer_size = *reinterpret_cast< const size_t* >( buff_length );
-		BOOST_CHECK_EQUAL( answer_size, 2 );
+		BOOST_CHECK_EQUAL( answer_size, 2ul );
 		char* buff_answer = new char[ answer_size ];
 		read( socket, buffer( buff_answer, answer_size ) );
 		const std::string expected_answer( "ok" );

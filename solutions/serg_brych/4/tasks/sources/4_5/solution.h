@@ -20,7 +20,7 @@ namespace task4_5
 		int get_max() const;
 	private:
 		void calculate_result(const data_type& data);
-		void process_thread(const data_type& data ,const int &init_value);
+		void process_thread(const data_type& data ,const int init_value);
 		int m_min;
 		int m_max;
 

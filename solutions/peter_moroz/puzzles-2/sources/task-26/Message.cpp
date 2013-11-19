@@ -20,7 +20,7 @@ Message::Message() {
 Message::~Message() {}
 
 void Message::ReadFrom(istream& is) {
-  is.read(stock_name_, sizeof(stock_name_));
+  is.read(stock_name_, sizeof(stock_name_) - 1);
   is.read(date_time_, sizeof(date_time_));
   is.read(reinterpret_cast<char*>(&price_), sizeof(price_));
   is.read(reinterpret_cast<char*>(&vwap_), sizeof(vwap_));
