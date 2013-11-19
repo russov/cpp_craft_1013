@@ -30,7 +30,7 @@ void task4_5::solution::add_min_max(data_type::const_iterator it)
     }
 } 
 
-task4_5::solution::solution( const data_type& data ) : data_(data), max_(0), min_(0)
+task4_5::solution::solution( const data_type& data ) : max_(0), min_(0),data_(data) 
 {
     max_values_.reserve(data_.size());
     min_values_.reserve(data_.size());
