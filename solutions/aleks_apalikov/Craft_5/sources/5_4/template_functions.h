@@ -8,7 +8,7 @@ namespace task5_4
 	/*template< bool delete_first, typename Container > //somehow not working: 4 errors cannot use delete
 	void clear_container( Container& c, bool b = delete_first)
 	{
-		for(Container::const_iterator it = c.begin(); it != c.end(); )
+		for(typename iter it = c.begin(); it != c.end(); )
 		{
 			if(delete_first) 
 			{
@@ -20,57 +20,51 @@ namespace task5_4
 				it = c.erase (it);
 			}
 		}
-	}*/
+		}*/
 	template<bool delete_first, typename Container> void clear_container(Container & c, char(*)[delete_first] = 0) 
 	{
-		for(Container::const_iterator it = c.begin(); it != c.end(); )
+		for(typename Container::iterator it = c.begin(); it != c.end(); it++)
 		{
 			delete *it;
-			it = c.erase (it) ;
 		}
+		c.clear();
 	}
 	template<bool delete_first, typename Container> void clear_container(Container & c, char(*)[!delete_first] = 0) 
 	{
-		for(Container::const_iterator it = c.begin(); it != c.end(); )
-		{
-			it = c.erase (it) ;
-		}
+		c.clear();
 	}
 	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first] = 0,
 		char(*)[delete_second] = 0) 
 	{
-		for(Container::const_iterator it = c.begin(); it != c.end(); )
+		for(typename Container::iterator it = c.begin(); it != c.end(); it++)
 		{
 			delete it->first;
 			delete it->second;
-			it = c.erase (it) ;
 		}
+		c.clear();
 	}
 	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[delete_first] = 0,
 		char(*)[!delete_second] = 0) 
 	{
-		for(Container::const_iterator it = c.begin(); it != c.end(); )
+		for(typename Container::iterator it = c.begin(); it != c.end(); it++)
 		{
 			delete it->first;
-			it = c.erase (it) ;
 		}
+		c.clear();
 	}
 	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[!delete_first ] = 0,
 		char(*)[delete_second] = 0) 
 	{
-		for(Container::const_iterator it = c.begin(); it != c.end(); )
+		for(typename Container::iterator it = c.begin(); it != c.end(); it++)
 		{
 			delete it->second;
-			it = c.erase (it) ;
 		}
+		c.clear();
 	}
 	template<bool delete_first, bool delete_second, typename Container> void clear_container(Container & c, char(*)[!delete_first ] = 0,
 		char(*)[!delete_second ] = 0) 
 	{
-		for(Container::const_iterator it = c.begin(); it != c.end(); )
-		{
-			it = c.erase (it) ;
-		}
+		c.clear () ;
 	}
 /*	template< bool delete_first, bool delete_second, typename Container >
 	void clear_container( Container& )
