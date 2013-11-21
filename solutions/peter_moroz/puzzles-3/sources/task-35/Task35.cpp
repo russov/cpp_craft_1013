@@ -56,11 +56,11 @@ void Task35::Perform() {
 
   ofstream ofs;
   ofs.open(kOutputFilename, ios_base::binary);
-  if (ofs.is_open()) {
+  if (!ofs.is_open()) {
     cout << "Can't open file " << kOutputFilename << endl;
     return;
   }
   statistics_.ReportAverageCounters(ofs);
 
-  cout << "Task34::Perform has finished.\n";
+  cout << "Task35::Perform has finished.\n";
 }

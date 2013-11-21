@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <cmath>
 #include "solution.h"
 #include <boost/lexical_cast.hpp>
