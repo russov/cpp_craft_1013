@@ -137,5 +137,6 @@ void task5_5::tests_::vector_tests()
 		BOOST_CHECK_EQUAL( iv[ 1 ], 0 );
 		BOOST_CHECK_EQUAL( iv[ 150 ], 149 );
 	}
+	
 }
 

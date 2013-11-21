@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 
+
 namespace task5_5
 {
 	template< typename T >
@@ -13,6 +14,7 @@ namespace task5_5
 		typedef const T* const_iterator; // you could change this
 	public:
 		explicit vector();
+		~vector();
 		vector( const vector& copy );
 		vector& operator=( const vector& copy_from );
 
@@ -34,6 +36,11 @@ namespace task5_5
 
 		const_iterator begin() const;
 		const_iterator end() const;
+
+	private:
+		T* StartPos;
+		T* EndPos;
+		T* ReservedPos;
 	};
 
 	// TODO, please realise the rest methods according to the tests
@@ -41,83 +48,166 @@ namespace task5_5
 	template< typename T >
 	vector< T >::vector()
 	{
+		StartPos = new T[4];
+		EndPos = StartPos;
+		ReservedPos = StartPos + 4;
 	}
+
 	template< typename T >
-	vector< T >::vector( const vector< T >&  )
+	vector< T >::~vector()
 	{
+		delete [] StartPos;
 	}
+
+
 	template< typename T >
-	vector< T >& vector< T >::operator=( const vector< T >&  )
+	vector< T >::vector( const vector< T >&  copy)
 	{
+		StartPos = 0;
+		EndPos = 0;
+		ReservedPos = 0;
+
+		*this = copy;
+	}
+
+	template< typename T >
+	vector< T >& vector< T >::operator=( const vector< T >& copy_from)
+	{
+		if (&copy_from == this)
+			return *this;
+
+		delete [] StartPos;
+
+		StartPos = new T[copy_from.capacity()];
+		ReservedPos = StartPos + copy_from.capacity();
+		EndPos = StartPos + copy_from.size();	
+
+		for (size_t i = 0; i < copy_from.size(); i++)
+		{
+			*(StartPos + i) = copy_from[i];
+		}
+
 		return *this;
 	}
 
 	template< typename T >
-	void vector< T >::push_back( const T& )
+	void vector< T >::push_back( const T& value)
 	{
+		if (EndPos == ReservedPos)
+			this->reserve(this->capacity()*2);
+
+
+		*(EndPos) = value;
+		EndPos++;
 	}
 
 	template< typename T >
-	void vector< T >::insert( const size_t , const T&  )
+	void vector< T >::insert( const size_t index, const T& value )
 	{
+		if( index >= size() )
+			throw std::out_of_range("incorrect index");
+
+		resize(size()+1);
+
+		for(iterator it = EndPos-1; it > StartPos + index; it--)
+		{
+			*it = *(it-1);
+		}
+
+		*(StartPos+ index) = value;
+
 	}
 
 	template< typename T >
-	T& vector< T >::operator[]( const size_t  )
+	T& vector< T >::operator[]( const size_t index)
 	{
-		return *(new T());
+		if( index >= this->size() )
+			throw std::out_of_range("incorrect index");
+
+		return *(StartPos + index);
 	}
 
 	template< typename T >
-	const T& vector< T >::operator[]( const size_t  ) const
+	const T& vector< T >::operator[]( const size_t  index) const
 	{
-		return *(new T());
+		if( index >= this->size() )
+			throw std::out_of_range("incorrect index");
+
+		return *(StartPos + index);
 	}
 
 	template< typename T >
-	void vector< T >::resize( const size_t  )
+	void vector< T >::resize( const size_t  amount)
 	{
+		if( amount > capacity())
+			reserve(amount);
+
+		if ((size_t)(EndPos - StartPos)<amount)
+		{
+			size_t num = (size_t)(ReservedPos - EndPos);
+			memset(EndPos, 0, num*sizeof(T));
+		}
+		EndPos = StartPos + amount;
+
 	}
 	template< typename T >
-	void vector< T >::reserve( const size_t  )
+	void vector< T >::reserve( const size_t  amount)
 	{
+		if (amount > capacity())
+		{
+			T* tempStartPos;
+			const size_t sz = size();
+
+			tempStartPos = new T[amount];
+			memcpy(tempStartPos, StartPos, sizeof(T)*sz);
+
+			delete [] StartPos;
+			StartPos = tempStartPos;
+			EndPos = StartPos + sz;
+			ReservedPos = StartPos + amount;
+		}
 	}
 
 	template< typename T >
 	size_t vector< T >::size() const
 	{
-		return 0ul;
+		return EndPos - StartPos;
 	}
+
 	template< typename T >
 	size_t vector< T >::capacity() const
 	{
-		return 0ul;
+		return ReservedPos - StartPos;
 	}
+
 	template< typename T >
 	bool vector< T >::empty() const
 	{
 		return false;
 	}
+
 	template< typename T >
 	typename vector< T >::iterator vector< T >::begin()
 	{
-		return new T;
+		return StartPos;
 	}
+
 	template< typename T >
 	typename vector< T >::iterator vector< T >::end()
 	{
-		return new T;
+		return EndPos;
 	}
 	
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::begin() const
 	{
-		return new T;
+		return StartPos;
 	}
+
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::end() const
 	{
-		return new T;
+		return EndPos;
 	}
 }
 
