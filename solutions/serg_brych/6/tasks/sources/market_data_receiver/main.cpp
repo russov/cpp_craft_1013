@@ -3,14 +3,9 @@
 #include <cstdint>
 #include <boost/thread.hpp>
 
-
-
-
 static void signalHandler( int signum )
 {
     std::cout << "Prepare to end please wait." << std::endl;
-
-
 	exit(signum);  
 }
 
@@ -22,5 +17,8 @@ int main()
 		std::cout << "Program working....." << std::endl;
 		boost::this_thread::sleep(boost::posix_time::seconds(1));
 	}
+
+
+
 	return 0;
 }
