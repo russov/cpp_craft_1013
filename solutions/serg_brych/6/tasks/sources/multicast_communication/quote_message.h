@@ -5,7 +5,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/assign.hpp>
 
-
 #include <math.h>
 #include <map>
 
@@ -49,6 +48,12 @@ namespace multicast_communication
 			lq_denominato_len = 1,
 			lq_price_len = 12,
 			lq_volume_len = 7,
+		};
+
+		enum quote_signature
+		{
+			sig_short_quote = 'D',
+			sig_long_quote = 'B',
 		};
 	
 		std::string security_symbol_;

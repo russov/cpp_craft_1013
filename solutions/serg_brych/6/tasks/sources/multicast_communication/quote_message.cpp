@@ -27,7 +27,7 @@ std::string get_string(std::istream& data)
 }
 
 multicast_communication::quote_message::quote_message():
-	security_symbol_(""), bid_price_(0.0), bid_volume_(0.0),offer_price_(0.0), offer_volume_(0.0)
+	security_symbol_(""), bid_price_(0.0), bid_volume_(0.0),offer_price_(0.0), offer_volume_(0.0), type_(quote_type::unknown_quote)
 {
 
 }
@@ -40,11 +40,11 @@ bool multicast_communication::quote_message::parse_quote(std::istream &data)
 
 	switch(msg_type)
 	{
-	case 'D':
+	case quote_signature::sig_short_quote:
 		parse_short_quote(data);
 		type_ = quote_type::short_quote;
 		return true;
-	case 'B':
+	case quote_signature::sig_long_quote:
 		parse_long_quote(data);
 		type_ = quote_type::long_quote;
 		return true;
