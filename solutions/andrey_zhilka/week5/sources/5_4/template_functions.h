@@ -2,43 +2,92 @@
 #define _TASK5_4_TEMPLATE_FUNCTIONS_H_
 
 #include <functional>
-#include <algorithm>
-#include <iostream>
 
 namespace task5_4
 {
-	std::equal_to< bool > should_delete;
-
-	template <typename T>
-	class delete_ptr
+	template< bool delete_first, typename Container >
+	void clear_container( Container& c )
 	{
-		void operator()(T ptr)
+		MonoHelper< delete_first, Container >::clear_container( c );
+	}
+
+	template< bool delete_first, typename Container >
+	struct MonoHelper 
+	{
+		static void clear_container( Container& c )
 		{
-			delete ptr;
+			c.clear();
+		}
+	};
+
+	template< typename Container >
+	struct MonoHelper< true, Container >
+	{
+		static void clear_container( Container& c )
+		{
+			for ( typename Container::iterator i = c.begin(); i != c.end(); i++ )
+			{
+				delete *i;
+			}
+
+			c.clear();
+		}
+	};
+
+	template< bool delete_first, bool delete_second, typename Container >
+	void clear_container( Container& c )
+	{
+		BiHelper< delete_first, delete_second, Container >::clear_container( c );
+	}
+
+	template< bool delete_first, bool delete_second, typename Container >
+	struct BiHelper
+	{
+		static void clear_container( Container& c )
+		{
+			c.clear();
+		}
+	};
+
+	template< typename Container >
+	struct BiHelper< true, true, Container >
+	{
+		static void clear_container( Container& c )
+		{
+			for ( typename Container::iterator i = c.begin(); i != c.end(); i++ )
+			{
+				delete i->first;
+				delete i->second;
+			}
+			c.clear();
+		}
+	};
+
+	template< bool delete_second, typename Container >
+	struct BiHelper< true, delete_second, Container >
+	{
+		static void clear_container( Container& c )
+		{
+			for ( typename Container::iterator i = c.begin(); i != c.end(); i++ )
+			{
+				delete i->first;
+			}
+			c.clear();
 		}
 	};
 
 	template< bool delete_first, typename Container >
-	void clear_container( Container& );
-
-	template< typename Container >
-	void clear_container< true, Container >( Container& container)
+	struct BiHelper< delete_first, true, Container >
 	{
-		std::for_each( container.begin(), container.end(), 
-			delete_ptr<Container::value_type>() );
-		container.clear();
-	}
-
-	template< typename Container >
-	void clear_container< false, Container >( Container& container)
-	{
-		container.clear();
-	}
-
-	template< bool delete_first, bool delete_second, typename Container >
-	void clear_container( Container& container)
-	{
-	}
+		static void clear_container( Container& c )
+		{
+			for ( typename Container::iterator i = c.begin(); i != c.end(); i++ )
+			{
+				delete i->second;
+			}
+			c.clear();
+		}
+	};
 }
 
 
