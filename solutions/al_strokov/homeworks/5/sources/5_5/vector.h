@@ -125,23 +125,23 @@ namespace task5_5
 	template< typename T >
 	typename vector< T >::iterator vector< T >::begin()
 	{
-		return &(*v_.begin());
+		return &(v_[0]);
 	}
 	template< typename T >
 	typename vector< T >::iterator vector< T >::end()
 	{
-		return &(*v_.begin()) + v_.size();
+		return &(v_[0]) + v_.size();
 	}
 	
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::begin() const
 	{
-		return &(*v_.begin());
+		return &(v_[0]);
 	}
 	template< typename T >
 	typename vector< T >::const_iterator vector< T >::end() const
 	{
-		return &(*v_.begin()) + v_.size();
+		return &(v_[0]) + v_.size();
 	}
 }
 
