@@ -183,7 +183,7 @@ namespace task5_5
 	template< typename T >
 	bool vector< T >::empty() const
 	{
-		return false;
+		return (size()==0);
 	}
 
 	template< typename T >
