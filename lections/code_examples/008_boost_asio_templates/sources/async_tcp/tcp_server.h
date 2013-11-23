@@ -45,8 +45,8 @@ namespace async_tcp
 
 	public:
 		explicit client_manager( boost::asio::io_service& service )
-			: buffer_( NULL )
-			, message_length_( 0 )
+			: message_length_( 0 )
+			, buffer_( NULL )
 		{
 			using namespace boost::asio::ip;
 			socket_.reset( new tcp::socket( service ) );

@@ -55,7 +55,7 @@ void tcp_client::read_string_handler_( const boost::system::error_code& er )
 	manager_.message_read();	
 	socket_.async_receive( boost::asio::buffer( &length_, sizeof( length_ ) ), boost::bind( &tcp_client::read_string_length_handler_, this, _1 ) );
 }
-void tcp_client::write_string_handler_( const boost::system::error_code& er )
+void tcp_client::write_string_handler_( const boost::system::error_code& )
 {
 	manager_.message_sent();
 }
