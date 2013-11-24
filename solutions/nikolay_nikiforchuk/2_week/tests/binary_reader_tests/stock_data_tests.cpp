@@ -1,3 +1,6 @@
+#define BOOST_FILESYSTEM_VERSION 3 // for boost 1.44, only
+#define BOOST_FILESYSTEM_NO_DEPRECATED
+
 #include "test_registrator.h"
 
 #include <vector>

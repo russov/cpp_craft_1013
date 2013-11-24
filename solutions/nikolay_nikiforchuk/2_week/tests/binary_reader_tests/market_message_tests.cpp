@@ -1,3 +1,6 @@
+#define BOOST_FILESYSTEM_VERSION 3
+#define BOOST_FILESYSTEM_NO_DEPRECATED
+
 #include "test_registrator.h"
 #include "market_message.h"
 
