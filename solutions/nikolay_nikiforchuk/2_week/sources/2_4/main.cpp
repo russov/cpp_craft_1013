@@ -14,7 +14,12 @@ class Message
 			MARKET_CLOSE = 4
 		};
 		Message(const uint32_t type, const uint32_t time, 
-			const uint32_t len, const char msg){}
+			const uint32_t len, const char msg){
+				this->type = type;
+				this->time = time;
+				this->len = len;
+				*this->msg = msg;
+		}
 		~Message(){}
 
 		uint32_t get_type();
@@ -30,13 +35,13 @@ class Message
 		char *msg;
 };
 
-Message::Message(const uint32_t type, const uint32_t time,
+/*Message::Message(const uint32_t type, const uint32_t time,
 	const uint32_t len, const char msg){
 		this->type = type;
 		this->time = time;
 		this->len = len;
 		*this->msg = msg;
-}
+}*/
 
 uint32_t Message::get_type(){
 	return this->type;
@@ -51,8 +56,8 @@ char Message::get_msg(){
 	return *this->msg;
 };
 void Message::toString(){
-	std::cout << "Msg lenght:" << this->get_len << "::msg:" << this->get_msg() << "::type:"
-		<< this->get_type << "::time:" << this->get_time;
+	std::cout << "Msg lenght:" << this->get_len() << "::msg:" << this->get_msg() << "::type:"
+		<< this->get_type() << "::time:" << this->get_time() << std::ends;
 }
 
 class IBinaryReader{
@@ -101,13 +106,13 @@ std::vector<Message> BinaryReader::readAll(std::ifstream &is){
 std::string in_file = BINARY_DIR "/2.4_example.in";
 std::string out_file = BINARY_DIR "/out.txt";
 std::vector<Message> messages;
-BinaryReader reader;
+BinaryReader *reader;
 int main()
 {	
 	reader = new BinaryReader();
 	std::ifstream is(in_file, std::ifstream::binary);
 	if (is){
-		messages = reader.readAll();
+		messages = (*reader).readAll(is);
 	}
 	std::ifstream os(out_file, std::ofstream::binary);
 }
