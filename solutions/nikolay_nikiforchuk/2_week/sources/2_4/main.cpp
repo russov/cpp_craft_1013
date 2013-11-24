@@ -3,8 +3,9 @@
 #include <string>
 #include <stdint.h>
 #include <vector>
+#include <market_message.h>
 
-class Message
+/*class Message
 {
 	public:
 		const static enum TYPES {
@@ -33,7 +34,7 @@ class Message
 		uint32_t time;
 		uint32_t len;
 		char *msg;
-};
+};*/
 
 /*Message::Message(const uint32_t type, const uint32_t time,
 	const uint32_t len, const char msg){
@@ -43,39 +44,36 @@ class Message
 		*this->msg = msg;
 }*/
 
-uint32_t Message::get_type(){
+uint32_t market_message::type(){
 	return this->type;
 };
-uint32_t Message::get_time(){
+uint32_t market_message::time(){
 	return this->time;
 };
-uint32_t Message::get_len(){
-	return this->len;
-};
-char Message::get_msg(){
+char market_message::msg(){
 	return *this->msg;
 };
 void Message::toString(){
-	std::cout << "Msg lenght:" << this->get_len() << "::msg:" << this->get_msg() << "::type:"
-		<< this->get_type() << "::time:" << this->get_time() << std::ends;
+	std::cout << "msg:" << this->msg() << "::type:"
+		<< this->type() << "::time:" << this->time() << std::ends;
 }
 
 class IBinaryReader{
 	public:
-		virtual Message readMessage(std::ifstream &is);
+		virtual market_message readMessage(std::ifstream &is);
 };
 
 class BinaryReader : IBinaryReader {
 	public:
 		BinaryReader();
-		Message readMessage(std::ifstream &is);
-		std::vector<Message> readAll(std::ifstream &is);
+		market_message readMessage(std::ifstream &is);
+		std::vector<market_message> readAll(std::ifstream &is);
 		//TODO implements set message filter
 		~BinaryReader();
 };
 
-Message BinaryReader::readMessage(std::ifstream &is){
-	Message *message;
+market_message BinaryReader::readMessage(std::ifstream &is){
+	market_message *message;
 	uint32_t type;
 	uint32_t time;
 	uint32_t len;
@@ -90,13 +88,13 @@ Message BinaryReader::readMessage(std::ifstream &is){
 		msg = "";
 		std::cout << "Zero lengh message found" << std::ends;
 	}
-	message = new Message(type, time, len, *msg);
+	message = new market_message(type, time, len, *msg);
 	(*message).toString();
 	return *message;
 };
 
-std::vector<Message> BinaryReader::readAll(std::ifstream &is){
-	std::vector<Message> messages;
+std::vector<market_message> BinaryReader::readAll(std::ifstream &is){
+	std::vector<market_message> messages;
 	if (is){
 		messages.push_back(readMessage(is));
 	}
@@ -105,7 +103,7 @@ std::vector<Message> BinaryReader::readAll(std::ifstream &is){
 
 std::string in_file = BINARY_DIR "/2.4_example.in";
 std::string out_file = BINARY_DIR "/out.txt";
-std::vector<Message> messages;
+std::vector<market_message> messages;
 BinaryReader *reader;
 int main()
 {	
