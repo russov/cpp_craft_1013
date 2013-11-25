@@ -113,8 +113,8 @@ bool multicast_communication::quote_message::parse_block(const std::string & dat
 {
 	std::stringstream input(data, std::stringstream::in);
 	quote_message_ptr message;
-
-	if( input.get() != Signatures::StartMessage)
+	char sep = input.get();
+	if( sep != Signatures::StartMessage)
 	{
 		return false;
 	}
@@ -127,10 +127,20 @@ bool multicast_communication::quote_message::parse_block(const std::string & dat
 		{
 			result.push_back(message);
 		}
+		sep = input.get();
 
-	}while(input && input.get() == Signatures::SeporatorMessage);
+		while(input)
+		{
+			if(sep == Signatures::SeporatorMessage)
+				break;
+			if(sep == Signatures::EndMessage)
+				break;
 
-	if( input.get() != Signatures::EndMessage )
+			sep = input.get();
+		}
+	}while(input &&  sep == Signatures::SeporatorMessage);
+
+	if( sep == Signatures::EndMessage )
     {        
         return false;
     }

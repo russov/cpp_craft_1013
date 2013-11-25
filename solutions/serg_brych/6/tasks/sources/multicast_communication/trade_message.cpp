@@ -94,8 +94,8 @@ bool multicast_communication::trade_message::parse_block(const std::string & dat
 {
 	std::stringstream input(data, std::stringstream::in);
 	trade_message_ptr message;
-
-	if( input.get() != Signatures::StartMessage)
+	char sep = input.get();
+	if( sep != Signatures::StartMessage)
 	{
 		return false;
 	}
@@ -108,7 +108,17 @@ bool multicast_communication::trade_message::parse_block(const std::string & dat
 		{
 			result.push_back(message);
 		}
+		sep = input.get();
 
+		while(input)
+		{
+			if(sep == Signatures::SeporatorMessage)
+				break;
+			if(sep == Signatures::EndMessage)
+				break;
+
+			sep = input.get();
+		}
 	}while(input && input.get() == Signatures::SeporatorMessage);
 
 	if( input.get() != Signatures::EndMessage )

@@ -42,7 +42,6 @@ void async_udp::udp_listener::listen_handler_(const boost::system::error_code& e
 		static const int NO_ENOUGHT_BUFFER = 234;
 		if ( error.value() == NO_ENOUGHT_BUFFER )
 		{
-			
 			register_listen_();
 		}
 		return;

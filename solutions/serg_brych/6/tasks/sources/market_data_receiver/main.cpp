@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <boost/thread.hpp>
 #include "market_data_receiver.h"
+#include "data_processor.h"
 
 
 static void signalHandler( int signum )
@@ -14,13 +15,14 @@ static void signalHandler( int signum )
 int main()
 {
 	signal(SIGINT, signalHandler);  
-	while(true)
-	{
-		std::cout << "Program working....." << std::endl;
-		boost::this_thread::sleep(boost::posix_time::seconds(1));
-	}
+	
+	multicast_communication::data_processor processor(std::cout);
+	multicast_communication::market_data_receiver receive(processor);
 
+	receive.run();
+		
+	boost::this_thread::sleep_for(boost::chrono::milliseconds(10000));
 
-
+	receive.stop();
 	return 0;
 }
