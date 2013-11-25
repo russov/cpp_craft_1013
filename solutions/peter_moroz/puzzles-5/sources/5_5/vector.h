@@ -54,7 +54,7 @@ namespace task5_5
   vector< T >::vector() : data_(NULL), size_(0), capacity_(0)
 	{
     // one additional element at the end means 'end of vector'
-    data_ = new T[kInitialCapacity + 1];
+    data_ = new T[kInitialCapacity + 1]();
     capacity_ = kInitialCapacity;
 	}
 	template< typename T >
@@ -64,14 +64,14 @@ namespace task5_5
     size_ = 0;
     capacity_ = 0;
 
-    T* data = new T[copy.capacity() + 1];
+    T* data = new T[copy.capacity() + 1]();
 
     T* dst = data;
     T* src = copy.data_;
     for (size_t i = 0; i < copy.size(); ++i) 
     {
       try {
-        *dst = T(*src);
+        *dst = *src;
         ++dst;
         ++src;
       } catch (...) {
@@ -88,13 +88,13 @@ namespace task5_5
 	{
     if (this != &copy_from)
     {
-      T* data = new T[copy_from.capacity() + 1];
+      T* data = new T[copy_from.capacity() + 1]();
       T* dst = data;
       T* src = copy_from.data_;
       for (size_t i = 0; i < copy_from.size(); ++i) 
       {
         try {
-          *dst = T(*src);
+          *dst = *src;
         } catch (...) {
           delete [] data;
           throw;
@@ -187,14 +187,14 @@ namespace task5_5
     {
       if (amount > capacity())
         reserve(amount);
-      size_t count = amount - size();
+      /*size_t count = amount - size();
       T* dst = data_ + size();
       while (count > 0)
       {
         *dst = T();
         ++dst;
         --count;
-      }
+      }*/
     }
     size_ = amount;
 	}
@@ -204,14 +204,14 @@ namespace task5_5
     if (amount > capacity())
     {
       // one additional element at the end means 'end of vector'
-      T* data = new T[amount + 1];
+      T* data = new T[amount + 1]();
       T* src = data_;
       T* dst = data;
       size_t count = size();
       while (count > 0)
       {
         try {
-          *dst = T(*src);
+          *dst = *src;
         } catch (...) {
           delete [] data;
           throw;
