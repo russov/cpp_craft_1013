@@ -55,16 +55,16 @@ namespace task5_5
 	{
     // one additional element at the end means 'end of vector'
     data_ = new T[kInitialCapacity + 1];
-    if (data_ == NULL)
-      throw std::bad_alloc("task5_5::vector() couldn't allocate memory.");
     capacity_ = kInitialCapacity;
 	}
 	template< typename T >
 	vector< T >::vector( const vector< T >& copy )
 	{
+    data_ = NULL;
+    size_ = 0;
+    capacity_ = 0;
+
     T* data = new T[copy.capacity() + 1];
-    if (data == NULL)
-      throw std::bad_alloc("task5_5::vector::vector - can't allocate memory");
 
     T* dst = data;
     T* src = copy.data_;
@@ -75,11 +75,6 @@ namespace task5_5
         ++dst;
         ++src;
       } catch (...) {
-        while (dst != data)
-        {
-          --dst;
-          dst->~T();
-        }
         delete [] data;
         throw;
       }
@@ -94,26 +89,18 @@ namespace task5_5
     if (this != &copy_from)
     {
       T* data = new T[copy_from.capacity() + 1];
-      if (data == NULL)
-        throw std::bad_alloc("task5_5::vector::operator= - can't allocate memory");
-
       T* dst = data;
       T* src = copy_from.data_;
       for (size_t i = 0; i < copy_from.size(); ++i) 
       {
         try {
           *dst = T(*src);
-          ++dst;
-          ++src;
         } catch (...) {
-          while (dst != data)
-          {
-            --dst;
-            dst->~T();
-          }
           delete [] data;
           throw;
         }
+        ++dst;
+        ++src;
       }
       delete [] data_;
       data_ = data;
@@ -127,18 +114,15 @@ namespace task5_5
   vector< T >::~vector()
   {
     delete [] data_;
+    data_ = NULL;
+    size_ = 0;
+    capacity_ = 0;
   }
 	template< typename T >
 	void vector< T >::push_back( const T& value )
 	{
     if (size() + 1 > capacity())
-    {
-      try {
-        grow();
-      } catch (std::bad_alloc&) {
-        throw;
-      }
-    }
+      grow();
     data_[size()] = value;
     ++size_;
 	}
@@ -147,13 +131,7 @@ namespace task5_5
 	void vector< T >::insert( const size_t index, const T& value )
 	{
     if (size() + 1 > capacity())
-    {
-      try {
-        grow();
-      } catch (std::bad_alloc&) {
-        throw;
-      }
-    }
+      grow();
       
     size_t count = size() - index;
     T* src = data_ + size();
@@ -162,11 +140,13 @@ namespace task5_5
     while (count > 0)
     {
       --src;
-      *dst = T(*src);
+      // I'm not sure abouth following expression ...
+      // What should we do, if assignment raise exception ?
+      *dst = *src;
       --dst;
       --count;
     }
-    *dst = T(value);
+    *dst = value;
 
     ++size_;
 	}
@@ -206,13 +186,7 @@ namespace task5_5
     else
     {
       if (amount > capacity())
-      {
-        try {
-          reserve(amount);
-        } catch (std::bad_alloc&) {
-          throw;
-        }
-      }
+        reserve(amount);
       size_t count = amount - size();
       T* dst = data_ + size();
       while (count > 0)
@@ -231,14 +205,17 @@ namespace task5_5
     {
       // one additional element at the end means 'end of vector'
       T* data = new T[amount + 1];
-      if (data == NULL)
-        throw std::bad_alloc("task5_5::vector::reserve() couldn't allocate memory.");
       T* src = data_;
       T* dst = data;
       size_t count = size();
       while (count > 0)
       {
-        *dst = T(*src);
+        try {
+          *dst = T(*src);
+        } catch (...) {
+          delete [] data;
+          throw;
+        }
         ++dst;
         ++src;
         --count;
@@ -289,11 +266,7 @@ namespace task5_5
   template< typename T >
   void vector<T>::grow()
   {
-    try {
-      reserve(capacity() * kGrowScale);
-    } catch (std::bad_alloc&) {
-      throw;
-    }
+    reserve(capacity() * kGrowScale);
   }
 }
 
