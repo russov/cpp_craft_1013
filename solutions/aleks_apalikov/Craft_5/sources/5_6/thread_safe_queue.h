@@ -59,14 +59,14 @@ namespace task5_6
 	template< typename T >
 	bool thread_safe_queue< T >::empty() const
 	{
-		lock_t push_lock(protector);
+		lock_t lock(protector);
 		return que.empty();
 	}
 
 	template< typename T >
 	size_t thread_safe_queue< T >::size() const
 	{
-		lock_t push_lock(protector);
+		lock_t lock(protector);
 		return que.size();
 	}
 

@@ -23,7 +23,7 @@ class Datafeed
 	ofstream out;
 	bool fileErr;
 public:
-	Datafeed(string & fileName);
+	Datafeed(string & in_name, string & out_name);
 	int createOutput(); //read elements one by one and output average values
 public:
 	~Datafeed(void);

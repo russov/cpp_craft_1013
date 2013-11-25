@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <string>
 
-Islands::Islands(string fileName)
+Islands::Islands(const string& fileName)
 {
 	string str = BINARY_DIR + string("/") + fileName;
 	fs.open(str.c_str(), fstream::in);

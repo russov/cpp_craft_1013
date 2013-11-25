@@ -1,13 +1,11 @@
 #include "buf.h"
 
 
-buf::buf( string & fileName ):TotalTypes(100000)
+buf::buf( string & in_name, string & out_name ):TotalTypes(100000)
 {
 	fileErr = false;
-	string fileN1 =  fileName + ".in"; 
-	in.open(fileN1.c_str(), fstream::in | fstream::binary);
-	string fileN2 = fileName + ".out"; 
-	out.open(fileN2.c_str(), fstream::out | fstream::binary);
+	in.open(in_name.c_str(), fstream::in | fstream::binary);
+	out.open(out_name.c_str(), fstream::out | fstream::binary);
 	if(!in.is_open() || !out.is_open())
 	{
 		cout << "File not found! "<<endl;
@@ -15,6 +13,7 @@ buf::buf( string & fileName ):TotalTypes(100000)
 		return;
 	}
 	numBytes.resize(TotalTypes + 1, 0);
+	messages.resize(TotalTypes + 1, 0);
 	totalBytes.resize(TotalTypes + 1, 0);
 
 }
@@ -38,9 +37,13 @@ int buf::createOutput()
 	UINT32 curTime = 0;
 	char* str = NULL;
 	bool toWrite = false;
-	DealsElem* de = NULL;
+	messages.assign(TotalTypes + 1, 0);
 	while (in)
 	{
+		if( in.peek() == EOF )
+		{
+			break;
+		}
 		type = read_uint32(in);
 		time = read_uint32(in);
 		if(time>curTime)
@@ -53,16 +56,11 @@ int buf::createOutput()
 			numBytes.assign(TotalTypes + 1, 0);
 		}		
 		len = read_uint32(in);
-		if ((numBytes[type] + len + 3 * sizeof(UINT32)) <= 2400)
+		if ((type<TotalTypes)&&((numBytes[type] + len + 3 * sizeof(UINT32)) <= 2048))
 		{
 			numBytes[type] += len + 3 * sizeof(UINT32);
+			messages[type] ++;
 		}
-		if( in.peek() == EOF )
-		{
-			break;
-		}
-		if(len == 0)
-			continue;
 		str = new char[len+1];
 		for (size_t i = 0; i < len; i++)
 		{
@@ -74,26 +72,27 @@ int buf::createOutput()
 		{
 			delete[] str;
 		}
+		if((len == 0) || (type > TotalTypes) )
+		{
+			continue;
+		}
 	}
 	for(vector<size_t>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); ++it, ++tb)
 	{
 		*tb += *it;
 	}
 	type = 0;
-	for(vector<size_t>::iterator tb = totalBytes.begin(); tb != totalBytes.end(); ++tb)
+
+	for(vector<size_t>::iterator tb = messages.begin(); tb != messages.end(); ++tb)
 	{
 		if (*tb == 0)
 		{
 			type++;
 			continue;
 		}
-		if (de)
-		{
-			delete de;
-		}
-
 		write_uint32(out, type);
-		write_double(out, (double)*tb/curTime);
+		double val = (double)*tb/curTime;
+		write_double(out, val);
 		type++;
 	}
 	return n;

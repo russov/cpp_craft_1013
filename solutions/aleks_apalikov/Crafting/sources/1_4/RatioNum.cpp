@@ -2,7 +2,7 @@
 #include <math.h>
 #include <string>
 
-RatioNum::RatioNum(string fileName)
+RatioNum::RatioNum(const string& fileName)
 {
 	string str = BINARY_DIR + string("/") + fileName;
 	fs.open(str.c_str(), fstream::in);
@@ -38,13 +38,13 @@ int RatioNum::check()
 	float pass;
 
 	bool concur;
-	float prev = 0;
 	while (!fs.eof())
 	{
 		concur = false;
-		fs>>pass;
-		if(prev == pass) // in the case of empty last line
+		char c[20];
+		if(fs.peek() == EOF)
 			break;
+		fs>>pass;
 		passes.push_back(pass);
 		for(vector<float>::iterator it = codes.begin(); it < codes.end(); it++)
 		{
@@ -52,7 +52,7 @@ int RatioNum::check()
 		}
 		string ans = concur ? "Yes\n" : "No\n";
 		of << ans.c_str();
-		prev = pass;
+		fs.getline(c, 20); //read all spaces after float and \n symbol
 	}
 	
 	return count;

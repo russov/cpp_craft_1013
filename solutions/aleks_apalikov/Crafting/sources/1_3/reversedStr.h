@@ -13,7 +13,7 @@ class ReversedStr
 	string current;
 	int count;
 public:
-	ReversedStr(string fileName); //read 1st line
+	ReversedStr(const string& fileName = "Input.txt"); //read 1st line
 
 	string toLower(string);
 

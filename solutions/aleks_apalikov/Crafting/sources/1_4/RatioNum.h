@@ -11,7 +11,7 @@ class RatioNum
 	vector<float> codes;
 	vector<float> passes;
 public:
-	RatioNum(string fileName);
+	RatioNum(const string& fileName = "Input2.txt");
 	int check();
 	~RatioNum(void);
 };

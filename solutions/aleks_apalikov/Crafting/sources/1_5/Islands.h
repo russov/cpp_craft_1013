@@ -13,7 +13,7 @@ class Islands
 	vector<vector<int>> Map;
 	int Trace();
 public:
-	Islands(string f = "Input3.txt");
+	Islands(const string& f = "Input3.txt");
 	int Count();
 	void changeAll(const int old, const int ne);
 	~Islands(void);

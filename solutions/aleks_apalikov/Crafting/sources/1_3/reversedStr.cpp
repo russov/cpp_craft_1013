@@ -5,7 +5,7 @@
 using namespace std;
 
 
-ReversedStr::ReversedStr(string fileName)
+ReversedStr::ReversedStr(const string& fileName)
 {
 	string str = BINARY_DIR + string("/") + fileName;
 	cout << str;

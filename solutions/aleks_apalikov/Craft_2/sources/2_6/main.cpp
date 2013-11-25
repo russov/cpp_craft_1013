@@ -3,8 +3,10 @@
 
 int main(int argc, char** argv)
 {
-	std::string s = BINARY_DIR "/input_261.txt";
-	Datafeed df(s);
+	char * num = "_261";
+	std::string in_file = BINARY_DIR "/input" + string(num) + ".txt";
+	std::string out_file = BINARY_DIR "/output" + string(num) + ".txt";
+	Datafeed df(in_file, out_file);
 	df.createOutput();
 	return 0;
 }

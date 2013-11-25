@@ -1,13 +1,11 @@
 #include "Datafeed.h"
 //now working only with 0x20 symbols instead of 0x0
 
-Datafeed::Datafeed( string & fileName )
+Datafeed::Datafeed( string & in_name, string & out_name )
 {
 	fileErr = false;
-	string fileN1 = fileName + ".in"; 
-	in.open(fileN1.c_str(), fstream::in | fstream::binary);
-	string fileN2 = fileName + ".out"; 
-	out.open(fileN2.c_str(), fstream::out | fstream::binary);
+	in.open(in_name.c_str(), fstream::in | fstream::binary);
+	out.open(out_name.c_str(), fstream::out | fstream::binary);
 	if(!in.is_open() || !out.is_open())
 	{
 		cout << "File not found! "<<endl;
@@ -68,10 +66,10 @@ int Datafeed::createOutput()
 
 UINT32 Data::days()
 {
-	int total = (date_time / 10000) * 372;
+	int total = ((date_time / 10000) - 1)* 372;
 	int month = (date_time % 10000) /100;
 	int days = date_time % 100;
-	total += month * 31 + days;
+	total += (month - 1) * 31 + days;
 	ds = total;
 	return total;
 }
