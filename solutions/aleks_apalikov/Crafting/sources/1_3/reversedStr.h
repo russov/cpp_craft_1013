@@ -13,7 +13,6 @@ class ReversedStr
 	string current;
 	int count;
 public:
-	static const string path;
 	ReversedStr(string fileName); //read 1st line
 
 	string toLower(string);

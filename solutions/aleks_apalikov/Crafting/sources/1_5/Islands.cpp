@@ -2,10 +2,10 @@
 #include <assert.h>
 #include <string>
 
-Islands::Islands(void)
+Islands::Islands(string fileName)
 {
-	//	string str = reversedStr::path + fileName;
-	fs.open("input3.txt", fstream::in);
+	string str = BINARY_DIR + string("/") + fileName;
+	fs.open(str.c_str(), fstream::in);
 
 	int n = 0;
 	if(!fs.is_open()) {
@@ -34,9 +34,9 @@ Islands::Islands(void)
 		Map.pop_back();
 	}
 	columns = Map[rows-1].size();
-	of.open("Output3.txt", fstream::out  | fstream::trunc );
+	string out_s = BINARY_DIR + string("/") + "Output3.txt";
+	of.open(out_s.c_str(), fstream::out  | fstream::trunc );
 
-	//str = path + "Output.txt";
 	if(!of.is_open()) {
 		printf("Output3 failed to open!");
 	}

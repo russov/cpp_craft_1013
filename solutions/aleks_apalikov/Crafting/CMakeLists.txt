@@ -4,7 +4,6 @@ set( CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "Configurations"
 project( ${SOLUTION_NAME} )
 include( environment.cmake required )
 
-modules( DealsElem )
-binaries( 2_4_Deals 2_5 2_6 )
+binaries( 1_3 1_4 1_5 )
 
 compile()
