@@ -57,7 +57,9 @@ int Datafeed::createOutput()
 		write_uint32(out, d->ds);
 		write_double(out, d->vwap);
 		write_uint32(out, d->volume);
-		write_double(out, d->f2);
+		write_double(out, d->f1);
+		write_double(out, d->f4);
+		write_double(out, d->f3);
 		n++;
 		delete d;
 	}
