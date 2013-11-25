@@ -11,7 +11,7 @@ class Deals
 	ofstream out;
 	bool fileErr;
 public:
-	Deals(string & fileName);
+	Deals(string & file_name, string & out_file);
 	int createOutput(); //read one element and output if condtions are true
 	~Deals(void);
 };

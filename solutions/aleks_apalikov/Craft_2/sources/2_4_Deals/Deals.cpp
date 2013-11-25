@@ -1,12 +1,10 @@
 #include "Deals.h"
 
-Deals::Deals( string & fileName )
+Deals::Deals( string & file_name, string & out_file )
 {
 	fileErr = false;
-	string fileN1 = fileName + ".in"; 
-	in.open(fileN1.c_str(), fstream::in | fstream::binary);
-	string fileN2 = fileName + ".out"; 
-	out.open(fileN2.c_str(), fstream::out | fstream::binary);
+	in.open(file_name.c_str(), fstream::in | fstream::binary);
+	out.open(out_file.c_str(), fstream::out | fstream::binary);
 	if(!in.is_open() || !out.is_open())
 	{
 		cout << "File not found! "<<endl;
@@ -75,16 +73,16 @@ int Deals::createOutput()
 			in.read(&(str[i]), 1);
 //			str[i] = in.get();
 		}
-		if( in.peek() == EOF )
-		{
-			break;
-		}
 		str[len] = '\0';
 		n++;
 		de = new DealsElem(type, time, len, str);
 		if (toWrite)
 		{
 			de->operator <<(out);
+		}
+		if( in.peek() == EOF )
+		{
+			break;
 		}
 	}
 

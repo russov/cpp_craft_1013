@@ -25,8 +25,7 @@ DealsElem::~DealsElem(void)
 
 UINT32 write_uint32( ofstream& outs, UINT32 value)
 {
-	for (unsigned size = 0; size < sizeof( UINT32 ); ++size)
-		outs.put(value << (8 * size));
+	outs.write( reinterpret_cast< const char* >( &value ), sizeof( UINT32 ) );
 	return value;
 }
 /*

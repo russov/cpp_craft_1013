@@ -3,9 +3,10 @@
 
 int main(int argc, char** argv)
 {
-	const string searchPath = "D:\\LekS Files\\Ccraft\\cpp_craft_1013\\solutions\\aleks_apalikov\\Crafting 2\\sources\\buffer\\";
-	string s =  searchPath + "2.4";
-	Deals d(s);
+	const string searchPath = BINARY_DIR + string("/");
+	string s =  searchPath + "input_242.txt";
+	string out_f = searchPath + "output_242.txt";
+	Deals d(s, out_f);
 	d.createOutput();
 	return 0;
 }
