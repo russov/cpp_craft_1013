@@ -31,8 +31,10 @@ void async_udp::udp_listener::socket_reload_()
 
 void async_udp::udp_listener::register_listen_()
 {
+	char* const buffer_start = &(*buffer_->begin());
+
 	using namespace boost::asio::placeholders;
-	socket_.async_receive(boost::asio::buffer(buffer_.get(), max_buffer_size), boost::bind( &udp_listener::listen_handler_, this, error, bytes_transferred ) );
+	socket_.async_receive(boost::asio::buffer(buffer_start, max_buffer_size), boost::bind( &udp_listener::listen_handler_, this, error, bytes_transferred ) );
 }
 
 void async_udp::udp_listener::listen_handler_(const boost::system::error_code& error, const size_t bytes_received )

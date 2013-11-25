@@ -13,7 +13,8 @@ namespace multicast_communication
 	class config_reader : virtual protected boost::noncopyable
 	{
 	public:
-		config_reader(const std::string &);
+		explicit config_reader(const std::string &);
+		explicit config_reader(size_t,  size_t, addresses_and_ports &, addresses_and_ports &);
 		size_t get_trade_thread_size() const;
 		size_t get_quote_thread_size() const;
 		addresses_and_ports get_trade_adr_and_ports() const;

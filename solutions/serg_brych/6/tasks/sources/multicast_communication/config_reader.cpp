@@ -25,6 +25,14 @@ multicast_communication::config_reader::config_reader(const std::string &config_
 	}
 }
 
+multicast_communication::config_reader::config_reader(size_t trade_thread_size,  size_t quote_thread_size, 
+			addresses_and_ports &trade_adr_ports, addresses_and_ports &quote_adr_ports):
+			trade_thread_size_(trade_thread_size),quote_thread_size_(quote_thread_size), 
+			trade_adr_ports_(trade_adr_ports), quote_adr_ports_(quote_adr_ports)
+{
+	
+}
+
 size_t multicast_communication::config_reader::get_trade_thread_size() const
 {
 	return trade_thread_size_;
