@@ -5,11 +5,17 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/assign.hpp>
 
-#include <math.h>
-#include <map>
+#include <list>
+#include <iomanip>
+
+#include "msg_utility.h"
 
 namespace multicast_communication
 {
+	class quote_message;
+	typedef boost::shared_ptr< quote_message > quote_message_ptr;
+	typedef std::list<quote_message_ptr> quote_message_list_ptr;
+
 	class quote_message
 	{
 	public:
@@ -69,6 +75,7 @@ namespace multicast_communication
 		quote_message();
 		bool parse_quote(std::istream &);
 		std::string security_symbol() const;
+		static bool parse_block(const std::string &, quote_message_list_ptr &);
 		double bid_price() const;
 		double bid_volume() const;
 		double offer_price() const;
@@ -76,7 +83,7 @@ namespace multicast_communication
 		quote_type type() const;
 	};
 
-	typedef boost::shared_ptr< quote_message > quote_message_ptr;
+	std::ostream& operator<<( std::ostream& output, quote_message& msg );
 }
 
 #endif // _MULTICAST_COMMUNICATION_QUOTE_MESSAGE_H_

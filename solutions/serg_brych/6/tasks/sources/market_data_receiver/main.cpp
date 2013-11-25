@@ -2,6 +2,8 @@
 #include <csignal>
 #include <cstdint>
 #include <boost/thread.hpp>
+#include "market_data_receiver.h"
+
 
 static void signalHandler( int signum )
 {

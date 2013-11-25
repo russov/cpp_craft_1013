@@ -6,8 +6,8 @@
 #include <boost/noncopyable.hpp>
 namespace multicast_communication
 {
-
-	typedef std::vector< std::pair<std::string, unsigned short> > addresses_and_ports;
+	typedef std::pair<std::string, unsigned short> address_and_port;
+	typedef std::vector< address_and_port > addresses_and_ports;
 
 
 	class config_reader : virtual protected boost::noncopyable

@@ -1,30 +1,5 @@
 #include "quote_message.h"
-
-
-static const std::map< const char, double > denominator_map = boost::assign::map_list_of
-    ('3' , 8.0) ('4' , 16.0) ('5' , 32.0) ('6' , 64.0) ('7' , 128.0) ('8' , 256.0)
-    ('A' , 10.0) ('B' , 100.0) ('C' , 1000.0 ) ('D' , 10000.0 )
-    ('E' , 100000.0 ) ('F' , 1000000.0 ) ('G' , 10000000.0  )
-    ('H' , 100000000.0 )
-	('I' , 1.0)
-    ;
-
-
-template<size_t size>
-double get_number(std::istream& data)
-{
-    char buffer[ size ];
-    data.read( buffer, size );
-    return boost::lexical_cast< double >( buffer, size );
-}
-
-template<size_t size>
-std::string get_string(std::istream& data)
-{
-    char buffer[ size ];
-    data.read( buffer, size );
-    return std::string( buffer , size );
-}
+#include "msg_utility.h"
 
 multicast_communication::quote_message::quote_message():
 	security_symbol_(""), bid_price_(0.0), bid_volume_(0.0),offer_price_(0.0), offer_volume_(0.0), type_(quote_type::unknown_quote)
@@ -122,4 +97,42 @@ double multicast_communication::quote_message::offer_volume() const
 multicast_communication::quote_message::quote_type multicast_communication::quote_message::type() const
 {
 	return type_;
+}
+
+std::ostream& multicast_communication::operator<<( std::ostream& output, quote_message& msg )
+{
+   output  << std::fixed << "Q " << msg.security_symbol() << " " <<
+        std::setprecision( 2 )  << msg.bid_price() << " " <<
+        std::setprecision( 1 ) << msg.bid_volume() << " " <<
+        std::setprecision( 2 ) << msg.offer_price() << " " <<
+        std::setprecision( 1 ) << msg.offer_volume() << std::endl;
+    return output;
+}
+
+bool multicast_communication::quote_message::parse_block(const std::string & data, quote_message_list_ptr &result)
+{
+	std::stringstream input(data, std::stringstream::in);
+	quote_message_ptr message;
+
+	if( input.get() != Signatures::StartMessage)
+	{
+		return false;
+	}
+
+	do
+	{
+		message.reset(new quote_message());
+		message->parse_quote(input);
+		if(message->type() != unknown_quote)
+		{
+			result.push_back(message);
+		}
+
+	}while(input && input.get() == Signatures::SeporatorMessage);
+
+	if( input.get() != Signatures::EndMessage )
+    {        
+        return false;
+    }
+	return true;
 }

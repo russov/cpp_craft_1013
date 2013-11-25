@@ -3,12 +3,18 @@
 
 #include "market_data_processor.h"
 #include "config_reader.h"
+#include "udp_listener.h"
+
 
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+
 
 #include <string>
+#include <stdexcept>
 
 static const std::string config_file("config.ini");
 
@@ -20,12 +26,15 @@ namespace multicast_communication
 		boost::scoped_ptr<config_reader> config_;
 		boost::thread_group	quote_threads_;
 		boost::thread_group	trade_threads_;
+		boost::asio::io_service	service_;
+		market_data_processor& processor_;
+
+		void quote_thread(multicast_communication::address_and_port &);
+		void trade_thread(multicast_communication::address_and_port &);
+
 	public:
-		market_data_receiver():config_(new config_reader(config_file))
-		{
-			
-		};
-		
+		explicit market_data_receiver(market_data_processor &);
+		~market_data_receiver();
 		void run();
 		void stop();
 

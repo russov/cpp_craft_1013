@@ -4,10 +4,17 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/assign.hpp>
+#include <list>
+#include <iomanip>
 
+#include "msg_utility.h"
 
 namespace multicast_communication
 {
+	class trade_message;
+	typedef boost::shared_ptr< trade_message > trade_message_ptr;
+	typedef std::list<trade_message_ptr> trade_message_list_ptr;
+
 	class trade_message
 	{
 	public:
@@ -61,13 +68,15 @@ namespace multicast_communication
 	public:
 		trade_message();
 		bool parse_trade(std::istream &);
+		static bool parse_block(const std::string &, trade_message_list_ptr &);
 		std::string security_symbol() const;
 		double price() const;
 		double volume() const;
 		trade_type type() const;
 	};
 
-	typedef boost::shared_ptr< trade_message > trade_message_ptr;
+	std::ostream& operator<<( std::ostream& output, trade_message& msg );
+	
 }
 
 #endif // _MULTICAST_COMMUNICATION_TRADE_MESSAGE_H_
