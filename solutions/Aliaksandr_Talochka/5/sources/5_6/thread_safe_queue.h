@@ -44,7 +44,7 @@ namespace task5_6
 		while(sz!=0)
 		{
 			queue_member* tmpPtr = ToPopPtr->NextPtr;
-			delete [] ToPopPtr;
+			delete ToPopPtr;
 			ToPopPtr = tmpPtr;
 			sz--;
 		}
@@ -85,7 +85,7 @@ namespace task5_6
 		{
 			result = ToPopPtr->Data;
 			queue_member* tmpPtr = ToPopPtr->NextPtr;
-			delete [] ToPopPtr;
+			delete ToPopPtr;
 			ToPopPtr = tmpPtr;
 			sz--;
 			out = true;
