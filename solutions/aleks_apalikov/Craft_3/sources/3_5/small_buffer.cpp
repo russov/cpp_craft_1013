@@ -4,7 +4,7 @@
 #include <vector>
 #include "boost/shared_ptr.hpp"
 #include <sstream>
-#include "trades_filter.h"
+#include "Trade.h"
 
 using namespace std;
 class processor{
@@ -19,7 +19,7 @@ public:
 	  {
 		  stringstream output;
 		  output << BINARY_DIR << "/output" << ".txt";
-		  outp.open( output.str().c_str(), fstream::binary | fstream::out);
+		  outp->open( output.str().c_str(), fstream::binary | fstream::out);
 	  }
 		  
 
@@ -28,7 +28,7 @@ public:
 	{
 		if(count == 0)
 		{
-			output.close();
+			outp->close();
 		}
 	}
 	int process_data()
@@ -51,7 +51,7 @@ public:
 		  return -1;
 	  }
 	  ifstream inp( input.str().c_str(), fstream::binary | fstream::in);
-	  if(!inp.is_open() || !outp.is_open())
+	  if(!inp.is_open() || !outp->is_open())
 	  {
 		  cout << "File not found! "<<endl;
 		  return 1;
@@ -87,7 +87,7 @@ public:
 			  break;
 		  if (toWrite)
 		  {
-			  trade.write(outp);
+			  trade.write(*outp);
 		  }
 		  if( inp.peek() == EOF )
 		  {
@@ -95,7 +95,7 @@ public:
 		  }
 	  }
 	  inp.close();
-	  outp.close();
+	  outp->close();
 	  return 0;
 	}
 	void operator() ()
@@ -103,7 +103,7 @@ public:
 	  process_data();
 	}
 };
-boost::shared_ptr<ofstream> outp = NULL;
+boost::shared_ptr<ofstream> outp;
 int main()
 {
 	binary_reader::stock_data( "", "", 1, 1, 1,1,1,1,1,1 );

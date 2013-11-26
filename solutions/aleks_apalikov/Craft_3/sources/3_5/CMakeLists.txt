@@ -10,5 +10,5 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 #	chrono
 )
 
-compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries Boost binary_reader 3_4)
+compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries Boost binary_reader Trade)
 
