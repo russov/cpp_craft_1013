@@ -5,31 +5,30 @@
 #include <vector>
 
 class processor{
-	string* num;
+	string& num;
 public:
-	processor(string& name)
+	processor(string& name):
+	  num (name)  // "YZ"
 	{
-		num = new string(name); // "YZ"
 	}
 	~processor()
 	{
-		delete num;
 	}
 	int process_data()
 	{
 		stringstream input;
 		stringstream output;
-		if(num->size() == 1)
+		if(num.size() == 1)
 		{
 			input << BINARY_DIR << "/input_00" << num << ".txt";
 			output << BINARY_DIR << "/ouput_00" << num << ".txt";
 		}
-		else if (num->size() == 2 )
+		else if (num.size() == 2 )
 		{
 			input << BINARY_DIR << "/input_0" << num << ".txt";
 			output << BINARY_DIR << "/ouput_0" << num << ".txt";
 		}
-		else if (num->size() == 3)
+		else if (num.size() == 3)
 		{
 			input << BINARY_DIR << "/input_" << num << ".txt";
 			output << BINARY_DIR << "/ouput_" << num << ".txt";
@@ -40,6 +39,12 @@ public:
 		}
 		ifstream inp( input.str().c_str(), fstream::binary | fstream::in);
 		ofstream outp(output.str().c_str(), fstream::binary | fstream::out);
+		if(!inp.is_open() || !outp.is_open())
+		{
+			cout << "File not found! "<<endl;
+			return 1;
+		}
+		
 		size_t currentTime = 0;
 		bool toWrite = false;
 		Trade trade;
@@ -89,13 +94,13 @@ public:
 int main()
 {
 	size_t quantity = 10;
-	vector<processor> process;
+	vector<string*> nums;
 	boost::thread_group thr_gr;
 	for(size_t i = 0; i < quantity; i++)
 	{
-		string st (boost::lexical_cast<string>(i));
-		process.push_back(processor(st));
-		thr_gr.create_thread(process[i]);
+		nums.push_back (new string(boost::lexical_cast<string>(i) ) );
+		processor process (*nums[i]);
+		thr_gr.create_thread(process);
 	}
 	thr_gr.join_all();
 }
