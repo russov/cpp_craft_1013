@@ -39,6 +39,37 @@ void multicast_communication::tests_::trade_message_tests()
 		BOOST_CHECK_EQUAL( tm.price(), 77.9 );
 		BOOST_CHECK_EQUAL( tm.volume(), 100.0 );
 	}
+
+	// test long trade block
+	{
+		std::stringstream ss("\x01""EBAO A  000173807D:3\\839XRX          T  0     000@   0  B000000001102000003400DD 0"
+							 "\x1f""EBAO A  000173808T:3\\880VZ              0     000 F  1  B000000005030000000100DD 0""\x03");
+		trade_message tm;
+		BOOST_CHECK_NO_THROW
+		(
+			tm.parse_trade(ss);
+		)
 	
-		
+
+		trade_message_list_ptr processed_messages;
+		trade_message_list_ptr::iterator it;
+		trade_message_ptr trade_message_ptr;
+		if(trade_message::parse_block(ss.str(), processed_messages))
+		{
+			it = processed_messages.begin();
+			trade_message_ptr = *it;
+			BOOST_CHECK_EQUAL( trade_message_ptr->security_symbol(), "XRX        " );
+			BOOST_CHECK_EQUAL( trade_message_ptr->price(), 11.02 );
+			BOOST_CHECK_EQUAL( trade_message_ptr->volume(), 3400.0 );
+
+			++it;
+			trade_message_ptr = *it;
+			
+			BOOST_CHECK_EQUAL( trade_message_ptr->security_symbol(), "VZ         " );
+			BOOST_CHECK_EQUAL( trade_message_ptr->price(), 50.30 );
+			BOOST_CHECK_EQUAL( trade_message_ptr->volume(), 100.0 );
+		}
+	}
+
+
 }
