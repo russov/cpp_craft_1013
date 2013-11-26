@@ -133,20 +133,31 @@ namespace task5_5
     if (size() + 1 > capacity())
       grow();
       
-    size_t count = size() - index;
-    T* src = data_ + size();
-    T* dst = data_ + size();
 
-    while (count > 0)
+    T* data = new T[capacity() + 1];
+    T* src = data_;
+    T* dst = data;
+
+    size_t n = size() + 1;
+    for (size_t i = 0; i < n; ++i)
     {
-      --src;
-      // I'm not sure abouth following expression ...
-      // What should we do, if assignment raise exception ?
-      *dst = *src;
-      --dst;
-      --count;
+      try {
+        if (i == index)
+          *dst = value;
+        else
+        {
+          *dst = *src;
+          ++src;
+        }
+      } catch (...) {
+        delete [] data;
+        throw;
+      }
+      ++dst;
     }
-    *dst = value;
+
+    delete [] data_;
+    data_ = data;
 
     ++size_;
 	}
@@ -187,14 +198,6 @@ namespace task5_5
     {
       if (amount > capacity())
         reserve(amount);
-      /*size_t count = amount - size();
-      T* dst = data_ + size();
-      while (count > 0)
-      {
-        *dst = T();
-        ++dst;
-        --count;
-      }*/
     }
     size_ = amount;
 	}
