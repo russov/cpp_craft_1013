@@ -15,6 +15,12 @@ multicast_communication::market_data_receiver::market_data_receiver(market_data_
 	}
 }
 
+multicast_communication::market_data_receiver::market_data_receiver( market_data_processor& processor, multicast_communication::config_reader* config )
+	: processor_(processor)
+{
+	config_.reset(config);
+}
+
 multicast_communication::market_data_receiver::~market_data_receiver()
 {
 	stop();
@@ -50,14 +56,14 @@ void multicast_communication::market_data_receiver::stop()
 
 void multicast_communication::market_data_receiver::quote_thread(multicast_communication::address_and_port &adr_port)
 {
-	async_udp::udp_listener(service_, adr_port.first, adr_port.second,[&](const std::string& data)
+	async_udp::udp_listener udp_l(service_, adr_port.first, adr_port.second,[&](const std::string& data)
 		{
 			quote_message_list_ptr processed_messages;
 			if(quote_message::parse_block(data,  processed_messages))
 			{
 				std::for_each(processed_messages.begin(), processed_messages.end(),[&](quote_message_ptr &msg)
 					{
-					processor_.new_quote(msg);
+						processor_.new_quote(msg);
 					}
 				);
 			}
@@ -68,14 +74,14 @@ void multicast_communication::market_data_receiver::quote_thread(multicast_commu
 
 void multicast_communication::market_data_receiver::trade_thread(multicast_communication::address_and_port &adr_port)
 {
-	async_udp::udp_listener(service_, adr_port.first, adr_port.second,[&](const std::string& data)
+	async_udp::udp_listener udp_l(service_, adr_port.first, adr_port.second,[&](const std::string& data)
 		{
 			trade_message_list_ptr processed_messages;
 			if(trade_message::parse_block(data,  processed_messages))
 			{
 				std::for_each(processed_messages.begin(), processed_messages.end(),[&](trade_message_ptr &msg)
 					{
-					processor_.new_trade(msg);
+						processor_.new_trade(msg);
 					}
 				);
 			}

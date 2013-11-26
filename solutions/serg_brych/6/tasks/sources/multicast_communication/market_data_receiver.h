@@ -22,7 +22,7 @@ namespace multicast_communication
 	class market_data_receiver : virtual private boost::noncopyable
 	{
 	private:
-		boost::scoped_ptr<config_reader> config_;
+		boost::shared_ptr<config_reader> config_;
 		boost::thread_group	quote_threads_;
 		boost::thread_group	trade_threads_;
 		boost::asio::io_service	service_;
@@ -33,6 +33,7 @@ namespace multicast_communication
 
 	public:
 		explicit market_data_receiver(market_data_processor &);
+		explicit market_data_receiver(market_data_processor &, config_reader* );
 		~market_data_receiver();
 		void run();
 		void stop();

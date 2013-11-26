@@ -32,7 +32,6 @@ namespace async_udp
 	public:
 		explicit udp_listener( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port, callback_type callback );
 		~udp_listener();
-	
 	private:
 		void socket_reload_();
 		void register_listen_();
