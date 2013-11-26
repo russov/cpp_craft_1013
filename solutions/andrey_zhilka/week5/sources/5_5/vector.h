@@ -140,7 +140,7 @@ namespace task5_5
 	}
 
 	template< typename T >
-	const T& vector< T >::operator[]( const size_t  ) const
+	const T& vector< T >::operator[]( const size_t index ) const
 	{
 		if ( index > this->size() )
 		{
