@@ -5,7 +5,6 @@
 #include <stock_data.h>
 #include <iostream>
 #include <fstream>
-#include "boost/shared_ptr.hpp"
 #include <sstream>
 #include "Trade.h"
 #include "boost/thread.hpp"
@@ -15,44 +14,55 @@ using namespace std;
 typedef vector<size_t> messages_t;
 class processor{
 	string& num;
+	boost::mutex& mut;
 	static size_t count;
 
 	boost::mutex& max_mut;
 	static size_t max_time;
 	messages_t numBytes; //used number of Bytes of idx type
-	messages_t messages;
 	boost::mutex & total_mut;
-	messages_t& total_msgs; //total used Bytes
+	messages_t& total_messages;
+	messages_t file_msgs;
+	messages_t total_bytes; //total used Bytes
 	bool fileErr;
 
 public:
 	static const UINT32 TotalTypes;
-	processor(string& name, boost::mutex & mut, messages_t msgs, boost::mutex & max_m):num (name), total_mut(mut), total_msgs(msgs), 
-		max_mut(max_m)  													// "YZ"			
+	processor(string& name, boost::mutex & mut, messages_t& msgs, boost::mutex & max_m, boost::mutex& count_mut):num (name), total_mut(mut), total_messages(msgs), 
+		max_mut(max_m) , mut(count_mut) 													// "YZ"			
 	{
+		{
+			boost::mutex::scoped_lock lock(mut);
+			count ++;
+		}
 		numBytes.resize(TotalTypes + 1, 0);
-		messages.resize(TotalTypes + 1, 0);
+		file_msgs.resize(TotalTypes + 1, 0);
+		total_bytes.resize(TotalTypes + 1, 0);
 	}
 	~processor()
 	{
-		if(count == 0)
 		{
-			stringstream output;
-			output << BINARY_DIR << "/output" << ".txt";
-			ofstream outp( output.str().c_str(), fstream::binary | fstream::out);
-
-			int type = 0;
-			for(vector<size_t>::iterator tb = messages.begin(); tb != messages.end(); ++tb)
+			boost::mutex::scoped_lock lock(mut);
+			count --;
+			if(count == 0)
 			{
-				if (*tb == 0)
+				stringstream output;
+				output << BINARY_DIR << "/output" << ".txt";
+				ofstream outp( output.str().c_str(), fstream::binary | fstream::out);
+
+				int type = 0;
+				for(vector<size_t>::iterator tb = total_messages.begin(); tb != total_messages.end(); ++tb)
 				{
+					if (*tb == 0)
+					{
+						type++;
+						continue;
+					}
+					binary_reader::write_binary(outp, type);
+					double val = (double)*tb/max_time;
+					binary_reader::write_binary(outp, val);
 					type++;
-					continue;
 				}
-				binary_reader::write_binary(outp, type);
-				double val = (double)*tb/max_time;
-				binary_reader::write_binary(outp, val);
-				type++;
 			}
 		}
 	}
