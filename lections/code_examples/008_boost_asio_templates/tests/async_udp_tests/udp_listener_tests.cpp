@@ -11,7 +11,7 @@ namespace async_udp
 		namespace detail
 		{
 			void service_thread( boost::asio::io_service& service );
-		};
+		}
 	}
 }
 
