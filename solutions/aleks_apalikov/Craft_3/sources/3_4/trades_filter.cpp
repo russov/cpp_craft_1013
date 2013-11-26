@@ -8,7 +8,7 @@ class processor{
 	string& num;
 public:
 	processor(string& name):
-	  num (name)  // "YZ"
+	  num (name)  // "YZ" or "Z" or "XYZ"
 	{
 	}
 	~processor()
