@@ -4,12 +4,16 @@
 task4_5::solution::solution( const data_type& data )
 {
 	a=data;
+	MAX = std :: numeric_limits<int>().min();
+	MIN = std :: numeric_limits<int>().max();
+	flows_to_find_min();
+	flows_to_find_max();
 }
 
 void task4_5::solution::count_min(std::vector< int > &b) const
 {	
-	int Min = (1<<31)-1;
-	for(int i=0;i<b.size();i++)
+	int Min = std :: numeric_limits<int>().max();
+	for(size_t i=0;i<b.size();i++)
 		Min = std :: min(Min,b[i]);
 	{
 		boost :: mutex :: scoped_lock lock(mtx);
@@ -32,8 +36,8 @@ void task4_5::solution::flows_to_find_min() const
 
 void task4_5::solution::count_max(std::vector< int > &b) const
 {	
-	int Max = -(1<<31);
-	for(int i=0;i<b.size();i++)
+	int Max = std :: numeric_limits<int>().min();
+	for(size_t i=0;i<b.size();i++)
 		Max = std :: max(Max,b[i]);
 	{
 		boost :: mutex :: scoped_lock lock(mtx);
@@ -56,14 +60,10 @@ void task4_5::solution::flows_to_find_max() const
 
 
 int task4_5::solution::get_min() const
-{
-	MIN = (1<<31)-1;
-	flows_to_find_min();
+{	
 	return MIN;
 }
 int task4_5::solution::get_max() const
-{
-	MAX = -(1<<31);
-	flows_to_find_max();
+{	
 	return MAX;
 }

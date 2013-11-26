@@ -13,7 +13,7 @@ void BinRW::BinReader(msg &t)
 				}
 			f1.read(reinterpret_cast<char*>(&t.time),sizeof (int));
 			f1.read(reinterpret_cast<char*>(&t.len),sizeof (int));
-			for(int i=0;i<t.len;i++)
+			for(unsigned int i=0;i<t.len;i++)
 			{
 				char c;
 				f1.read(reinterpret_cast<char*>(&c),sizeof (char));
@@ -26,7 +26,7 @@ void BinRW :: BinWriter(msg &a)
 			f2.write(reinterpret_cast<char*>(&(a.type)),sizeof (int));
 			f2.write(reinterpret_cast<char*>(&(a.time)),sizeof (int));
 			f2.write(reinterpret_cast<char*>(&(a.len)),sizeof (int));
-			for(int i=0;i<a.len;i++)
+			for(unsigned int i=0;i<a.len;i++)
 				{
 					f2.write(reinterpret_cast<char*>(&(a.m[i])),sizeof (char));
 				}

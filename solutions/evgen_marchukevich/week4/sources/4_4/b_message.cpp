@@ -25,5 +25,5 @@ const char task4_4::b_message::type() const
 }
 const std::string task4_4::b_message::str() const
 {
-	return "b_message(" + boost :: lexical_cast<std :: string>(length_) + "|" + boost::lexical_cast<std :: string>(content_) + ")";
+	return "b_message(" + boost :: lexical_cast<std :: string>(length_) + "|" + content_ + ")";
 }

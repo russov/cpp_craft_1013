@@ -5,6 +5,7 @@
 #include <math.h>
 #include <boost\thread.hpp>
 #include <math.h>
+#include <limits>
 
 namespace task4_5
 {

@@ -34,7 +34,8 @@ class Solution{
 		};
 
 	ifstream f1;
-	ofstream f2;
+	map<string,ofstream> out_files;
+	vector<string> files_to_close;
 
 	bool error;
 
@@ -70,7 +71,7 @@ public :
 	}
 
 
-	void writer(msg &x)
+	void writer(msg &x, ofstream &f2)
 	{
 		for(int i=0;i<9;i++)
 			f2.write(reinterpret_cast<char*>(&x.name[i]),sizeof (char));
@@ -90,7 +91,7 @@ public :
 
 	void process()
 	{
-		while (1)
+		while (true)
 		{
 			msg x;
 			reader(x);
@@ -100,7 +101,7 @@ public :
 		}
 	}	
 	
-	string get_out_file(char* t)
+	string get_out_file(const char* t)
 	{
 		string s=SOURCE_DIR;
 		s+="/output_";
@@ -111,9 +112,13 @@ public :
 	
 	void write_flow(msg &x)
 	{
-			f2.open(get_out_file(x.name).c_str(), std::ios_base :: app | std::ios_base :: binary);
-			writer(x);
-			f2.close();
+			string write_file = get_out_file(x.name);
+			if (out_files.count(write_file)==0)
+			{
+				out_files[write_file].open(get_out_file(x.name).c_str(), std::ios_base :: out | std::ios_base :: binary);
+				files_to_close.push_back(write_file);
+			}
+			writer(x,out_files[write_file]);			
 	}
 
 
@@ -131,6 +136,8 @@ public :
 	~Solution()
 	{		
 		f1.close();
+		for(vector<string> :: iterator it = files_to_close.begin();it!=files_to_close.end();it++)
+			out_files[*it].close();
 	}
 
 

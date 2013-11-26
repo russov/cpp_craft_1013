@@ -101,7 +101,6 @@ namespace task5_5
 	template< typename T >
 	vector<T>::~vector()
 	{
-		if (VECTOR)
 		delete[] VECTOR;
 	}
 

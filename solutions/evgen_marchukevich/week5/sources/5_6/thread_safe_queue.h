@@ -63,7 +63,8 @@ namespace task5_6
 	{
 		{
 			boost :: mutex :: scoped_lock Lock(mtx_size);
-			if (q_size==0) return false;
+			boost :: mutex :: scoped_lock Lock_queue(mtx_queue);
+			if (q_size==0 || QUEUE.empty()) return false;
 		}		
 		{
 			boost :: mutex :: scoped_lock Lock_pop(mtx_queue);

@@ -29,6 +29,8 @@ private :
 		static int file_id;
 		static const int file_cnt = 999;
 		static const size_t threads_count = 4;		
+		static const string input_prefix;
+		static const size_t buffer_size = 2048u;
 		vector<unsigned int> all_types;
 		BinRW RR;
 		boost :: mutex Mutex,mtx;
@@ -55,11 +57,11 @@ private :
 			return (sizeof(x.time)+sizeof(x.type)+sizeof(x.len)+sizeof(char)*x.len);
 		}		
 		
-		string get_in_file(int id)
+		string get_in_file(const int id)
 		{
 			char s[4];
 			sprintf(s,"%03d",id);			
-			return "/input_"+boost :: lexical_cast<string>(s)+".txt";
+			return input_prefix+boost :: lexical_cast<string>(s)+".txt";
 		}
 
 
@@ -68,13 +70,11 @@ public :
 
 		void flows()
 		{
-			while(file_id<=file_cnt )
-			{
+			
 				boost::thread_group threads_group;
 				for( size_t i = 0; i < threads_count; ++i )
 					threads_group.create_thread( boost::bind( &Solution::process, this ));
 				threads_group.join_all();
-			}
 			RR.BinOpen_outFile(SOURCE_DIR"/output.txt");
 			writer();
 			RR.BinClose_out();
@@ -91,60 +91,64 @@ public :
 
 		void process()
 		{
-			BinRW RR;
-			bool open_file=false;			
+			while(file_id<=file_cnt )
 			{
-				boost :: mutex :: scoped_lock lock(Mutex);
-				while(file_id<=file_cnt)
-				{			
-					RR.BinOpen_inFile((SOURCE_DIR+get_in_file(file_id)).c_str());				
-					if (!RR.Bin_isOpen_inFile())  
-						{
-							file_id++;
-							continue;
-						}	
-					file_id++;
-					open_file=true;
-					break;
+				BinRW RR;
+				bool open_file=false;			
+				{
+					boost :: mutex :: scoped_lock lock(Mutex);
+					while(file_id<=file_cnt)
+					{			
+						RR.BinOpen_inFile((SOURCE_DIR+get_in_file(file_id)).c_str());				
+						if (!RR.Bin_isOpen_inFile())  
+							{
+								file_id++;
+								continue;
+							}	
+						file_id++;
+						open_file=true;
+						break;
+					}
 				}
-			}
 				
-			if (!open_file) return;
-			map<unsigned int,size_t> BUFFER;
-			map<unsigned int,unsigned int> TIME;			
-			while (1)
-			{
-				BinRW :: msg x;
-				RR.BinReader(x);			
-				if (!RR.Bin_nice()) break;
-				if (TIME.count(x.type)==0 || TIME[x.type]!=x.time)				
-				{					
-					BUFFER[x.type]=0;
-					if (get_msg_size(x) <= 2048u)
+				if (!open_file) return;
+				map<unsigned int,size_t> BUFFER;
+				map<unsigned int,unsigned int> TIME;			
+				while (1)
+				{
+					BinRW :: msg x;
+					RR.BinReader(x);			
+					if (!RR.Bin_nice()) break;
+					if (TIME.count(x.type)==0 || TIME[x.type]!=x.time)				
+					{					
+						BUFFER[x.type]=0;
+						if (get_msg_size(x) <= buffer_size)
+						{
+							boost :: mutex :: scoped_lock lock(mtx);
+							kol[x.type]++;
+						} else
+							TIME[x.type]=0;
+					}
+					if (BUFFER[x.type]+get_msg_size(x) <= buffer_size)
 					{
 						boost :: mutex :: scoped_lock lock(mtx);
-						kol[x.type]++;
-					} else
-						TIME[x.type]=0;
+						TIME[x.type]=x.time;
+						BUFFER[x.type]+=get_msg_size(x);
+						u[x.type]++;
+						if (u[x.type]==1)
+							all_types.push_back(x.type);				
+						ans[x.type]++;
+					}				
 				}
-				if (BUFFER[x.type]+get_msg_size(x) <= 2048u)
-				{
-					boost :: mutex :: scoped_lock lock(mtx);
-					TIME[x.type]=x.time;
-					BUFFER[x.type]+=get_msg_size(x);
-					u[x.type]++;
-					if (u[x.type]==1)
-						all_types.push_back(x.type);				
-					ans[x.type]++;
-				}				
+				RR.BinClose_in();
 			}
-			RR.BinClose_in();
 		}
 					
 };
 
 
 int Solution :: file_id = 1;
+const string Solution :: input_prefix = "/input_";
 
 
 int main()
