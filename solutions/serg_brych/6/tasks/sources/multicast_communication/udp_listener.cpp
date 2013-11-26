@@ -52,7 +52,7 @@ void async_udp::udp_listener::listen_handler_(const boost::system::error_code& e
 	{
 		{
 			boost::mutex::scoped_lock lock( protect_messages_ );
-			callback_( *buffer_ );
+			callback_( std::string(buffer_->c_str(), bytes_received) );
 		}
 		register_listen_();
 	}

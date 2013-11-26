@@ -115,15 +115,11 @@ bool multicast_communication::trade_message::parse_block(const std::string & dat
 			if(sep == Signatures::SeporatorMessage)
 				break;
 			if(sep == Signatures::EndMessage)
-				break;
+				return true;
 
 			sep = input.get();
 		}
-	}while(input && input.get() == Signatures::SeporatorMessage);
+	}while(input && sep == Signatures::SeporatorMessage);
 
-	if( input.get() != Signatures::EndMessage )
-    {        
-        return false;
-    }
-	return true;
+	return false;
 }

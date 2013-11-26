@@ -134,15 +134,11 @@ bool multicast_communication::quote_message::parse_block(const std::string & dat
 			if(sep == Signatures::SeporatorMessage)
 				break;
 			if(sep == Signatures::EndMessage)
-				break;
+				return true;
 
 			sep = input.get();
 		}
-	}while(input &&  sep == Signatures::SeporatorMessage);
+	}while(input && sep == Signatures::SeporatorMessage);
 
-	if( sep == Signatures::EndMessage )
-    {        
-        return false;
-    }
-	return true;
+	return false;
 }
