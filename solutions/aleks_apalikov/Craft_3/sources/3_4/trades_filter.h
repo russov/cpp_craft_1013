@@ -11,6 +11,7 @@ enum Types {
 };
 struct Trade
 {
+public:
 	size_t typ;
 	size_t time;
 	size_t len;
