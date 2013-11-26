@@ -63,6 +63,7 @@ public:
 					binary_reader::write_binary(outp, val);
 					type++;
 				}
+				outp.close();
 			}
 		}
 	}

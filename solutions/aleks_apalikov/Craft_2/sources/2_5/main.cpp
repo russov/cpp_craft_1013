@@ -5,7 +5,7 @@
 
 int main(int argc, char** argv)
 {
-	char * num = "_251";
+	char * num = "_253";
 	std::string s = BINARY_DIR "/input" + string(num) + ".txt";
 	std::cout << s;
 	std::string out = BINARY_DIR "/output" + string(num) + ".txt";
