@@ -1,6 +1,8 @@
 #ifndef _SYNC_TCP_TCP_SERVER_H_
 #define _SYNC_TCP_TCP_SERVER_H_
 
+#include <list>
+
 #include <boost/asio.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
