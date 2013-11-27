@@ -5,6 +5,7 @@
 #include <boost/assign.hpp>
 
 static const std::map< const char, double > denominator_map = boost::assign::map_list_of
+	('0' , 1.0)
     ('3' , 8.0) ('4' , 16.0) ('5' , 32.0) ('6' , 64.0) ('7' , 128.0) ('8' , 256.0)
     ('A' , 10.0) ('B' , 100.0) ('C' , 1000.0 ) ('D' , 10000.0 )
     ('E' , 100000.0 ) ('F' , 1000000.0 ) ('G' , 10000000.0  )

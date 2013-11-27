@@ -23,16 +23,19 @@ namespace multicast_communication
 	{
 	private:
 		boost::shared_ptr<config_reader> config_;
-		boost::thread_group	quote_threads_;
-		boost::thread_group	trade_threads_;
+		boost::thread_group	process_threads_;
 		
 		market_data_processor& processor_;
 
 		typedef std::shared_ptr< boost::asio::io_service > service_ptr;
-        std::list< service_ptr > services_;
+		typedef std::shared_ptr< async_udp::udp_listener > udp_listner_ptr;
+		
+        std::vector< service_ptr > services_trades_;
+		std::vector< service_ptr > services_quotes_;
+		std::vector< udp_listner_ptr > udp_listners_trades;
+		std::vector< udp_listner_ptr > udp_listners_quotes;
 
-		void quote_thread(service_ptr, multicast_communication::address_and_port &);
-		void trade_thread(service_ptr, multicast_communication::address_and_port &);
+		void process_thread(service_ptr);
 
 	public:
 		explicit market_data_receiver(market_data_processor &);
