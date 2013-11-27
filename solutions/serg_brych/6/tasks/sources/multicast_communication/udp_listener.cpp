@@ -16,7 +16,6 @@ async_udp::udp_listener::udp_listener( boost::asio::io_service& io_service, cons
 async_udp::udp_listener::~udp_listener()
 {
 	socket_.close();
-	//boost::this_thread::sleep_for( boost::chrono::milliseconds( 1000 ) ); 
 }
 
 void async_udp::udp_listener::socket_reload_()

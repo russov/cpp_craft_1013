@@ -25,11 +25,14 @@ namespace multicast_communication
 		boost::shared_ptr<config_reader> config_;
 		boost::thread_group	quote_threads_;
 		boost::thread_group	trade_threads_;
-		boost::asio::io_service	service_;
+		
 		market_data_processor& processor_;
 
-		void quote_thread(multicast_communication::address_and_port &);
-		void trade_thread(multicast_communication::address_and_port &);
+		typedef std::shared_ptr< boost::asio::io_service > service_ptr;
+        std::list< service_ptr > services_;
+
+		void quote_thread(service_ptr, multicast_communication::address_and_port &);
+		void trade_thread(service_ptr, multicast_communication::address_and_port &);
 
 	public:
 		explicit market_data_receiver(market_data_processor &);
