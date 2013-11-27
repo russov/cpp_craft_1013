@@ -5,7 +5,7 @@ size_t processor::count = 0;
 const UINT32 processor::TotalTypes = 10000; //100000
 int main()
 {
-	size_t quantity = 3;
+	size_t quantity = 4;
 	vector<string*> nums;
 	boost::thread_group thr_gr;
 	boost::mutex total_mut;
@@ -24,6 +24,7 @@ int main()
 		thr_gr.create_thread(*processes[k]);
 	}
 	thr_gr.join_all();
+	processor::output(total_msgs);
 	for(vector<processor*>::iterator it = processes.begin(); it != processes.end(); it++)
 	{
 		delete *it;

@@ -39,33 +39,39 @@ public:
 		file_msgs.resize(TotalTypes + 1, 0);
 		total_bytes.resize(TotalTypes + 1, 0);
 	}
+	static int output(messages_t total_messages) //just for creating output
+	{
+		stringstream output;
+		output << BINARY_DIR << "/output" << ".txt";
+		ofstream outp( output.str().c_str(), fstream::binary | fstream::out);
+
+		int type = 0;
+		for(vector<size_t>::iterator tb = total_messages.begin(); tb != total_messages.end(); ++tb)
+		{
+			if (*tb == 0)
+			{
+				type++;
+				continue;
+			}
+			binary_reader::write_binary(outp, type);
+			double val = (double)*tb/max_time;
+			binary_reader::write_binary(outp, val);
+			type++;
+		}
+		outp.close();
+		return type;
+	}
 	~processor()
 	{
 		{
 			boost::mutex::scoped_lock lock(mut);
 			count --;
-			if(count == 0)
-			{
-				stringstream output;
-				output << BINARY_DIR << "/output" << ".txt";
-				ofstream outp( output.str().c_str(), fstream::binary | fstream::out);
-
-				int type = 0;
-				for(vector<size_t>::iterator tb = total_messages.begin(); tb != total_messages.end(); ++tb)
-				{
-					if (*tb == 0)
-					{
-						type++;
-						continue;
-					}
-					binary_reader::write_binary(outp, type);
-					double val = (double)*tb/max_time;
-					binary_reader::write_binary(outp, val);
-					type++;
-				}
-				outp.close();
-			}
+			
 		}
+
+		numBytes.clear();
+		file_msgs.clear();
+		total_bytes.clear();
 	}
 	int process_data();
 	void operator() ()
