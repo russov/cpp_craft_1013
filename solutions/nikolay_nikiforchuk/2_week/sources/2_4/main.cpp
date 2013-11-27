@@ -16,7 +16,7 @@ bool isAllowedType(binary_reader::market_message &message){
 
 struct comparator {
 	bool operator() (binary_reader::market_message *i, binary_reader::market_message *j){
-		return (i->time() > j->time());
+		return (i->time() < j->time());
 	}
 } message_comparator;
 
@@ -40,16 +40,12 @@ int main()
 			}
 		}
 		std::sort(messages.begin(), messages.end(), message_comparator);
-		//max_time = (messages.front())->time();
 		std::vector<binary_reader::market_message*>::iterator it = messages.begin();
 		while (it != messages.end()){
 			binary_reader::market_message* tmp_msg = *it;
-			//if (tmp_msg->time() <= (max_time - 2)){
-			//	break;
-			//}
 			tmp_msg->write(os);
-			std::cout << "Write -> msg:" << tmp_msg->msg() << "::type:"
-				<< tmp_msg->type() << "::time:" << tmp_msg->time() << std::ends;
+			//std::cout << "Write -> msg:" << tmp_msg->msg() << "::type:"
+			//	<< tmp_msg->type() << "::time:" << tmp_msg->time() << std::ends;
 			it++;
 		}
 
