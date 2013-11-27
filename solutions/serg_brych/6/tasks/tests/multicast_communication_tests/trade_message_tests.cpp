@@ -44,13 +44,7 @@ void multicast_communication::tests_::trade_message_tests()
 	{
 		std::stringstream ss("\x01""EBAO A  000173807D:3\\839XRX          T  0     000@   0  B000000001102000003400DD 0"
 							 "\x1f""EBAO A  000173808T:3\\880VZ              0     000 F  1  B000000005030000000100DD 0""\x03");
-		trade_message tm;
-		BOOST_CHECK_NO_THROW
-		(
-			tm.parse_trade(ss);
-		)
 	
-
 		trade_message_list_ptr processed_messages;
 		trade_message_list_ptr::iterator it;
 		trade_message_ptr trade_message_ptr;
