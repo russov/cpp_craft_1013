@@ -1,6 +1,6 @@
 @echo off
 
-set SOLUTION_NAME=puzzle_2_Ivan_solutions
+set SOLUTION_NAME=puzzle_2_binary_reader
 set BOOST_ROOT=F:\boost_1_47_0
 
 set BUILD_TYPE=Debug

@@ -26,7 +26,9 @@ namespace binary_reader
 	class stock_data : virtual protected boost::noncopyable
 	{
 		friend void tests_::test_stock_data();
+		friend class Datafeed;
 
+	public:
 		char stock_name_[8];
 		char date_time_[8];
 		double price_;
@@ -38,7 +40,6 @@ namespace binary_reader
 		double f3_;
 		double f4_;
 
-	public:
 		explicit stock_data( std::ifstream& in );
 		explicit stock_data( const char* stock_name,
 							const char* date_time,
@@ -53,6 +54,7 @@ namespace binary_reader
 		~stock_data();
 		//
 		void write( std::ofstream& out );
+
 		void write_raw( std::ofstream& out );
 	};
 }

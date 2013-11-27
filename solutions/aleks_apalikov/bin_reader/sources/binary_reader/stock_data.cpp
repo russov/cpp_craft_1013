@@ -53,7 +53,9 @@ void binary_reader::stock_data::write( std::ofstream& out )
 	write_binary( out, date );
 	write_binary( out, vwap_ );
 	write_binary( out, volume_ );
-	write_binary( out, f2_ );	
+	write_binary( out, f1_ );	
+	write_binary( out, f4_ );	
+	write_binary( out, f3_ );	
 }
 void binary_reader::stock_data::write_raw( std::ofstream& out )
 {	
