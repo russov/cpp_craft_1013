@@ -14,24 +14,23 @@ int Datafeed::run()
 	bool finish = false;
 	while(inp)
 	{
-		binary_reader::stock_data sd(inp);
-		boost::shared_ptr<binary_reader::stock_data> p (& sd);
-		map_stock::iterator it = tasks.find(sd.stock_name_);
+		boost::shared_ptr<binary_reader::stock_data> p (new binary_reader::stock_data(inp));
+		map_stock::iterator it = tasks.find(p->stock_name_);
 		if(it != tasks.end())
 		{
 			{
 				boost::mutex::scoped_lock lock (tasks_mtx);
-				it->second.push(p);
+				it->second->push(p);
 			}
 		}
 		else
 		{
-			queue_of_pointers q;
-			thr_gr.create_thread(processor(string(sd.stock_name_), tasks_mtx, q, finish));
-			q.push(p);
+			shared_queue q ( new queue_of_pointers());
+			thr_gr.create_thread(processor(string(p->stock_name_), tasks_mtx, q, finish));
+			q->push(p);
 			{
 				boost::mutex::scoped_lock lock (tasks_mtx);
-				tasks.insert( make_pair((string)sd.stock_name_, q));
+				tasks.insert( make_pair((string)p->stock_name_, q));
 			}
 		}
 		if (inp.peek() == EOF)
@@ -44,9 +43,9 @@ int Datafeed::run()
 
 int processor::process_data()
 {	
-	stringstream input;	
-	input << BINARY_DIR << "/ouput_" << num << ".txt";
-	ofstream outp( input.str().c_str(), fstream::binary | fstream::out);
+	stringstream output;	
+	output << BINARY_DIR << "/ouput_" << num << ".txt";
+	ofstream outp( output.str().c_str(), fstream::binary | fstream::out);
 	if(!outp.is_open())
 	{
 		cout << "File not found! "<<endl;
@@ -54,18 +53,17 @@ int processor::process_data()
 	}
 
 	int n = 0; //total number of objects
-	while ( !(finish && que_.empty()) )
+	while ( !(finish && que_->empty()) )
 	{
-		shared_stock sp;
 		{
 			boost::mutex::scoped_lock lock(que_mtx);
-			if(!que_.empty())
+			if(!que_->empty())
 			{
-				sp = que_.front();
-				que_.pop();
+				shared_stock sp( que_->front());
+				sp->write(outp);
+				que_->pop();
 			}
 		}
-		sp->write(outp);
 	}
 	outp.close();
 	return n;
