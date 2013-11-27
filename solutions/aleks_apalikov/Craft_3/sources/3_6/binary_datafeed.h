@@ -5,22 +5,54 @@
 #include <vector>
 #include "stock_data.h"
 #include "boost\thread.hpp"
+#include <boost/shared_ptr.hpp>
+#include <queue>
 
 using namespace std;
+typedef binary_reader::stock_data stock_data;
+typedef boost::shared_ptr<binary_reader::stock_data> shared_stock;
+typedef queue<boost::shared_ptr<binary_reader::stock_data>> queue_of_pointers;
+class processor{
+	string num;
+	boost::mutex& que_mtx;
+	bool& finish; // end of input file reached
+
+	queue_of_pointers que_;
+
+public:
+	processor(string name, boost::mutex & queue_mut, queue_of_pointers& que, bool & fin): que_mtx(queue_mut), que_(que), finish(fin)												// "YZ"			
+	{
+		num = name;
+	}
+	~processor()
+	{
+		boost::mutex::scoped_lock lock(que_mtx);
+		while(!que_.empty())
+			que_.pop();
+	}
+	int process_data();
+	void operator() ()
+	{
+		process_data();
+	}
+};
+
 class Datafeed
 {
 	ifstream inp;
 	ofstream ofp;
 	bool fileErr;
-	typedef map<string, vector<binary_reader::stock_data>> map_stock;
+	typedef map<string, queue_of_pointers> map_stock;
 	map_stock tasks;
 
 public:
 	Datafeed()
 	{
+		fileErr = false;
 		stringstream ss;
 		ss << BINARY_DIR << "/" << "input.txt";
 		string in_name = ss.str();
+		cout << in_name;
 		inp.open(in_name.c_str(), fstream::in | fstream::binary);
 		
 		if(!inp.is_open() )
@@ -30,21 +62,12 @@ public:
 			return;
 		}
 	}
-	int run()
-	{
-		if(fileErr)
-			return -1;
-		while(true)
-		{
-			binary_reader::stock_data sd(inp);
-			map_stock::iterator it = tasks.find(sd.stock_name_);
-			if(it != tasks.end())
-			{
-				
-			}
-		}
-	}
+	int run();
 	int operator() ()
+	{
+
+	}
+	~Datafeed()
 	{
 
 	}

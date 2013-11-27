@@ -2,7 +2,7 @@
 
 set SOLUTION_NAME=puzzle_3_week_solutions
 set BOOST_ROOT=F:\boost_1_47_0
-set BINARY_READER_ROOT=F:/Cpp_Craft/cpp_craft_1013/solutions/aleks_apalikov/bin_reader
+set BINARY_READER_ROOT=F:\Cpp_Craft\cpp\solutions\aleks_apalikov\bin_reader
 
 set BUILD_TYPE=Debug
 if [%1]==[Release] (

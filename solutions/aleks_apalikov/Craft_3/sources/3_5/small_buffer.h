@@ -24,7 +24,6 @@ class processor{
 	messages_t& total_messages;
 	messages_t file_msgs;
 	messages_t total_bytes; //total used Bytes
-	bool fileErr;
 
 public:
 	static const UINT32 TotalTypes;
