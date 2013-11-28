@@ -33,7 +33,11 @@ Islands::Islands(const string& fileName)
 		rows-=2;
 		Map.pop_back();
 	}
-	columns = Map[rows-1].size();
+	else
+	{
+		rows --;
+	}
+	columns = Map[0].size();
 	string out_s = BINARY_DIR + string("/") + "Output3.txt";
 	of.open(out_s.c_str(), fstream::out  | fstream::trunc );
 
