@@ -14,15 +14,17 @@ buf::buf( string & in_name, string & out_name ):TotalTypes(100000)
 	}
 	numBytes.resize(TotalTypes + 1, 0);
 	messages.resize(TotalTypes + 1, 0);
-	totalBytes.resize(TotalTypes + 1, 0);
 
 }
 
 buf::~buf(void)
 {
-
-	in.close();
-	out.close();
+	numBytes.clear();
+	messages.clear();
+	if(in)
+		in.close();
+	if(out)
+		out.close();
 }
 
 
@@ -49,10 +51,6 @@ int buf::createOutput()
 		if(time>curTime)
 		{
 			curTime = time;
-			for(vector<size_t>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); it++, tb++)
-			{
-				*tb += *it;
-			}
 			numBytes.assign(TotalTypes + 1, 0);
 		}		
 		len = read_uint32(in);
@@ -77,21 +75,17 @@ int buf::createOutput()
 			continue;
 		}
 	}
-	for(vector<size_t>::iterator it = numBytes.begin(), tb = totalBytes.begin(); it != numBytes.end(); ++it, ++tb)
-	{
-		*tb += *it;
-	}
 	type = 0;
 
-	for(vector<size_t>::iterator tb = messages.begin(); tb != messages.end(); ++tb)
+	for(vector<size_t>::iterator msgs = messages.begin(); msgs != messages.end(); ++msgs)
 	{
-		if (*tb == 0)
+		if (*msgs == 0)
 		{
 			type++;
 			continue;
 		}
 		write_uint32(out, type);
-		double val = (double)*tb/curTime;
+		double val = (double)*msgs/curTime;
 		write_double(out, val);
 		type++;
 	}

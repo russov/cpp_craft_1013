@@ -1,7 +1,8 @@
 #pragma once
-#include <basetsd.h>
 #include <fstream>
 using namespace std;
+
+typedef unsigned int UINT32;
 struct DealsElem
 {
 	UINT32 Type;
