@@ -46,11 +46,13 @@ namespace multicast_communication
 
 void multicast_communication::market_data_processor_test_hlpr::new_trade( const trade_message_ptr& trade)
 {
+	boost::lock_guard<boost::mutex> l_(mutex_);
 	++count_processed_trades_;
 }
 
 void multicast_communication::market_data_processor_test_hlpr::new_quote( const quote_message_ptr& quote)
 {
+	boost::lock_guard<boost::mutex> l_(mutex_);
 	++count_processed_quotes_;
 }
 
