@@ -58,10 +58,11 @@ namespace multicast_communication
 			lt_trade_price_len = 12,
 			lt_trade_volume_len = 9,
 		};
-		trade_type type_;
+		
+		std::string security_symbol_;
 		double price_;
 		double volume_;
-		std::string security_symbol_;
+		trade_type type_;
 
 		void parse_short_trade(std::istream &);
 		void parse_long_trade(std::istream &);

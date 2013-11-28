@@ -74,9 +74,9 @@ void multicast_communication::market_data_receiver::run()
 	{
 		for(size_t i = 0; i < config_->get_quote_thread_size(); i++)
 		{
-			size_t id = i % count_of_multicast_addresses;
+			const size_t id = i % count_of_multicast_addresses;
 			process_threads_.create_thread(
-				boost::bind( &multicast_communication::market_data_receiver::process_thread, this, services_quotes_[i % count_of_multicast_addresses]));
+				boost::bind( &multicast_communication::market_data_receiver::process_thread, this, services_quotes_[id]));
 		}
 	}
 
@@ -118,9 +118,9 @@ void multicast_communication::market_data_receiver::run()
 	{
 		for(size_t i = 0; i < config_->get_trade_thread_size(); i++)
 		{
-			size_t id = i % count_of_multicast_addresses;
+			const size_t id = i % count_of_multicast_addresses;
 			process_threads_.create_thread(
-				boost::bind( &multicast_communication::market_data_receiver::process_thread, this, services_trades_[i % count_of_multicast_addresses]));
+				boost::bind( &multicast_communication::market_data_receiver::process_thread, this, services_trades_[id]));
 		}
 	}
 }

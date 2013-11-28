@@ -45,12 +45,12 @@ size_t multicast_communication::config_reader::get_quote_thread_size() const
 	return quote_thread_size_;
 }
 
-multicast_communication::addresses_and_ports multicast_communication::config_reader::get_trade_adr_and_ports() const
+const multicast_communication::addresses_and_ports& multicast_communication::config_reader::get_trade_adr_and_ports() const
 {
 	return trade_adr_ports_;
 }
 
-multicast_communication::addresses_and_ports multicast_communication::config_reader::get_quote_adr_and_ports() const
+const multicast_communication::addresses_and_ports& multicast_communication::config_reader::get_quote_adr_and_ports() const
 {
 	return quote_adr_ports_;
 }

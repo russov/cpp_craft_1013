@@ -17,8 +17,8 @@ namespace multicast_communication
 		explicit config_reader(size_t,  size_t, addresses_and_ports &, addresses_and_ports &);
 		size_t get_trade_thread_size() const;
 		size_t get_quote_thread_size() const;
-		addresses_and_ports get_trade_adr_and_ports() const;
-		addresses_and_ports get_quote_adr_and_ports() const;
+		const addresses_and_ports& get_trade_adr_and_ports() const;
+		const addresses_and_ports& get_quote_adr_and_ports() const;
 	private:
 		size_t trade_thread_size_;
 		size_t quote_thread_size_;
@@ -27,4 +27,4 @@ namespace multicast_communication
 
 	};
 }
-#endif __CONFIG_READER_H__
+#endif //__CONFIG_READER_H__

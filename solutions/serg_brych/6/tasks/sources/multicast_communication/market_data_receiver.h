@@ -49,4 +49,4 @@ namespace multicast_communication
 }
 
 
-#endif _MARKET_DATA_RECEIVER_H_
+#endif //_MARKET_DATA_RECEIVER_H_
