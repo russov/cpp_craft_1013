@@ -34,7 +34,7 @@ enum Signatures
 {
 	StartMessage = 0x01,
 	EndMessage = 0x03,
-	SeporatorMessage = 0x1F,
+	SeparatorMessage = 0x1F,
 };
 
 
