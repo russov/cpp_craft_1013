@@ -1,5 +1,7 @@
 #include "b_message.h"
 #include <sstream>
+#include <stdexcept>
+
 
 task4_4::b_message::b_message( std::istream& inp )
 {
@@ -15,7 +17,7 @@ task4_4::b_message::b_message( std::istream& inp )
 		content_ = new char[ length_ + 1];
 	}
 	std::stringstream ss;
-	for(int i = 0; i < length_; i++)
+	for(size_t i = 0; i < length_; i++)
 	{
 		inp >> c;
 		if(inp.eof())
@@ -26,7 +28,6 @@ task4_4::b_message::b_message( std::istream& inp )
 		ss << c;
 	}
 	ss.read( content_, length_ );
-	std::cout<< ss.rdstate() <<std::endl;
 	content_[ length_ ] = 0;
 	if (ss.fail())
 		throw std::logic_error("bad input stream, b_message cannot be read");

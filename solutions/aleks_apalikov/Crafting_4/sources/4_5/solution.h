@@ -69,10 +69,6 @@ namespace task4_5
 		int minimum;
 		int maximum;
 	public:
-//		mutable boost::mutex min_mut;
-//		mutable boost::mutex max_mut;
-//		void min_routine(data_vector & vec, int & val);
-//		void max_routine(data_vector & vec, int & val);
 		explicit solution( const data_type& data );
 		int get_min() const;
 		int get_max() const;

@@ -1,4 +1,5 @@
 #include "message_reader.h"
+#include <stdexcept>
 
 #include <string>
 

@@ -7,8 +7,7 @@ using namespace std;
 
 ReversedStr::ReversedStr(const string& fileName)
 {
-	string str = BINARY_DIR + string("/") + fileName;
-	cout << str;
+	const string str = BINARY_DIR + string("/") + fileName;
 	fs.open(str.c_str(), fstream::in);
 
 	if(!fs.is_open()) {

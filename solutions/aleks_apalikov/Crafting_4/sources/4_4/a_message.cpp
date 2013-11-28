@@ -1,4 +1,5 @@
 #include "a_message.h"
+#include <stdexcept>
 
 task4_4::a_message::a_message( std::istream& inp )
 {

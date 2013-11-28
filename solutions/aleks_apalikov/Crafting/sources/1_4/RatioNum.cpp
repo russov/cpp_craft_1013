@@ -12,11 +12,11 @@ RatioNum::RatioNum(const string& fileName)
 		printf("fs failed to open!");
 	}
 	fs >> n;
-	float cod;
+	double cod;
 	for (int i = 0; i < n; i++)
 	{
 		fs >> cod;
-		codes.push_back(cod);
+		push_code(cod);
 	}
 	string out_s = BINARY_DIR + string("/") + "Output2.txt";
 	of.open(out_s.c_str(), fstream::out  | fstream::trunc );
@@ -35,8 +35,7 @@ RatioNum::~RatioNum(void)
 
 int RatioNum::check()
 {
-	float pass;
-
+	double pass;
 	bool concur;
 	while (!fs.eof())
 	{
@@ -45,10 +44,10 @@ int RatioNum::check()
 		if(fs.peek() == EOF)
 			break;
 		fs>>pass;
-		passes.push_back(pass);
-		for(vector<float>::iterator it = codes.begin(); it < codes.end(); it++)
+		code_t pass_i = convert(pass);
+		for(vector<code_t>::iterator it = codes.begin(); it < codes.end(); it++)
 		{
-			concur |= (fabs(*it - pass) < 1e-4);
+			concur |= (*it == pass_i);
 		}
 		string ans = concur ? "Yes\n" : "No\n";
 		of << ans.c_str();
@@ -56,4 +55,21 @@ int RatioNum::check()
 	}
 	
 	return count;
+}
+
+void RatioNum::trunc( double& num )
+{
+	num = floor(num * 10000) / 10000;
+
+}
+
+
+void RatioNum::push_code( double num)
+{
+	codes.push_back(convert(num));
+}
+
+code_t RatioNum::convert( double d)
+{
+	return (code_t) (d * 10000);
 }
