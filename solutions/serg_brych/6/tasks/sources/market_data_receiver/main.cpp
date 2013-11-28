@@ -13,7 +13,7 @@ boost::mutex close_mutex;
 boost::condition_variable close_condition;
 
 
-static void signalHandler( int signum )
+void signalHandler( int )
 {
 	close_condition.notify_one();
 }
