@@ -30,18 +30,9 @@ namespace multicast_communication
 
         void start(); 
         void stop(); 
-        void join()
-        { 
-            t_group_.join_all();
-        }
-        size_t trades_size() const
-        {
-            return trade_queue_.size();
-        }
-        size_t quotes_size() const
-        {
-            return quote_queue_.size();
-        }
+        void join();
+        size_t trades_size() const;
+        size_t quotes_size() const;
         friend class udp_listener;
         private:
         boost::asio::io_service io_service_;
@@ -56,8 +47,8 @@ namespace multicast_communication
         size_t const trade_thread_size_;
         size_t const quote_thread_size_;
 
-        void process_();
-        void process_();
+        void process_trades_();
+        void process_quotes_();
         void receive(udp_listener::message const&);
 
         std::vector< udp_listener::udp_listener_ptr > listeners_; 

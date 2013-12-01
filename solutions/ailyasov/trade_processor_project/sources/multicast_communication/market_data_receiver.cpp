@@ -13,7 +13,6 @@
 
 namespace multicast_communication
 {
-
     void market_data_receiver::receive(udp_listener::message const& m)
     { 
         if(m.type_ == udp_listener::message::TRADE)
@@ -123,4 +122,17 @@ namespace multicast_communication
         }
     } 
 
+    void market_data_receiver::join()
+    { 
+        t_group_.join_all();
+    }
+
+    size_t market_data_receiver::trades_size() const
+    {
+        return trade_queue_.size();
+    }
+    size_t market_data_receiver::quotes_size() const
+    {
+        return quote_queue_.size();
+    }
 }

@@ -77,8 +77,7 @@ namespace multicast_communication
                         std::cerr << e.what() << std::endl;
                     }
                 }
-            } 
-
+            }
 
             static void split_block(message_type const& m, std::vector<message_type>& v)
             {
