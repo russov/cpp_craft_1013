@@ -47,10 +47,10 @@ namespace multicast_communication
             std::string security_symbol_;
             char bid_price_demoninator_indicator_;
             double bid_price_;
-            size_t bid_size_;
+            double bid_size_;
             char offer_price_denominator_indicator_;
             double offer_price_;
-            size_t offer_size_;
+            double offer_size_;
             char category_;
             char type_;
     };
