@@ -14,7 +14,7 @@ namespace multicast_communication
         endpoint_.reset( new boost::asio::ip::udp::endpoint( boost::asio::ip::address::from_string( "0.0.0.0" ), addr.second ));
     }
 
-    void udp_listener::udp_listener::socket_reload_()
+    void udp_listener::socket_reload_()
     {
         using boost::asio::ip::udp;
         using boost::asio::ip::address;
