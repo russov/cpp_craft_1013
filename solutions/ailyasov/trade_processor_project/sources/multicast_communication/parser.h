@@ -45,6 +45,67 @@ namespace multicast_communication
         private:
             message_type raw_;
     };
+
+    template <typename T> class converter
+    {
+        public:
+            static void convert_block(message_type const& block, std::vector< boost::shared_ptr<T> >& v)
+            {
+                std::vector<message_type> m;
+                split_block(block, m);
+                convert(m, v);
+            }
+        private:
+            static void convert(
+                    std::vector<message_type> const& m , std::vector< boost::shared_ptr<T> >& v)
+            {
+                for(std::vector<message_type>::const_iterator it = m.begin(); it != m.end(); ++it)
+                {
+                    message_type m = *it;
+                    try
+                    {
+                        if( !m.empty() && T::is_valid_type(m) )
+                        {
+                            boost::shared_ptr<T> t( new T( m ) );
+                            v.push_back( t );
+                        } else
+                        {
+                            std::cerr << "incorrect message" << std::endl;
+                        }
+                    } catch(std::logic_error& e)
+                    {
+                        std::cerr << e.what() << std::endl;
+                    }
+                }
+            } 
+
+
+            static void split_block(message_type const& m, std::vector<message_type>& v)
+            {
+                message_type msg;
+                for(message_type::const_iterator it = m.begin(); it != m.end(); ++it)
+                {
+                    char c = *it;
+                    switch(c)
+                    {
+                        case 0x01:
+                            msg.clear();
+                            break;
+                        case 0x1f:
+                            v.push_back(msg);
+                            msg.clear();
+                            break;
+                        case 0x03:
+                            v.push_back(msg);
+                            return;
+                        default:
+                            msg.push_back(c);
+                    }
+                }
+            }
+
+    };
+
 }
 
 #endif

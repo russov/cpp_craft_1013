@@ -181,4 +181,9 @@ namespace multicast_communication
         'L'
     };
 
+    bool quote_message::is_valid_type(message_type const& m)
+    {
+        return parser<short_quote_message>::is_valid_type(m) ||
+            parser<long_quote_message>::is_valid_type(m);
+    } 
 }

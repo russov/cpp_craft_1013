@@ -14,7 +14,7 @@
 namespace multicast_communication
 {
     class quote_message: virtual private boost::noncopyable
-    {
+    { 
         public:
             quote_message(message_type const&);
             std::string security_symbol() const;
@@ -22,6 +22,7 @@ namespace multicast_communication
             double bid_volume() const;
             double offer_price() const;
             double offer_volume() const;
+            static bool is_valid_type(message_type const&);
             friend std::ostream& operator<<(std::ostream&, quote_message const&);
         private:
 

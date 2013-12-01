@@ -88,8 +88,7 @@ namespace multicast_communication
 
                 q_addr.push_back( std::make_pair("233.200.79.0", 61000) );
                 q_addr.push_back( std::make_pair("233.200.79.1", 61001) );
-                /*
-                 q_addr.push_back( std::make_pair("233.200.79.2", 61002) );
+                q_addr.push_back( std::make_pair("233.200.79.2", 61002) );
                 q_addr.push_back( std::make_pair("233.200.79.3", 61003) );
                 q_addr.push_back( std::make_pair("233.200.79.4", 61004) );
                 q_addr.push_back( std::make_pair("233.200.79.5", 61005) );
@@ -101,12 +100,11 @@ namespace multicast_communication
                 t_addr.push_back( std::make_pair("233.200.79.131", 62131) );
                 t_addr.push_back( std::make_pair("233.200.79.132", 62132) );
                 t_addr.push_back( std::make_pair("233.200.79.133", 62133) );
-                */
                 t_addr.push_back( std::make_pair("233.200.79.134", 62134) );
                 t_addr.push_back( std::make_pair("233.200.79.135", 62135) );
 
                 market_data_processor_impl processor;
-                market_data_receiver receiver(8, 8, t_addr, q_addr, processor );
+                market_data_receiver receiver(2, 2, t_addr, q_addr, processor );
 
                 boost::thread run(service_run, boost::ref( service ) );
 
@@ -129,8 +127,6 @@ namespace multicast_communication
                     boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
                 }
 
-                //service.stop();
-                //receiver.stop();
                 run.join();
                 BOOST_CHECK_EQUAL( receiver.trades_size(), 0 );
                 BOOST_CHECK_EQUAL( receiver.quotes_size(), 0 );

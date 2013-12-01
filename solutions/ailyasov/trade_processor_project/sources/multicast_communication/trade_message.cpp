@@ -145,4 +145,10 @@ namespace multicast_communication
         'L'
     };
 
+    bool trade_message::is_valid_type(message_type const& m)
+    {
+        return parser<short_trade_message>::is_valid_type(m) ||
+            parser<long_trade_message>::is_valid_type(m);
+    } 
+
 }

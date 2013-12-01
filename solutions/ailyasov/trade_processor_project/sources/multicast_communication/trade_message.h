@@ -20,6 +20,7 @@ namespace multicast_communication
             std::string security_symbol() const;
             double price() const;
             double volume() const;
+            static bool is_valid_type(message_type const&);
             friend std::ostream& operator<<(std::ostream&, trade_message const&);
         private:
             template<typename T>
@@ -41,6 +42,8 @@ namespace multicast_communication
             char type_;
             char price_denom_code_;
     };
+
+    typedef boost::shared_ptr< trade_message > trade_message_ptr;
 
     struct long_trade_message
     {
@@ -105,8 +108,6 @@ namespace multicast_communication
         static const char RESTRICTION_TYPE[RESTRICTION_SIZE];
         static const char RESTRICTION_CATEGORY[RESTRICTION_SIZE];
     };
-
-    typedef boost::shared_ptr< trade_message > trade_message_ptr;
 
 }
 
