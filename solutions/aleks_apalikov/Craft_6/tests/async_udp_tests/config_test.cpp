@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-void config_test::read_config()
+void text_test::read_config()
 {
 	BOOST_CHECK_NO_THROW
 	(

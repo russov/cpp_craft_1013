@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -55,11 +56,11 @@ public:
 		}
 
 	}
-	addresses get_trades()
+	addresses& get_trades()
 	{
 		return trades;
 	}
-	addresses get_quotes()
+	addresses& get_quotes()
 	{
 		return quotes;
 	}
@@ -81,3 +82,5 @@ public:
 	}
 	~config(void);
 };
+
+#endif //_CONFIG_H_

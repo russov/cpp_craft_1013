@@ -1,7 +1,8 @@
 #include <boost/test/test_tools.hpp>
-namespace config_test
+namespace text_test
 {
 	void read_config();
+	void quote_trade_parse();
 
 }
 namespace async_udp
