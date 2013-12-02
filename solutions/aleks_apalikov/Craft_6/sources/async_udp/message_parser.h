@@ -15,12 +15,12 @@ enum delim
 };
 
 template< class T >
-void read_binary( std::ifstream& in, T& t, const size_t len = sizeof( T ) )
+void read_binary( std::istream& in, T& t, const size_t len = sizeof( T ) )
 {
 	in.read( reinterpret_cast< char* >( &t ), len );
 }
 template< class T >
-void write_binary( std::ofstream& out, T& t, const size_t len = sizeof( T ) )
+void write_binary( std::ostream& out, T& t, const size_t len = sizeof( T ) )
 {
 	out.write( reinterpret_cast< const char* >( &t ), len );
 }
@@ -62,9 +62,9 @@ public:
 	}
 	message(istream& inf): inp(inf)
 	{
-		if (!inf.is_open())
+		if (inf.eof())
 		{
-			cout<< "Error in binary file! "<<endl;
+			cout<< "Error in stringstream:it is empty "<<endl;
 			inp_good = false;
 		}
 		inp_good = true;
@@ -79,7 +79,7 @@ public:
 	{
 		return categ;
 	}
-	void get_string(string & s, int pos, size_t len);
+	void get_string(string & s, size_t pos, size_t len);
 	virtual int parse_rest();
 };
 class quote: public message

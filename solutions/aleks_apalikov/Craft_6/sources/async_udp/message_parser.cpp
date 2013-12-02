@@ -6,7 +6,7 @@ message::message_category message::read_category()
 	byte ch = 0;
 	while (ch != delim::start)
 	{
-		if(!inp.is_open())
+		if(inp.eof())
 		{
 			categ = message_category::end_reached;
 			return categ;
@@ -35,9 +35,9 @@ message message::read_next()
 
 void message::get_byte(byte & ch)
 {
-	if((!inp.is_open()) || (inp.peek() == EOF))
+	if((inp.eof()) || (inp.peek() == EOF))
 	{
-		inp.close();
+		inp.setstate(iostream::eofbit);
 		ch = EOF;
 		return;
 	}
@@ -47,9 +47,9 @@ void message::get_byte(byte & ch)
 
 void message::get_char( char & ch )
 {
-	if((!inp.is_open()) || (inp.peek() == EOF))
+	if((inp.eof()) || (inp.peek() == EOF))
 	{
-		inp.close();
+		inp.setstate(iostream::eofbit);
 		ch = EOF;
 		return;
 	}
@@ -58,7 +58,7 @@ void message::get_char( char & ch )
 }
 
 
-void message::get_string( string & s, int pos, size_t len )
+void message::get_string( string & s, size_t pos, size_t len )
 {
 	for (size_t k = 0; k < pos; k++)
 	{
