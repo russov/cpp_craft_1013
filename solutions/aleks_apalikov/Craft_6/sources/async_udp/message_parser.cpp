@@ -7,10 +7,14 @@ message::message_category message::read_category()
 	while (ch != delim::start)
 	{
 		if(!inp.is_open())
-			return message_category::end_reached;
+		{
+			categ = message_category::end_reached;
+			return categ;
+		}
 		get_byte(ch);
-		counter ++ ;
 	}
+	counter ++ ; // total delim:start 's
+	place = 0;
 	get_byte(ch);
 	if((ch == message_category::bond)||(ch == message_category::equity)||(ch == message_category::equity))
 	{
@@ -31,13 +35,45 @@ message message::read_next()
 
 void message::get_byte(byte & ch)
 {
-	if(inp.peek() == EOF)
+	if((!inp.is_open()) || (inp.peek() == EOF))
 	{
 		inp.close();
 		ch = EOF;
 		return;
 	}
 	read_binary(inp, ch);
+	place++;
+}
+
+void message::get_char( char & ch )
+{
+	if((!inp.is_open()) || (inp.peek() == EOF))
+	{
+		inp.close();
+		ch = EOF;
+		return;
+	}
+	read_binary(inp, ch);
+	place++;
+}
+
+
+void message::get_string( string & s, int pos, size_t len )
+{
+	for (size_t k = 0; k < pos; k++)
+	{
+		char c;
+		get_char(c);
+	}
+	char * cs = new char [len + 1];
+	for (size_t i = 0; i < len; i++)
+	{
+		get_char(cs[i]);
+	}
+	cs[len] = '\0';
+	s = string(cs);
+	len = s.length();
+	delete [] cs;
 }
 
 int message::parse_rest()
@@ -49,14 +85,25 @@ int message::parse_rest()
 
 int quote::parse_rest()
 {
-
+	/*byte b;
+	get_byte(b); 
+	typ = (message_type) b;
+	pair<char, int> p; 
+	if(sec_len.find(b))
+		get_string(security_symbol, header_len - place, sec_len[(char)b]);
+*/
 	return 0;
-
-
 }
 
 int trade::parse_rest()
 {
+	byte b;
+	get_byte(b); 
+	typ = (message_type) b;
+	map<char, int>::const_iterator i = sec_len.find(b);
+	if((i != sec_len.end()) && b != 'D')
+		get_string(security_symbol, header_len - place, i->second);
+	else return -1;
 
 	return 0;
 }
