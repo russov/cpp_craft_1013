@@ -10,6 +10,11 @@ void config_test::read_config()
 {
 	BOOST_CHECK_NO_THROW
 	(
-		config c("F:\\Cpp_Craft\\cpp\\solutions\\aleks_apalikov\\Craft_6\\sources\\" + string("config.ini"));
+		config c(data_path + string("config.ini"));
 	);
+	{
+		config c(data_path + string("config.ini"));
+		BOOST_CHECK_EQUAL (c.get_trades().size(), c.trade_ports());
+		BOOST_CHECK_EQUAL (c.get_quotes().size(), c.quote_ports());
+	}
 }

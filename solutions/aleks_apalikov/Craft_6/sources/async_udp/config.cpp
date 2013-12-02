@@ -3,4 +3,5 @@
 
 config::~config(void)
 {
+	conf.close();
 }
