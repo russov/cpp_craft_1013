@@ -4,6 +4,8 @@ int message::counter = 0;
 message::message_category message::read_category()
 {
 	byte ch = 0;
+	if( !inp_good )
+		return message_category::end_reached;
 	while (ch != delim::start)
 	{
 		if(inp.eof())
@@ -26,11 +28,11 @@ message::message_category message::read_category()
 
 }
 
-message message::read_next()
+message* message::read_next()
 {
-	read_category();
+	if(read_category() == -1) return this;
 	parse_rest();
-	return message(inp);
+	return this;
 }
 
 void message::get_byte(byte & ch)
@@ -97,6 +99,10 @@ int quote::parse_rest()
 
 int trade::parse_rest()
 {
+	if(inp.eof())
+	{
+		return -1;
+	}
 	byte b;
 	get_byte(b); 
 	typ = (message_type) b;
@@ -105,14 +111,49 @@ int trade::parse_rest()
 		get_string(security_symbol, header_len - place, i->second);
 	else return -1;
 	string st;
+	const trade::trade_t* cur_trade;
 	switch (i->first)
 	{
 	case message_type::short_trade:
+		cur_trade = &get_short();
 		break;
 	case message_type::long_trade:
+		cur_trade = &get_long();
 		break;
+	default:
+		cout<<"Unknown type read"<<endl;
+		return -1;
 	};
+	parse(cur_trade);
 //	get_string(st, )
 
 	return 0;
+}
+
+
+
+vector<trade::trade_t> trade::short_long = boost::assign::list_of(trade_t(1, 4, 6, 8, 5)) (trade_t(34, 9, 22, 12, 21));
+
+const trade::trade_t& trade::get_short()
+{
+	return short_long[0];
+}
+const trade::trade_t& trade::get_long()
+{
+	return short_long[1];
+}
+
+void trade::parse(const trade::trade_t* cur_trade )
+{
+	streamoff sec_symb = inp.tellg();
+	inp.seekg(cur_trade->denom_of + sec_symb, ios_base::beg);
+	get_char(denom);
+	inp.seekg(cur_trade->pr_of + sec_symb, ios_base::beg);
+	string s;
+	get_string(s, 0, cur_trade->pr_len);
+	price = boost::lexical_cast<double> (s);
+	inp.seekg(cur_trade->vol_of + sec_symb, ios_base::beg);
+	s.clear();
+	get_string(s, 0, cur_trade->vol_len);
+	volume = boost::lexical_cast<double> (s);
 }

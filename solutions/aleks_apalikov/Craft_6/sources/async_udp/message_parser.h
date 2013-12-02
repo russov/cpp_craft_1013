@@ -4,6 +4,7 @@
 #include <iostream>
 #include <map>
 #include "boost/assign.hpp"
+#include "boost/lexical_cast.hpp"
 
 typedef unsigned char byte;
 using namespace std;
@@ -57,22 +58,24 @@ public:
 		return typ;
 	}
 	static int counter;
-	message(): inp(ifstream())
+	message(): inp(cin) // not neccessary construct
 	{
 	}
 	message(istream& inf): inp(inf)
 	{
 		if (inf.eof())
 		{
-			cout<< "Error in stringstream:it is empty "<<endl;
+			cout<< "Error in stringstream: it is empty "<<endl;
 			inp_good = false;
+			categ = message_category::end_reached;
+			return;
 		}
 		inp_good = true;
 		place = 0;
 
 	}
 	message_category read_category(); //search for listed above message_category
-	message read_next();
+	message* read_next();
 	void get_byte(byte & b);
 	void get_char(char & c);
 	message_category get_categ()
@@ -90,38 +93,33 @@ public:
 	virtual int parse_rest();
 
 };
-struct trad{
-	static const char vol_of = 1;
-	static const char vol_len = 4;
-	static const char pr_of = 6;
-	static const char pr_len = 8;
-	static const char denom_of = 5;
-};
+
 class trade:public message
 {
 public:
-	static struct tr:public trad //offset of bytes after sec_symb
+	struct trade_t //offset of bytes after sec_symb
 	{
-		static const char vol_of = 1;
-		static const char vol_len = 4;
-		static const char pr_of = 6;
-		static const char pr_len = 8;
-		static const char denom_of = 5;
-	} short_tr;
-	static struct long_trad: public tr  //offset of bytes after sec_symb
-	{
-		static const char vol_of = 34;
-		static const char vol_len = 9;
-		static const char pr_of = 22;
-		static const char pr_len = 12;
-		static const char denom_of = 21;
-	} long_tr;
+		char vol_of;
+		char vol_len;
+		char pr_of;
+		char pr_len;
+		char denom_of;
+		trade_t(char vo, char vl, char po, char pl, char d_o): vol_of(vo), vol_len(vl), pr_of(po), pr_len(pl), denom_of(d_o)
+		{
+		}
+	} ;
+	char denom;
+	double price;
+	double volume;
+	static const struct short_trade_t short_tr;
+	static vector<trade_t> short_long;
+	const static trade_t& get_short();
+	const static trade_t& get_long();
 	trade(istream& ifs): message(ifs)
 	{
 	}
 	virtual int parse_rest();
-
+	void parse(const trade::trade_t* cur_trade );
 };
-
 static const map<char, int> sec_len = boost::assign::map_list_of('D', 3) ('B', 11) ('I', 3);
 #endif

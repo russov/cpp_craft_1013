@@ -7,10 +7,15 @@
 void text_test::quote_trade_parse()
 {
 	{
-//		const trad* t1 = &trade::short_tr;
-//		const trad* t2 = &trade::long_tr;
-		char v1 = trade::short_tr.vol_of;
-		char v2 = trade::long_tr.vol_of;
+//		trade t12(stringstream());
+		const trade::trade_t* t1 = & trade::get_short() ;
+		const trade::trade_t& t2 = trade::get_long();
+		BOOST_CHECK_EQUAL(t1->denom_of, 5) ;
+		BOOST_CHECK_EQUAL(t1->pr_of, 6) ;
+		BOOST_CHECK_EQUAL(t1->vol_len, 4);
+		BOOST_CHECK_EQUAL(t2.vol_of, 34) ;
+		BOOST_CHECK_EQUAL(t2.pr_of, 22) ;
+		BOOST_CHECK_EQUAL(t2.denom_of, 21) ;
 		string str = data_path + string("233.200.79.0.udp");
 		ifstream fs; 
 		stringstream sout;
