@@ -7,6 +7,10 @@
 void text_test::quote_trade_parse()
 {
 	{
+//		const trad* t1 = &trade::short_tr;
+//		const trad* t2 = &trade::long_tr;
+		char v1 = trade::short_tr.vol_of;
+		char v2 = trade::long_tr.vol_of;
 		string str = data_path + string("233.200.79.0.udp");
 		ifstream fs; 
 		stringstream sout;
@@ -30,5 +34,9 @@ void text_test::quote_trade_parse()
 		{
 			t.read_next();
 		}
+	}
+
+	{
+	
 	}
 }

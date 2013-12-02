@@ -112,7 +112,7 @@ int trade::parse_rest()
 	case message_type::long_trade:
 		break;
 	};
-	get_string(st, )
+//	get_string(st, )
 
 	return 0;
 }
