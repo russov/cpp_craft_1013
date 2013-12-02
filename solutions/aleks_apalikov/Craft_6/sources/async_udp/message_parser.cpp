@@ -104,6 +104,15 @@ int trade::parse_rest()
 	if((i != sec_len.end()) && b != 'D')
 		get_string(security_symbol, header_len - place, i->second);
 	else return -1;
+	string st;
+	switch (i->first)
+	{
+	case message_type::short_trade:
+		break;
+	case message_type::long_trade:
+		break;
+	};
+	get_string(st, )
 
 	return 0;
 }

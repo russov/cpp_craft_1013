@@ -93,6 +93,22 @@ public:
 class trade:public message
 {
 public:
+	static struct  //offset of bytes after sec_symb
+	{
+		static const char vol_of = 1;
+		static const char vol_len = 4;
+		static const char pr_of = 6;
+		static const char pr_len = 8;
+		static const char denom_of = 5;
+	} short_tr;
+	enum long_tr  //offset of bytes after sec_symb
+	{
+		vol_of = 34, 
+		vol_len = 9,
+		pr_of = 22,
+		pr_len = 12,
+		denom_of = 21
+	};
 	trade(istream& ifs): message(ifs)
 	{
 	}
