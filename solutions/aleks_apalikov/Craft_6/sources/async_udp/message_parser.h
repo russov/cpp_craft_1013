@@ -87,6 +87,25 @@ public:
 };
 class quote: public message
 {
+	struct quote_t //offset of bytes after sec_symb
+	{
+		char bid_vol_of;
+		char bid_vol_len;
+		char bid_pr_of;
+		char bid_pr_len;
+		char bid_denom_of;
+		char off_vol_of;
+		char off_vol_len;
+		char off_pr_of;
+		char off_pr_len;
+		char off_denom_of;
+		quote_t(char bvo, char bvl, char bpo, char bpl, char bdo, char ovo, char ovl, char opo, char opl, char odo): 
+			bid_vol_of(bvo), bid_vol_len(bvl), bid_pr_of(bpo), bid_pr_len(bpl), bid_denom_of(bdo),
+			off_vol_of(ovo), off_vol_len(ovl), off_pr_of(opo), off_pr_len(opl), off_denom_of(odo)
+		{
+		}
+	} ;
+	static const vector<quote_t> short_long;
 public:
 	quote(istream& ifs): message(ifs)
 	{}
@@ -111,7 +130,6 @@ public:
 	char denom;
 	double price;
 	double volume;
-	static const struct short_trade_t short_tr;
 	static vector<trade_t> short_long;
 	const static trade_t& get_short();
 	const static trade_t& get_long();

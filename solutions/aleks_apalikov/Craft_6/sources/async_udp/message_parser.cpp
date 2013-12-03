@@ -96,6 +96,9 @@ int quote::parse_rest()
 */
 	return 0;
 }
+				// (char bvo, char bvl, char bpo, char bpl, char bdo, char ovo, char ovl, char opo, char opl, char odo)
+const vector<quote::quote_t> quote::short_long = boost::assign::list_of (quote_t (15, 3, 7, 8, 6, 28, 3, 20, 8, 19 ) )
+(quote_t ( 29, 7, 17, 12, 16, 49, 7, 37, 12, 36 ) );
 
 int trade::parse_rest()
 {
