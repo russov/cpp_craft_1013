@@ -72,6 +72,7 @@ public:
 		}
 		inp_good = true;
 		place = 0;
+		inp.seekg(place);
 
 	}
 	message_category read_category(); //search for listed above message_category
@@ -87,6 +88,13 @@ public:
 };
 class quote: public message
 {
+public:
+	char bid_denom; //TODO: make getters for tests or struct for tests
+	double bid_price;
+	double bid_volume;
+	char offer_denom;
+	double offer_price;
+	double offer_volume;
 	struct quote_t //offset of bytes after sec_symb
 	{
 		char bid_vol_of;
@@ -105,12 +113,16 @@ class quote: public message
 		{
 		}
 	} ;
+private:
+	virtual int parse_rest();
+	void parse( const quote::quote_t* cur_trade );
 	static const vector<quote_t> short_long;
+public:
+	const static quote_t& get_short();
+	const static quote_t& get_long();
 public:
 	quote(istream& ifs): message(ifs)
 	{}
-	virtual int parse_rest();
-
 };
 
 class trade:public message

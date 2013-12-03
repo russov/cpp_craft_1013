@@ -4,6 +4,7 @@ int message::counter = 0;
 message::message_category message::read_category()
 {
 	byte ch = 0;
+	byte pos = inp.tellg();//for tests
 	if( !inp_good )
 		return message_category::end_reached;
 	while (ch != delim::start)
@@ -18,7 +19,7 @@ message::message_category message::read_category()
 	counter ++ ; // total delim:start 's
 	place = 0;
 	get_byte(ch);
-	if((ch == message_category::bond)||(ch == message_category::equity)||(ch == message_category::equity))
+	if((ch == message_category::bond)||(ch == message_category::equity)||(ch == message_category::local_issue))
 	{
 		categ = (message_category)ch;
 		return categ;
@@ -30,9 +31,16 @@ message::message_category message::read_category()
 
 message* message::read_next()
 {
+	try{
 	if(read_category() == -1) return this;
 	parse_rest();
 	return this;
+	}
+	catch( ... )
+	{
+		categ = message_category::end_reached;
+		return this;
+	}
 }
 
 void message::get_byte(byte & ch)
@@ -87,18 +95,73 @@ int message::parse_rest()
 
 int quote::parse_rest()
 {
-	/*byte b;
+	if(inp.eof())
+	{
+		return -1;
+	}
+	byte b;
 	get_byte(b); 
 	typ = (message_type) b;
-	pair<char, int> p; 
-	if(sec_len.find(b))
-		get_string(security_symbol, header_len - place, sec_len[(char)b]);
-*/
+	map<char, int>::const_iterator i = sec_len.find(b);
+	if((i != sec_len.end()) && b != 'I')
+		get_string(security_symbol, header_len - place, i->second);
+	else return -1;
+	string st;
+	const quote::quote_t* cur_trade;
+	switch (i->first)
+	{
+	case message_type::short_quote:
+		cur_trade = &get_short();
+		break;
+	case message_type::long_quote:
+		cur_trade = &get_long();
+		break;
+	default:
+		cout<<"Unknown type read"<<endl;
+		return -1;
+	};
+	parse(cur_trade);
+
 	return 0;
 }
-				// (char bvo, char bvl, char bpo, char bpl, char bdo, char ovo, char ovl, char opo, char opl, char odo)
-const vector<quote::quote_t> quote::short_long = boost::assign::list_of (quote_t (15, 3, 7, 8, 6, 28, 3, 20, 8, 19 ) )
+
+void quote::parse( const quote::quote_t* cur_trade )
+{
+	streamoff sec_symb = inp.tellg();
+	inp.seekg(cur_trade->bid_denom_of + sec_symb, ios_base::beg);
+	get_char(bid_denom);
+	inp.seekg(cur_trade->bid_pr_of + sec_symb, ios_base::beg);
+	string s;
+	get_string(s, 0, cur_trade->bid_pr_len);
+	bid_price = boost::lexical_cast<double> (s);
+	inp.seekg(cur_trade->bid_vol_of + sec_symb, ios_base::beg);
+	s.clear();
+	get_string(s, 0, cur_trade->bid_vol_len);
+	bid_volume = boost::lexical_cast<double> (s);
+	inp.seekg(cur_trade->off_denom_of + sec_symb, ios_base::beg);
+	get_char(offer_denom);
+	inp.seekg(cur_trade->off_pr_of + sec_symb, ios_base::beg);
+	s.clear();
+	get_string(s, 0, cur_trade->off_pr_len);
+	offer_price = boost::lexical_cast<double> (s);
+	inp.seekg(cur_trade->off_vol_of + sec_symb, ios_base::beg);
+	s.clear();
+	get_string(s, 0, cur_trade->off_vol_len);
+	offer_volume = boost::lexical_cast<double> (s);
+}
+
+// (char bvo, char bvl, char bpo, char bpl, char bdo, char ovo, char ovl, char opo, char opl, char odo) //starting from end of security symbol
+const vector<quote::quote_t> quote::short_long = boost::assign::list_of (quote_t (12, 3, 4, 8, 3, 25, 3, 17, 8, 16 ) )
 (quote_t ( 29, 7, 17, 12, 16, 49, 7, 37, 12, 36 ) );
+
+const quote::quote_t& quote::get_short()
+{
+	return short_long[0];
+}
+const quote::quote_t& quote::get_long()
+{
+	return short_long[1];
+}
 
 int trade::parse_rest()
 {
@@ -128,7 +191,6 @@ int trade::parse_rest()
 		return -1;
 	};
 	parse(cur_trade);
-//	get_string(st, )
 
 	return 0;
 }
