@@ -38,7 +38,7 @@ void text_test::quote_trade_parse()
 		BOOST_CHECK_EQUAL(q.offer_price(), 1213700.0);
 		BOOST_CHECK_EQUAL(q.offer_volume(), 1);
 		BOOST_CHECK_EQUAL((char)q.get_categ(), 'E');
-		processor.wr_quote(shared_ptr<quote> (& q ) );
+		processor.wr_quote( q );
 
 		q.read_next();
 		BOOST_CHECK_EQUAL(q.bid_denom(), 'D');
@@ -48,13 +48,13 @@ void text_test::quote_trade_parse()
 		BOOST_CHECK_EQUAL(q.offer_price(), 354300.0);
 		BOOST_CHECK_EQUAL(q.offer_volume(), 1);
 		BOOST_CHECK_EQUAL((char)q.get_type(), 'D');
-		processor.wr_quote(shared_ptr<quote> (& q ) );
+		processor.wr_quote( q );
 
 			q.read_next();
 		BOOST_CHECK_EQUAL((char)q.bid_denom(), 'F');
 		BOOST_CHECK_EQUAL((char)q.get_type(), 'D');
 		BOOST_CHECK_EQUAL((char)q.get_categ(), 'L');
-		processor.wr_quote( shared_ptr<quote> (& q ) );
+		processor.wr_quote( q );
 
 		BOOST_CHECK_NO_THROW(
 			q.read_next();

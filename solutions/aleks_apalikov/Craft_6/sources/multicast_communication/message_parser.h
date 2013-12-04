@@ -197,7 +197,9 @@ public:
 	virtual int parse_rest();
 	void parse(const trade::trade_t* cur_trade );
 };
-typedef boost::shared_ptr<quote> shared_quote;
-typedef boost::shared_ptr<trade> shared_trade;
+//typedef boost::shared_ptr<quote> shared_quote;
+//typedef boost::shared_ptr<trade> shared_trade;
+typedef quote& shared_quote;
+typedef trade& shared_trade;
 static const map<char, int> sec_len = boost::assign::map_list_of('D', 3) ('B', 11) ('I', 3);
 #endif

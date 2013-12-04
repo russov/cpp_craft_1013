@@ -1,15 +1,17 @@
 #include "market_data_processor.h"
 
-int market_data_processor::wr_trade( shared_trade trad )
+int market_data_processor::wr_trade( shared_trade trad_ )
 {
+	trade * trad = & trad_;
 	outp << "T "<< trad->security_symbol() << " "
 		<< std::setprecision(2) << ( trad->price() / trad->denom()) << " "
 		<< std::setprecision(1) << trad->volume() << std::endl;
 	return 1;
 }
 
-int market_data_processor::wr_quote( shared_quote quot )
+int market_data_processor::wr_quote( shared_quote quot_ )
 {
+	quote * quot = & quot_;
 	outp << "Q " << std::fixed << quot->security_symbol() << " "
 		<< std::setprecision(2) << ( quot->bid_price() / quot->bid_denom() ) << " "
 		<< std::setprecision(1) << quot->bid_volume()  << " " 
