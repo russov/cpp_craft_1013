@@ -48,10 +48,12 @@ int Datafeed::createOutput()
 		d->f3 = read_double(in);
 		d->f4 = read_double(in);
 		
-		out.write( d->stock_name.c_str(), 9 ); 
-		write_uint32(out, d->ds);
+		write_str( out, d->stock_name.c_str() ); 
+		if(write_uint32(out, d->ds) != d->ds)
+			cout << "An error in write_uint32 () ";
 		write_double(out, d->vwap);
-		write_uint32(out, d->volume);
+		if(write_uint32(out, d->volume) != d->volume)
+			cout << "An error in write_uint32 () ";
 		write_double(out, d->f1);
 		write_double(out, d->f4);
 		write_double(out, d->f3);

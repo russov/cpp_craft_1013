@@ -60,7 +60,7 @@ UINT32 read_uint32( fstream& ins)
 
 void write_double( ofstream& out, double rational ) 
 {
-	out.write( reinterpret_cast<char*>( &rational ), sizeof rational );
+	out.write( reinterpret_cast<char*>( &rational ), sizeof ( rational ) );
 }
 
 const char* write_str( ofstream& ofs, const char* str )
@@ -74,6 +74,7 @@ const char* write_str( ofstream& ofs, const char* str )
 		else
 			ofs.put(str[size]);
 	}
+	ofs.put( ( char ) 0);
 	return str;
 
 }
@@ -108,7 +109,7 @@ std::string read_str( fstream& ins )
 double read_double( fstream& ins )
 {
 	double rational = 0;
-	ins.read( reinterpret_cast<char*>( &rational ), sizeof rational );
+	ins.read( reinterpret_cast<char*>( &rational ), sizeof ( rational ) );
 	return rational;
 }
 
