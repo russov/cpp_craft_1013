@@ -7,6 +7,7 @@ namespace text_test
 }
 namespace async_udp
 {
+	void receiver_test();
 	namespace tests_
 	{
 		void udp_listener_tests();
