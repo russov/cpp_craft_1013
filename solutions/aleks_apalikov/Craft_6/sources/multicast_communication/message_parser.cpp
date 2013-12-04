@@ -6,12 +6,12 @@ message::message_category message::read_category()
 	byte ch = 0;
 	std::streampos pos = inp.tellg();//TODO: del; for tests
 	if( !inp_good )
-		return message_category::end_reached;
-	while (ch != delim::start)
+		return end_reached; // from enum message_category
+	while (ch != start) // from enum delim
 	{
 		if(inp.eof())
 		{
-			categ = message_category::end_reached;
+			categ = end_reached;
 			return categ;
 		}
 		get_byte(ch);
@@ -19,7 +19,7 @@ message::message_category message::read_category()
 	counter ++ ; // total delim:start 's
 	place = 0;
 	get_byte(ch);
-	if((ch == message_category::bond)||(ch == message_category::equity)||(ch == message_category::local_issue))
+	if((ch == bond)||(ch == equity)||(ch == local_issue))
 	{
 		categ = (message_category)ch;
 		return categ;
@@ -38,7 +38,7 @@ message* message::read_next()
 	}
 	catch( ... )
 	{
-		categ = message_category::end_reached;
+		categ = end_reached;
 		return this;
 	}
 }
@@ -110,10 +110,10 @@ int quote::parse_rest()
 	const quote::quote_t* cur_trade;
 	switch (i->first)
 	{
-	case message_type::short_quote:
+	case short_quote: //enum message_type::short_quote
 		cur_trade = &get_short();
 		break;
-	case message_type::long_quote:
+	case long_quote:
 		cur_trade = &get_long();
 		break;
 	default:
@@ -130,7 +130,7 @@ void quote::parse( const quote::quote_t* cur_trade )
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->bid_denom_of + sec_symb, ios_base::beg);
 	get_char(bid_denom_);
-	denominator(bid_denom_);
+	denominator(bid_denom_); //TODO: del before pull req
 	inp.seekg(cur_trade->bid_pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->bid_pr_len);
@@ -182,10 +182,10 @@ int trade::parse_rest()
 	const trade::trade_t* cur_trade;
 	switch (i->first)
 	{
-	case message_type::short_trade:
+	case short_trade: //enum message_type::short_trade
 		cur_trade = &get_short();
 		break;
-	case message_type::long_trade:
+	case long_trade:
 		cur_trade = &get_long();
 		break;
 	default:
@@ -215,7 +215,7 @@ void trade::parse(const trade::trade_t* cur_trade )
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->denom_of + sec_symb, ios_base::beg);
 	get_char(denom_);
-	denominator(denom_);
+	denominator(denom_); //TODO: del before pull req
 	inp.seekg(cur_trade->pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->pr_len);

@@ -2,6 +2,8 @@
 #define _TRADES_FILTER_
 #include <iostream>
 #include <fstream>
+#include <stdint.h>
+
 using namespace std;
 enum Types {
 	MARKET_OPEN = 1u,
@@ -12,15 +14,15 @@ enum Types {
 struct Trade
 {
 public:
-	size_t typ;
-	size_t time;
-	size_t len;
+	uint32_t typ;
+	uint32_t time;
+	uint32_t len;
 	string str;
-	Trade(size_t t = 0, size_t time = 0, size_t l = 0, char * st = ""): typ(t), time(time), len(l)
+	Trade(uint32_t t = 0, uint32_t time = 0, uint32_t l = 0, char * st = ""): typ(t), time(time), len(l)
 	{
 		str = string(st);
 	}
-	void change(size_t t = 0, size_t time = 0, size_t l = 0, char * st = "")
+	void change(uint32_t t = 0, uint32_t time = 0, uint32_t l = 0, char * st = "")
 	{
 		typ = t;
 		time = time;

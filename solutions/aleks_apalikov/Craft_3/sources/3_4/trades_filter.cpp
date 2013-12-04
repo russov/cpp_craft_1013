@@ -38,10 +38,14 @@ public:
 			return -1;
 		}
 		ifstream inp( input.str().c_str(), fstream::binary | fstream::in);
-		ofstream outp(output.str().c_str(), fstream::binary | fstream::out);
-		if(!inp.is_open() || !outp.is_open())
+		ofstream outp;
+		if( inp.is_open() )
 		{
-			cout << "File not found! "<<endl;
+			outp.open(output.str().c_str(), fstream::binary | fstream::out);
+		}
+		else 
+		{
+			std::cout << input.str() << " File not found! "<<endl;
 			return 1;
 		}
 		

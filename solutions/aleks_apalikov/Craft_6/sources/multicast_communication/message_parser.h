@@ -93,7 +93,7 @@ public:
 		{
 			cout<< "Error in stringstream: it is empty "<<endl;
 			inp_good = false;
-			categ = message_category::end_reached;
+			categ = end_reached; //from message_category
 			return;
 		}
 		inp_good = true;
