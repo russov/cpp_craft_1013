@@ -47,13 +47,8 @@ int Datafeed::createOutput()
 		d->f2 = read_double(in);
 		d->f3 = read_double(in);
 		d->f4 = read_double(in);
-
-		if( in.peek() == EOF )
-		{
-			break;
-		}
-
-		write_str(out, d->stock_name.c_str());
+		
+		out.write( d->stock_name.c_str(), 9 ); 
 		write_uint32(out, d->ds);
 		write_double(out, d->vwap);
 		write_uint32(out, d->volume);
@@ -62,6 +57,10 @@ int Datafeed::createOutput()
 		write_double(out, d->f3);
 		n++;
 		delete d;
+		if( in.peek() == EOF )
+		{
+			break;
+		}
 	}
 	return n;
 }
