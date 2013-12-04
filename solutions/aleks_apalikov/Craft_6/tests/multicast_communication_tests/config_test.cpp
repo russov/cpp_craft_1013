@@ -15,6 +15,10 @@ void text_test::read_config()
 	{
 		config c(data_path + string("config.ini"));
 		BOOST_CHECK_EQUAL (c.get_trades().size(), c.trade_ports());
+		BOOST_CHECK_EQUAL (c.get_quotes()[1].first, "233.200.79.1");
+		ofstream o (data_path + string("out"));
+		o<<c.get_quotes()[0].first;
 		BOOST_CHECK_EQUAL (c.get_quotes().size(), c.quote_ports());
+		o.close();
 	}
 }

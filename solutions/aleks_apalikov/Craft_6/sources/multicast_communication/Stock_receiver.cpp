@@ -7,28 +7,67 @@ stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini")
 	c.trade_threads();
 	c.quote_threads();
 
-	quote_services.reserve(c.quote_threads());
-	for(size_t i = 0; i != c.quote_threads(); i++)
+	init_services( quote_services, c, true);	
+	init_services(trade_services, c, false);
+
+	init_listeners(true);
+	init_listeners(false);
+
+	int denom = c.get_trades().size();
+	for(int i = 0; i < c.trade_threads(); i++ )
 	{
-		shared_service sp;
-		sp.reset(new boost::asio::io_service);
-		quote_services.push_back(sp);
+		threads.create_thread(boost::bind(&stock_receiver::service_run, this, trade_services[i % denom]));
+
 	}
-	for(size_t i = 0; i != c.quote_threads(); i++)
-	{
-		cout << quote_services[i].use_count() << endl;
-	}
-	quote_listeners.reserve(c.quote_ports());
-	for(listeners_vec::iterator i = quote_listeners.begin(); i != quote_listeners.end(); i++)
-	{
-		boost::shared_ptr<void> sp ;
-		i->reset (new udp_listener(boost::asio::io_service(), 
-			"212.12.23.32", 3128));
-	}
+
 
 }
 
 
 stock_receiver::~stock_receiver(void)
 {
+}
+
+void stock_receiver::init_services( vector<shared_service> & vs, config & c, const bool quotes )
+{
+	size_t siz =
+	quotes ? c.quote_threads() : c.trade_threads();
+	vs.reserve(siz);
+	for(size_t i = 0; i != siz; i++)
+	{
+		shared_service sp;
+		sp.reset(new boost::asio::io_service);
+		vs.push_back(sp);
+	}
+}
+
+void stock_receiver::init_listeners( const bool quotes )
+{
+	listeners_vec  & lv = quotes ? quote_listeners :  trade_listeners;
+	vector<shared_service> & vs = quotes ? quote_services : trade_services;
+	size_t siz = quotes ? c.quote_ports() : c.trade_ports();
+	addresses & a = quotes ? c.get_quotes() : c.get_trades();
+	lv.reserve(a.size());
+	for(int i = 0; i < siz; i++)
+	{
+		boost::shared_ptr<udp_listener> sp;
+		sp.reset(new udp_listener(*vs[i], a[i].first, a[i].second));
+		lv.push_back (sp);
+	}
+}
+
+int stock_receiver::wait_some_data()
+{
+	for(int i = 0; i < trade_listeners.size(); ++i) { 
+		if (trade_listeners[i]->messages().size() > 0 )
+		{
+			return i;
+		}
+	}
+	return 0;
+}
+
+void stock_receiver::service_run(shared_service serv)
+{
+	serv->run();
 }

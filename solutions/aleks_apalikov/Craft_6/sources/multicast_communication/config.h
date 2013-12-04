@@ -9,8 +9,8 @@ using namespace std;
 typedef string ip_address;
 typedef unsigned short port;
 typedef vector<pair<ip_address, port>> addresses;
-//static const string data_path ("D:/CppCraft/solutions/aleks_apalikov/Craft_6/sources/data/") ;
-static const string data_path ("F:/Cpp_Craft/cpp/solutions/aleks_apalikov/Craft_6/sources/data/") ;
+static const string data_path ("D:/CppCraft/solutions/aleks_apalikov/Craft_6/sources/data/") ;
+//static const string data_path ("F:/Cpp_Craft/cpp/solutions/aleks_apalikov/Craft_6/sources/data/") ;
 
 class config
 {
@@ -41,7 +41,7 @@ public:
 			port num;
 			char address_line[ip_char_len];
 			conf.getline(address_line, ip_char_len, ' ');
-			ip_address ip(address_line);
+			ip_address ip(address_line + 1); // to del \n
 			conf >> num;
 			trades.push_back(make_pair(ip, num));
 		}
@@ -51,7 +51,7 @@ public:
 			port num;
 			char address_line[ip_char_len];
 			conf.getline(address_line, ip_char_len, ' ');
-			ip_address ip(address_line);
+			ip_address ip(address_line + 1);
 			conf >> num;
 			quotes.push_back(make_pair(ip, num));
 		}

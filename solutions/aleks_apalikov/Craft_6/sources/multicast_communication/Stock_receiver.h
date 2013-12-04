@@ -6,6 +6,7 @@
 #include "udp_listener.h"
 #include <vector>
 #include "boost/thread.hpp"
+#include <stdexcept>
 
 using namespace std;
 using namespace async_udp;
@@ -19,10 +20,12 @@ class stock_receiver
 	typedef vector<boost::shared_ptr<udp_listener>> listeners_vec;
 	listeners_vec quote_listeners;
 	listeners_vec trade_listeners;
-
-
+	static void init_services(vector<shared_service> & vs, config & c, const bool quotes);
+	void init_listeners( bool quotes);
 	config c;
 public:
+	int wait_some_data();
+	void service_run(shared_service serv);
 	stock_receiver(void);
 	~stock_receiver(void);
 };
