@@ -63,7 +63,7 @@ void write_double( ofstream& out, double rational )
 	out.write( reinterpret_cast<char*>( &rational ), sizeof ( rational ) );
 }
 
-const char* write_str( ofstream& ofs, const char* str )
+void write_str( ofstream& ofs, const char* str )
 {
 	for (unsigned size = 0; size < strlen(str); ++size)
 	{
@@ -75,7 +75,6 @@ const char* write_str( ofstream& ofs, const char* str )
 			ofs.put(str[size]);
 	}
 	ofs.put( ( char ) 0);
-	return str;
 
 }
 

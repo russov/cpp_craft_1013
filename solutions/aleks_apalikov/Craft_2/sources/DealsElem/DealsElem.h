@@ -29,7 +29,7 @@ enum Types {
 };
 UINT32 read_uint32( fstream& ins);
 UINT32 write_uint32( ofstream& ins, UINT32 value);
-const char* write_str(ofstream& ofs, const char* str);
+void write_str(ofstream& ofs, const char* str);
 
 void write_double( ofstream& out, double rational ) ;
 double read_double( fstream& ins);

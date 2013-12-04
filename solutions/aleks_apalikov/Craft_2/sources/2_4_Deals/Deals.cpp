@@ -29,7 +29,7 @@ int Deals::createOutput()
 	}
 	int n = 0; //total number of objects
 	UINT32 type, time, currentTime = 0;
-	size_t len;
+	UINT32 len;
 	char* str = NULL;
 	bool toWrite = false;
 	DealsElem* de = NULL;
