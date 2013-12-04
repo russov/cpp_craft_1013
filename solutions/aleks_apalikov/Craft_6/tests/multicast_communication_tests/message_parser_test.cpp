@@ -3,6 +3,8 @@
 #include "message_parser.h"
 #include "config.h"
 #include <sstream>
+#include "market_data_processor.h"
+#include "boost/thread.hpp"
 
 void text_test::quote_trade_parse()
 {
@@ -21,34 +23,39 @@ void text_test::quote_trade_parse()
 		string str = data_path + string("1.udp");
 		ofstream ofs; 
 		ofs.open(str.c_str());
+		market_data_processor processor(ofs);
 		ss << "EBEO A  003759557N:J_735AVB             0    AAAR B30000012127000000001D0000012137000000001     A   62TB00012130001 BB00012137001 "
 			<<"EDEO A  003759121P:J_428AINR  D00352000001 F00354300001 02"
 			<<"LDEO A  003759122N:J_432ALJR  F00124900003 D00125100001 02";
-		copy(
-			istreambuf_iterator<char>(ss),
-			istreambuf_iterator<char>(),
-			ostreambuf_iterator<char>(ofs));
-		quote q(ss);
+		//shared_ptr<quote> q (quote(ss));
+		quote q (ss);
+		using namespace boost;
 		q.read_next();
-		BOOST_CHECK_EQUAL(q.bid_denom, '3');
-		BOOST_CHECK_EQUAL(q.bid_price, 1212700.0);
-		BOOST_CHECK_EQUAL(q.bid_volume, 1);
-		BOOST_CHECK_EQUAL(q.offer_denom, 'D');
-		BOOST_CHECK_EQUAL(q.offer_price, 1213700.0);
-		BOOST_CHECK_EQUAL(q.offer_volume, 1);
+		BOOST_CHECK_EQUAL(q.bid_denom(), '3');
+		BOOST_CHECK_EQUAL(q.bid_price(), 1212700.0);
+		BOOST_CHECK_EQUAL(q.bid_volume(), 1);
+		BOOST_CHECK_EQUAL(q.offer_denom(), 'D');
+		BOOST_CHECK_EQUAL(q.offer_price(), 1213700.0);
+		BOOST_CHECK_EQUAL(q.offer_volume(), 1);
 		BOOST_CHECK_EQUAL((char)q.get_categ(), 'E');
+		processor.wr_quote(shared_ptr<quote> (& q ) );
+
 		q.read_next();
-		BOOST_CHECK_EQUAL(q.bid_denom, 'D');
-		BOOST_CHECK_EQUAL(q.bid_price, 352000.0);
-		BOOST_CHECK_EQUAL(q.bid_volume, 1);
-		BOOST_CHECK_EQUAL(q.offer_denom, 'F');
-		BOOST_CHECK_EQUAL(q.offer_price, 354300.0);
-		BOOST_CHECK_EQUAL(q.offer_volume, 1);
+		BOOST_CHECK_EQUAL(q.bid_denom(), 'D');
+		BOOST_CHECK_EQUAL(q.bid_price(), 352000.0);
+		BOOST_CHECK_EQUAL(q.bid_volume(), 1);
+		BOOST_CHECK_EQUAL(q.offer_denom(), 'F');
+		BOOST_CHECK_EQUAL(q.offer_price(), 354300.0);
+		BOOST_CHECK_EQUAL(q.offer_volume(), 1);
 		BOOST_CHECK_EQUAL((char)q.get_type(), 'D');
+		processor.wr_quote(shared_ptr<quote> (& q ) );
+
 			q.read_next();
-		BOOST_CHECK_EQUAL((char)q.bid_denom, 'F');
+		BOOST_CHECK_EQUAL((char)q.bid_denom(), 'F');
 		BOOST_CHECK_EQUAL((char)q.get_type(), 'D');
 		BOOST_CHECK_EQUAL((char)q.get_categ(), 'L');
+		processor.wr_quote( shared_ptr<quote> (& q ) );
+
 		BOOST_CHECK_NO_THROW(
 			q.read_next();
 		);

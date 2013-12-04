@@ -32,7 +32,7 @@ protected:
 	istream& inp;
 	size_t place; //where are we reading
 	bool inp_good;
-	string security_symbol;
+	string security_symbol_;
 	enum message_category
 	{
 		bond = 'B',
@@ -54,6 +54,10 @@ protected:
 
 	message_type typ;
 public:
+	const string & security_symbol()
+	{
+		return security_symbol_;
+	}
 	message_type get_type()
 	{
 		return typ;
@@ -110,13 +114,25 @@ public:
 };
 class quote: public message
 {
+	char bid_denom_;
+	double bid_price_;
+	double bid_volume_;
+	char offer_denom_;
+	double offer_price_;
+	double offer_volume_;
 public:
-	char bid_denom; //TODO: make getters for tests or struct for tests
-	double bid_price;
-	double bid_volume;
-	char offer_denom;
-	double offer_price;
-	double offer_volume;
+	double bid_denom()
+	{ return bid_denom_; }
+	double bid_price()
+	{ return bid_price_; }
+	double bid_volume()
+	{ return bid_volume_; }
+	char offer_denom()
+	{ return offer_denom_; }
+	double offer_price()
+	{ return offer_price_; }
+	double offer_volume() 
+	{ return offer_volume_; }
 	struct quote_t //offset of bytes after sec_symb
 	{
 		char bid_vol_of;
@@ -161,9 +177,17 @@ public:
 		{
 		}
 	} ;
-	char denom;
-	double price;
-	double volume;
+private:
+	char denom_;
+	double price_;
+	double volume_;
+public:
+	char  denom()
+	{ return denom_; }
+	double price()
+	{ return  price_; }
+	double volume()
+	{ return volume_; }
 	static vector<trade_t> short_long;
 	const static trade_t& get_short();
 	const static trade_t& get_long();
@@ -173,5 +197,7 @@ public:
 	virtual int parse_rest();
 	void parse(const trade::trade_t* cur_trade );
 };
+typedef boost::shared_ptr<quote> shared_quote;
+typedef boost::shared_ptr<trade> shared_trade;
 static const map<char, int> sec_len = boost::assign::map_list_of('D', 3) ('B', 11) ('I', 3);
 #endif

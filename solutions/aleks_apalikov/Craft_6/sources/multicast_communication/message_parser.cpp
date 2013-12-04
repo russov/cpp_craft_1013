@@ -104,7 +104,7 @@ int quote::parse_rest()
 	typ = (message_type) b;
 	map<char, int>::const_iterator i = sec_len.find(b);
 	if((i != sec_len.end()) && b != 'I')
-		get_string(security_symbol, header_len - place, i->second);
+		get_string(security_symbol_, header_len - place, i->second);
 	else return -1;
 	string st;
 	const quote::quote_t* cur_trade;
@@ -129,27 +129,27 @@ void quote::parse( const quote::quote_t* cur_trade )
 {
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->bid_denom_of + sec_symb, ios_base::beg);
-	get_char(bid_denom);
-	denominator(bid_denom);
+	get_char(bid_denom_);
+	denominator(bid_denom_);
 	inp.seekg(cur_trade->bid_pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->bid_pr_len);
-	bid_price = boost::lexical_cast<double> (s);
+	bid_price_ = boost::lexical_cast<double> (s);
 	inp.seekg(cur_trade->bid_vol_of + sec_symb, ios_base::beg);
 	s.clear();
 	get_string(s, 0, cur_trade->bid_vol_len);
-	bid_volume = boost::lexical_cast<double> (s);
+	bid_volume_ = boost::lexical_cast<double> (s);
 	inp.seekg(cur_trade->off_denom_of + sec_symb, ios_base::beg);
-	get_char(offer_denom);
-	denominator(offer_denom); //test
+	get_char(offer_denom_);
+	denominator(offer_denom_); //test
 	inp.seekg(cur_trade->off_pr_of + sec_symb, ios_base::beg);
 	s.clear();
 	get_string(s, 0, cur_trade->off_pr_len);
-	offer_price = boost::lexical_cast<double> (s);
+	offer_price_ = boost::lexical_cast<double> (s);
 	inp.seekg(cur_trade->off_vol_of + sec_symb, ios_base::beg);
 	s.clear();
 	get_string(s, 0, cur_trade->off_vol_len);
-	offer_volume = boost::lexical_cast<double> (s);
+	offer_volume_ = boost::lexical_cast<double> (s);
 }
 
 // (char bvo, char bvl, char bpo, char bpl, char bdo, char ovo, char ovl, char opo, char opl, char odo) //starting from end of security symbol
@@ -176,7 +176,7 @@ int trade::parse_rest()
 	typ = (message_type) b;
 	map<char, int>::const_iterator i = sec_len.find(b);
 	if((i != sec_len.end()) && b != 'D')
-		get_string(security_symbol, header_len - place, i->second);
+		get_string(security_symbol_, header_len - place, i->second);
 	else return -1;
 	string st;
 	const trade::trade_t* cur_trade;
@@ -214,14 +214,14 @@ void trade::parse(const trade::trade_t* cur_trade )
 {
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->denom_of + sec_symb, ios_base::beg);
-	get_char(denom);
-	denominator(denom);
+	get_char(denom_);
+	denominator(denom_);
 	inp.seekg(cur_trade->pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->pr_len);
-	price = boost::lexical_cast<double> (s);
+	price_ = boost::lexical_cast<double> (s);
 	inp.seekg(cur_trade->vol_of + sec_symb, ios_base::beg);
 	s.clear();
 	get_string(s, 0, cur_trade->vol_len);
-	volume = boost::lexical_cast<double> (s);
+	volume_ = boost::lexical_cast<double> (s);
 }
