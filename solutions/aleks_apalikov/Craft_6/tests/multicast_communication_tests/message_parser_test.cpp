@@ -7,6 +7,16 @@
 void text_test::quote_trade_parse()
 {
 	{
+		BOOST_CHECK_THROW(
+			message::denominator('J'),
+			std::logic_error
+		);
+		BOOST_CHECK_EQUAL(message::denominator('8'), 256.0);
+		BOOST_CHECK_EQUAL(message::denominator('C'), 1000.0);
+		BOOST_CHECK_EQUAL(message::denominator('H'), 100000000.0);
+		BOOST_CHECK_EQUAL(message::denominator('I'), 1.0);
+	}
+	{
 		stringstream ss;
 		string str = data_path + string("1.udp");
 		ofstream ofs; 

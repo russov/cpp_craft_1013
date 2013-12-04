@@ -4,7 +4,7 @@ int message::counter = 0;
 message::message_category message::read_category()
 {
 	byte ch = 0;
-	byte pos = inp.tellg();//for tests
+	std::streampos pos = inp.tellg();//TODO: del; for tests
 	if( !inp_good )
 		return message_category::end_reached;
 	while (ch != delim::start)
@@ -130,6 +130,7 @@ void quote::parse( const quote::quote_t* cur_trade )
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->bid_denom_of + sec_symb, ios_base::beg);
 	get_char(bid_denom);
+	denominator(bid_denom);
 	inp.seekg(cur_trade->bid_pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->bid_pr_len);
@@ -140,6 +141,7 @@ void quote::parse( const quote::quote_t* cur_trade )
 	bid_volume = boost::lexical_cast<double> (s);
 	inp.seekg(cur_trade->off_denom_of + sec_symb, ios_base::beg);
 	get_char(offer_denom);
+	denominator(offer_denom); //test
 	inp.seekg(cur_trade->off_pr_of + sec_symb, ios_base::beg);
 	s.clear();
 	get_string(s, 0, cur_trade->off_pr_len);
@@ -213,6 +215,7 @@ void trade::parse(const trade::trade_t* cur_trade )
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->denom_of + sec_symb, ios_base::beg);
 	get_char(denom);
+	denominator(denom);
 	inp.seekg(cur_trade->pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->pr_len);

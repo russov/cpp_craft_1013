@@ -5,6 +5,7 @@
 #include <map>
 #include "boost/assign.hpp"
 #include "boost/lexical_cast.hpp"
+#include <stdexcept>
 
 typedef unsigned char byte;
 using namespace std;
@@ -56,6 +57,27 @@ public:
 	message_type get_type()
 	{
 		return typ;
+	}
+	static double denominator(char code)
+	{
+		int denoms[19] = {1, 1, 1, 8, 16, 32, 64, 128, 256, 1, 1,
+			10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
+		int decimal = 10;
+		if( code == 'I' ) return 1.0;
+		if( code >= '3' && code <= '9' ) 
+		{
+			code -= '1' - 1;
+		}
+		else if ( code >= 'A' && code <= 'H' )
+		{
+			code -= 'A' - 1 - decimal; 
+		}
+		else 
+		{
+			throw std::logic_error("Wrong denominator");
+			return 1.0;
+		}
+		return (double) denoms[code];
 	}
 	static int counter;
 	message(): inp(cin) // not neccessary construct
