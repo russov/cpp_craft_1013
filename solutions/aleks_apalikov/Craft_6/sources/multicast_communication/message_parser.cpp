@@ -73,11 +73,15 @@ void message::get_char( char & ch )
 
 void message::get_string( string & s, size_t pos, size_t len )
 {
-	for (size_t k = 0; k < pos; k++)
+	streamoff cur_pos = inp.tellg();
+	inp.seekg(cur_pos + pos);
+	/*for (size_t k = 0; k < pos; k++) //for debug
 	{
 		char c;
 		get_char(c);
+		cout<< c;
 	}
+	cout<< endl;*/
 	char * cs = new char [len + 1];
 	for (size_t i = 0; i < len; i++)
 	{
@@ -95,28 +99,43 @@ int message::parse_rest()
 
 }
 
-void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std::string> buffer, const bool quote )
+void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std::string> buffer, const bool quotes )
 {
 	stringstream current_message;
 	for(string::iterator it = buffer->begin(); it != buffer->end(); it++)
 	{
-		if(*it == delim::start ) //from enum delim
+		if((*it == start) || (*it == unit_separator) ) //from enum delim
 		{
 			while( it != buffer->end())
 			{
 				current_message << *it;
-				if((*it == delim::unit_separator) || (*it == delim::end))
+				boost::shared_ptr<message> sm;
+				if((*it == unit_separator) || (*it == delim::end))
 				{
-					boost::shared_ptr<message> sm((message *)new trade(current_message));
+					if(quotes)
+					{
+						boost::shared_ptr<quote> st (new quote(current_message));
+						st->read_next( );
+//						sm.reset( boost::static_pointer_cast<message, quote>(st));
+						sm = boost::static_pointer_cast<message, quote>(st);
+					}
+					else
+					{
+						boost::shared_ptr<trade> st (new trade(current_message));
+						st->read_next( );
+						sm = boost::static_pointer_cast<message, trade>(st);
+					}
 					vec_msgs.push_back(sm);
-					vec_msgs.back()->read_next( );
-					current_message.clear();
-					it++;
-					continue;
+					sm.reset();
+					current_message.str(string()); //empty current_message
+	//				it++;
+					break;
 				}
 				it++;
 			}
-			break;
+			if(it != buffer->end() )
+				continue;
+			else break;
 		};
 	}
 }
@@ -244,7 +263,7 @@ void trade::parse(const trade::trade_t* cur_trade )
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->denom_of + sec_symb, ios_base::beg);
 	get_char(denom_);
-	denominator(denom_); //TODO: del before pull req
+//	denominator(denom_); //TODO: del before pull req
 	inp.seekg(cur_trade->pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->pr_len);
