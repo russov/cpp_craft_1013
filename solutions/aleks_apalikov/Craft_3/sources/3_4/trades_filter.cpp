@@ -49,7 +49,7 @@ public:
 			return 1;
 		}
 		
-		size_t currentTime = 0;
+		uint32_t currentTime = 0;
 		bool toWrite = false;
 		Trade trade;
 		while (!inp.eof())
@@ -97,7 +97,7 @@ public:
 };
 int main()
 {
-	size_t quantity = 3;
+	size_t quantity = 3; //your number of files, from 0
 	vector<string*> nums;
 	boost::thread_group thr_gr;
 	for(size_t i = 0; i < quantity; i++)
