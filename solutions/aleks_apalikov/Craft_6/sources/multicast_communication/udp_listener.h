@@ -30,6 +30,18 @@ namespace async_udp
 		explicit udp_listener( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port );
 		~udp_listener();
 		const std::vector< std::string > messages() const;
+		boost::shared_ptr<std::string> messages_pop()
+		{
+			boost::shared_ptr<std::string> sp (new std::string );
+			sp.reset(new std::string(messages_.back()));
+			messages_.pop_back();
+			return sp;
+		}
+
+		boost::mutex & protect_messages()
+		{
+			return protect_messages_;
+		}
 	private:
 		void socket_reload_();
 		void register_listen_( buffer_type pre_buffer = buffer_type(), const size_t previous_size = 0 );

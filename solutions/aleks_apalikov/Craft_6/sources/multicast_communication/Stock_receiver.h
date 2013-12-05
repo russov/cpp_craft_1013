@@ -6,6 +6,7 @@
 #include "udp_listener.h"
 #include <vector>
 #include "boost/thread.hpp"
+#include "message_parser.h"
 #include <stdexcept>
 
 using namespace std;

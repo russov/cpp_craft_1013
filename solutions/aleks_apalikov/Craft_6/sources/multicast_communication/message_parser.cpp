@@ -7,7 +7,7 @@ message::message_category message::read_category()
 	std::streampos pos = inp.tellg();//TODO: del; for tests
 	if( !inp_good )
 		return end_reached; // from enum message_category
-	while (ch != start) // from enum delim
+/*	while (ch != start) // from enum delim
 	{
 		if(inp.eof())
 		{
@@ -15,7 +15,7 @@ message::message_category message::read_category()
 			return categ;
 		}
 		get_byte(ch);
-	}
+	}*/
 	counter ++ ; // total delim:start 's
 	place = 0;
 	get_byte(ch);
@@ -90,6 +90,29 @@ int message::parse_rest()
 {
 	return 0;
 
+}
+
+void message::divide_messages( vector_messages vec_msgs, boost::shared_ptr<std::string> buffer, const bool quote )
+{
+	stringstream current_message;
+	for(string::iterator it = buffer->begin(); it != buffer->end(); it++)
+	{
+		if(*it == delim::start ) //from enum delim
+		{
+			while( it != buffer->end())
+			{
+				current_message << *it;
+				if((*it == delim::unit_separator) || (*it == delim::end))
+				{
+					boost::shared_ptr<message> sm((message *)new trade(current_message));
+					vec_msgs.push_back(sm);
+					vec_msgs.back()->read_next( );
+					current_message.clear();
+					continue;
+				}
+			}
+		};
+	}
 }
 
 

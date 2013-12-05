@@ -6,6 +6,8 @@
 #include "boost/assign.hpp"
 #include "boost/lexical_cast.hpp"
 #include <stdexcept>
+#include <string>
+#include "boost\shared_ptr.hpp"
 
 typedef unsigned char byte;
 using namespace std;
@@ -15,7 +17,8 @@ enum delim
 	unit_separator = 0x1F,
 	end = 0x03
 };
-
+class message;
+typedef vector<boost::shared_ptr<message>> vector_messages;
 template< class T >
 void read_binary( std::istream& in, T& t, const size_t len = sizeof( T ) )
 {
@@ -54,6 +57,8 @@ protected:
 
 	message_type typ;
 public:
+	static void divide_messages(  vector_messages vec_msgs, boost::shared_ptr<std::string> buffer,
+		const bool quote);
 	const string & security_symbol()
 	{
 		return security_symbol_;

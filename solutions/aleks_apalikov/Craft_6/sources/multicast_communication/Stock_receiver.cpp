@@ -71,6 +71,10 @@ int stock_receiver::wait_some_data()
 	for(size_t i = 0; i < trade_listeners.size(); ++i) { 
 		if (trade_listeners[i]->messages().size() > 0 )
 		{
+			vector_messages msgs;
+			boost::mutex::scoped_lock lock (trade_listeners[i]->protect_messages() );
+			message::divide_messages(msgs, 
+				trade_listeners[i]->messages_pop() , true);			
 			return i;
 		}
 	}
