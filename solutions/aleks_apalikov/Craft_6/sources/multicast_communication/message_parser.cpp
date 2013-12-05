@@ -15,7 +15,9 @@ message::message_category message::read_category()
 			return categ;
 		}
 		get_byte(ch);
-	}*/
+		}*/
+	get_byte(ch);
+	bool test = (ch == start);
 	counter ++ ; // total delim:start 's
 	place = 0;
 	get_byte(ch);
@@ -25,19 +27,20 @@ message::message_category message::read_category()
 		return categ;
 	}
 	else 
-		return read_category();
+		return end_reached;
 
 }
 
 message* message::read_next()
 {
 	try{
-	if(read_category() == -1) return this;
+	if(read_category() == -1) return this; //TODO: ret NULL and then check return if error
 	parse_rest();
 	return this;
 	}
-	catch( ... )
+	catch( std::exception e )
 	{
+		cout << e.what();
 		categ = end_reached;
 		return this;
 	}

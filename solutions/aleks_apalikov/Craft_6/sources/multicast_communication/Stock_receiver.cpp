@@ -65,7 +65,7 @@ int stock_receiver::wait_some_data()
 			vector_messages msgs;
 			boost::mutex::scoped_lock lock (trade_listeners[i]->protect_messages() );
 			message::divide_messages(msgs, 
-				trade_listeners[i]->messages_pop() , true);			
+				trade_listeners[i]->messages_pop() , false);			
 			return i;
 		}
 	}

@@ -31,7 +31,13 @@ void text_test::quote_trade_parse()
 		//shared_ptr<quote> q (quote(ss));
 		boost::shared_ptr<quote> q (new quote(ss)) ;
 		using namespace boost;
-		q->read_next();
+		vector_messages msgs;
+		vector_messages::iterator it;
+		string* s = new string(ss.str());
+		boost::shared_ptr<string> shar_str ( new string( ss.str()) );
+		message::divide_messages(msgs, shar_str, true);	
+		it = msgs.begin();
+		q = boost::static_pointer_cast<quote, message> (*it) ;
 		BOOST_CHECK_EQUAL(q->bid_denom(), '3');
 		BOOST_CHECK_EQUAL(q->bid_price(), 1212700.0);
 		BOOST_CHECK_EQUAL(q->bid_volume(), 1);
@@ -41,7 +47,8 @@ void text_test::quote_trade_parse()
 		BOOST_CHECK_EQUAL((char)q->get_categ(), 'E');
 		processor.wr_quote( q );
 
-		q->read_next();
+		it++;
+		q = boost::static_pointer_cast<quote, message> (*it) ;
 		BOOST_CHECK_EQUAL(q->bid_denom(), 'D');
 		BOOST_CHECK_EQUAL(q->bid_price(), 352000.0);
 		BOOST_CHECK_EQUAL(q->bid_volume(), 1);
@@ -51,16 +58,18 @@ void text_test::quote_trade_parse()
 		BOOST_CHECK_EQUAL((char)q->get_type(), 'D');
 		processor.wr_quote( q );
 
-			q->read_next();
+		it++;
+		q = boost::static_pointer_cast<quote, message> (*it) ;
 		BOOST_CHECK_EQUAL((char)q->bid_denom(), 'F');
 		BOOST_CHECK_EQUAL((char)q->get_type(), 'D');
 		BOOST_CHECK_EQUAL((char)q->get_categ(), 'L');
 		processor.wr_quote( q );
+		ofs.close();
 
-		BOOST_CHECK_NO_THROW(
+	/*	BOOST_CHECK_NO_THROW(
 			q->read_next();
 		);
-		BOOST_CHECK_EQUAL((char)q->get_categ(), (char)-1);
+		BOOST_CHECK_EQUAL((char)q->get_categ(), (char)-1);*/
 		ofs.close();
 
 	}

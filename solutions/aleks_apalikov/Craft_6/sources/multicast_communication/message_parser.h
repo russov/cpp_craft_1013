@@ -69,7 +69,7 @@ public:
 	}
 	static double denominator(char code)
 	{
-		int denoms[19] = {1, 1, 1, 8, 16, 32, 64, 128, 256, 1, 1,
+		static const int denoms[19] = {1, 1, 1, 8, 16, 32, 64, 128, 256, 1, 1,
 			10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
 		int decimal = 10;
 		if( code == 'I' ) return 1.0;
