@@ -35,6 +35,7 @@ void async_udp::receiver_test()
 		socket.send_to( boost::asio::buffer( str.c_str(), str.size() ), endpoint );
 		boost::this_thread::sleep_for( boost::chrono::nanoseconds( 100 ) );
 	}
+	sr.stop();
 
 }
 

@@ -92,7 +92,7 @@ int message::parse_rest()
 
 }
 
-void message::divide_messages( vector_messages vec_msgs, boost::shared_ptr<std::string> buffer, const bool quote )
+void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std::string> buffer, const bool quote )
 {
 	stringstream current_message;
 	for(string::iterator it = buffer->begin(); it != buffer->end(); it++)
@@ -108,9 +108,12 @@ void message::divide_messages( vector_messages vec_msgs, boost::shared_ptr<std::
 					vec_msgs.push_back(sm);
 					vec_msgs.back()->read_next( );
 					current_message.clear();
+					it++;
 					continue;
 				}
+				it++;
 			}
+			break;
 		};
 	}
 }

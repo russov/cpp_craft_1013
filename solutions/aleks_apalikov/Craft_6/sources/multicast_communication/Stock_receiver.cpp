@@ -26,16 +26,7 @@ stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini")
 
 stock_receiver::~stock_receiver(void)
 {
-	vector<shared_service>::iterator it;
-	for (it = quote_services.begin(); it != quote_services.end(); it++)
-	{
-		(*(it))->stop();
-	}
-	for (it = trade_services.begin(); it != trade_services.end(); it++)
-	{
-		(*(it))->stop();
-	}
-	threads.join_all();
+	stop();
 }
 
 void stock_receiver::init_services( vector<shared_service> & vs, config & c, const bool quotes )
@@ -84,4 +75,18 @@ int stock_receiver::wait_some_data()
 void stock_receiver::service_run(shared_service serv)
 {
 	serv->run();
+}
+
+void stock_receiver::stop()
+{
+	vector<shared_service>::iterator it;
+	for (it = quote_services.begin(); it != quote_services.end(); it++)
+	{
+		(*(it))->stop();
+	}
+	for (it = trade_services.begin(); it != trade_services.end(); it++)
+	{
+		(*(it))->stop();
+	}
+	threads.join_all();
 }

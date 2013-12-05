@@ -57,7 +57,7 @@ protected:
 
 	message_type typ;
 public:
-	static void divide_messages(  vector_messages vec_msgs, boost::shared_ptr<std::string> buffer,
+	static void divide_messages(  vector_messages& vec_msgs, boost::shared_ptr<std::string> buffer,
 		const bool quote);
 	const string & security_symbol()
 	{
