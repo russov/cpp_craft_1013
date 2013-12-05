@@ -4,7 +4,7 @@ namespace mcast_comm = multicast_communication;
 
 mcast_comm::market_messages_pump::market_messages_pump(
     boost::asio::io_service& io_service,
-    const message_receiver_delegate_ptr& msg_recv_delegate)
+    const market_data_received_delegate_ptr& msg_recv_delegate)
   : started_(false), socket_(io_service), 
     msg_recv_delegate_(msg_recv_delegate)
 {
@@ -51,7 +51,52 @@ void mcast_comm::market_messages_pump::on_receive(
 {
   if (error)
     return;
-  std::string msg(buffer, recv_bytes_count);
-  msg_recv_delegate_->on_message_received(msg);
+  transmission_block_.assign(recv_buffer_, recv_bytes_count);
+  parse_transmission_block();
   receive();
+}
+
+void mcast_comm::market_messages_pump::parse_transmission_block()
+{
+  size_t p0 = transmission_block_.find(SOH);
+  size_t p1 = 0;
+  
+  // we have uncompleted message, which has
+  // appeared during previous receive session
+  if (message_.size() != 0)
+  {
+    // search end of previous block
+    size_t p = transmission_block_.find(ETX);
+    if (p == std::string::npos)
+    {
+      message_.clear();
+      return;
+    }
+    std::string tail_of_prev_msg = transmission_block_.substr(0, p);
+    message_.append(tail_of_prev_msg);
+    transfer_message();
+  } // if (message_.size() != 0)
+
+  // usual processing of transmission block
+  while (p0 < transmission_block_.size() && p0 != std::string::npos)
+  {
+    p1 = transmission_block_.find(US, p0);
+    if (p1 == std::string::npos)      // last message in block
+    {
+      p1 = transmission_block_.find(ETX, p0);
+      if (p1 == std::string::npos)    // probably uncompleted message
+      {
+        message_ = transmission_block_.substr(p0);
+        break;
+      }
+    }
+    message_ = transmission_block_.substr(p0, p1 - p0);
+    transfer_message();
+    p0 = p1 + 1;
+  } // while (p0 < transmission_block_.size() && p0 != std::string::npos)
+}
+void mcast_comm::market_messages_pump::transfer_message()
+{
+  msg_recv_delegate_->on_message_received(message_);
+  message_.clear();
 }

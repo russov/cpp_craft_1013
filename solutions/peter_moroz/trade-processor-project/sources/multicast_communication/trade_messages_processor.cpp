@@ -18,10 +18,31 @@ mcast_comm::trade_messages_processor::~trade_messages_processor()
 void mcast_comm::trade_messages_processor::add_element_to_chain(
                       mcast_comm::trade_messages_processor* next)
 {
+  std::stringstream err_message;
+  if (next == NULL)
+  {
+    err_message 
+      << "Method: trade_messages_processor::add_element_to_chain "
+      << " Error: NULL-pointer has been passed as argument.\n";
+    throw std::invalid_argument(err_message.str());
+  }
+
+  if (next->next_ != NULL)
+  {
+    err_message 
+      << "Method: trade_messages_processor::add_element_to_chain "
+      << " Error: Not terminated chain element has been passed.\n";
+    throw std::invalid_argument(err_message.str());
+  }
+
+  if (next_ == NULL)
+    next_ = next;
+  else
+    add_element_to_chain(next);
 }
 
-// you need to change method initialize(), if 
-// you want to add some extra handlers to chain
+// everyone, who want to add some extra handlers to chain
+// need to change method initialize()
 void mcast_comm::trade_messages_processor::initialize()
 {
   add_element_to_chain(new long_trade_messages_processor());
@@ -49,8 +70,8 @@ mcast_comm::trade_message_ptr
     mcast_comm::long_trade_messages_processor::parse_message(const std::string& m)
 {
   std::string security_symbol = "";
-  std::string price = "0.0";
-  std::string volume = "0.0";
+  std::string price = "";
+  std::string volume = "";
 	
   double p = 0.0;
   double v = 0.0;
@@ -67,8 +88,7 @@ mcast_comm::trade_message_ptr
 }
 
 
-bool mcast_comm::short_trade_messages_processor::is_parseable(
-                                        const std::string& msg)
+bool mcast_comm::short_trade_messages_processor::is_parseable(const std::string& m)
 {
   return false;
 }
@@ -78,7 +98,7 @@ mcast_comm::trade_message_ptr
   std::string security_symbol = "";
   std::string price = "";
   std::string volume = "";
-	
+
   double p = 0.0;
   double v = 0.0;
 

@@ -17,12 +17,33 @@ mcast_comm::quote_messages_processor::~quote_messages_processor()
 
 
 void mcast_comm::quote_messages_processor::add_element_to_chain(
-    mcast_comm::quote_messages_processor* next)
+                      mcast_comm::quote_messages_processor* next)
 {
+  std::stringstream err_message;
+  if (next == NULL)
+  {
+    err_message 
+      << "Method: quote_messages_processor::add_element_to_chain "
+      << " Error: NULL-pointer has been passed as argument.\n";
+    throw std::invalid_argument(err_message.str());
+  }
+
+  if (next->next_ != NULL)
+  {
+    err_message 
+      << "Method: quote_messages_processor::add_element_to_chain "
+      << " Error: Not terminated chain element has been passed.\n";
+    throw std::invalid_argument(err_message.str());
+  }
+
+  if (next_ == NULL)
+    next_ = next;
+  else
+    add_element_to_chain(next);
 }
 
-// you need to change method initialize(), if 
-// you want to add some extra handlers to chain
+// everyone, who want to add some extra handlers to chain
+// need to change method initialize()
 void mcast_comm::quote_messages_processor::initialize()
 {
   add_element_to_chain(new long_quote_messages_processor());
@@ -43,18 +64,18 @@ mcast_comm::quote_messages_processor*
 
 bool mcast_comm::long_quote_messages_processor::is_parseable(const std::string& m)
 {
-  return true;
+  return false;
 }
 
 mcast_comm::quote_message_ptr 
     mcast_comm::long_quote_messages_processor::parse_message(const std::string& m)
 {
   std::string security_symbol = "";
-  std::string b_price = "0.0";
-  std::string b_volume = "0.0";
-  std::string o_price = "0.0";
-  std::string o_volume = "0.0";
-	
+  std::string b_price = "";
+  std::string b_volume = "";
+  std::string o_price = "";
+  std::string o_volume = "";
+
   double bid_price = 0.0;
   double bid_volume = 0.0;
   double offer_price = 0.0;
@@ -75,8 +96,7 @@ mcast_comm::quote_message_ptr
 }
 
 
-bool mcast_comm::short_quote_messages_processor::is_parseable(
-                                         const std::string& m)
+bool mcast_comm::short_quote_messages_processor::is_parseable(const std::string& m)
 {
   return false;
 }
@@ -88,7 +108,7 @@ mcast_comm::quote_message_ptr
   std::string b_volume = "";
   std::string o_price = "";
   std::string o_volume = "";
-	
+
   double bid_price = 0.0;
   double bid_volume = 0.0;
   double offer_price = 0.0;

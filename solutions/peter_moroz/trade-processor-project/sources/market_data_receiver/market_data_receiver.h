@@ -9,12 +9,24 @@
 
 namespace multicast_communication
 {
+  // interface-class. all entities, which should be 
+  // notified about these events must implement it.
+  class message_received_events
+  {
+  public:
+    virtual void on_quote_message(const std::string& msg) = 0;
+    virtual void on_trade_message(const std::string& msg) = 0;
+  };
+
+  typedef boost::shared_ptr<message_received_events> message_received_events_ptr;
+
+
   // I have to make all implementation of given class inside header-file,
-  // because, if I did it inside usual cpp-file, I have got error
-  // messages, when linker try to resolve names, which aren't belong
-  // to multicast_communication-library. So, main application was built 
-  // succesfully, but building of test environment wasn't so nice.
-  class market_data_receiver
+  // because, if I did it inside usual cpp-file, I've got error messages,
+  // when linker try to resolve names, which aren't belong to 
+  // multicast_communication-library. So, main application was 
+  // built succesfully, but building of test environment wasn't so nice.
+  class market_data_receiver : public message_received_events
   {
   public:
     market_data_receiver(market_data_processor_ptr& market_data_processor_p)
@@ -25,8 +37,10 @@ namespace multicast_communication
     }
 
   public:
-    void on_quote_message(const std::string& msg)
+    virtual void on_quote_message(const std::string& msg)
     {
+      // TO DO: might be good idea - to hide all following statements
+      // inside quote_message_processor, and just invoke method parse
       quote_messages_processor* qmessage_parser = NULL;
       qmessage_parser = quote_messages_processor_->get_parser(msg);
       if (qmessage_parser != NULL)
@@ -36,7 +50,7 @@ namespace multicast_communication
           market_data_processor_->new_quote(qmessage);
       } 
     }
-    void on_trade_message(const std::string& msg)
+    virtual void on_trade_message(const std::string& msg)
     {
       trade_messages_processor* tmessage_parser = NULL;
       tmessage_parser = trade_messages_processor_->get_parser(msg);
@@ -57,44 +71,44 @@ namespace multicast_communication
   typedef boost::shared_ptr<market_data_receiver> market_data_receiver_ptr;
 
 
-  class message_receiver_delegate
+  class market_data_received_delegate
   {
   protected:
-    message_receiver_delegate(const market_data_receiver_ptr& receiver) 
-      : receiver_(receiver) {}
+    market_data_received_delegate(const message_received_events_ptr& events_handler) 
+      : events_handler_(events_handler) {}
 
   public:
     virtual void on_message_received(const std::string& msg) = 0;
   protected:
-    market_data_receiver_ptr receiver_;
+    message_received_events_ptr events_handler_;
   };
 
-  typedef boost::shared_ptr<message_receiver_delegate> message_receiver_delegate_ptr;
+  typedef boost::shared_ptr<market_data_received_delegate> market_data_received_delegate_ptr;
 
 
-  class qmessage_receiver_delegate : public message_receiver_delegate
+  class qmessage_received_delegate : public market_data_received_delegate
   {
   public:
-    qmessage_receiver_delegate(const market_data_receiver_ptr& receiver) 
-      : message_receiver_delegate(receiver) {}
+    qmessage_received_delegate(const message_received_events_ptr& events_handler) 
+      : market_data_received_delegate(events_handler) {}
       
   public:
     virtual void on_message_received(const std::string& msg)
     {
-      receiver_->on_quote_message(msg);
+      events_handler_->on_quote_message(msg);
     }
   };
 
-  class tmessage_receiver_delegate : public message_receiver_delegate
+  class tmessage_received_delegate : public market_data_received_delegate
   {
   public:
-    tmessage_receiver_delegate(const market_data_receiver_ptr& receiver) 
-      : message_receiver_delegate(receiver) {}
+    tmessage_received_delegate(const message_received_events_ptr& events_handler) 
+      : market_data_received_delegate(events_handler) {}
       
   public:
     virtual void on_message_received(const std::string& msg)
     {
-      receiver_->on_trade_message(msg);
+      events_handler_->on_trade_message(msg);
     }
   };
 

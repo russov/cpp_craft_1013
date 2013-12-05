@@ -1,5 +1,9 @@
 find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
+	regex
 	system
+	thread  
+	date_time
+	chrono
 	unit_test_framework
 	filesystem
 )

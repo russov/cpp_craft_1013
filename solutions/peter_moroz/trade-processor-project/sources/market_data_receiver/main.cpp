@@ -136,10 +136,10 @@ int main()
   market_data_processor_ptr market_data_processor(new market_data_processor_impl());
   market_data_receiver_ptr market_data_receiver(new market_data_receiver(market_data_processor));
 
-  message_receiver_delegate_ptr trade_msg_recvr_delegate(
-      new tmessage_receiver_delegate(market_data_receiver));
-  message_receiver_delegate_ptr quote_msg_recvr_delegate(
-      new qmessage_receiver_delegate(market_data_receiver));
+  market_data_received_delegate_ptr trade_msg_recvr_delegate(
+      new tmessage_received_delegate(market_data_receiver));
+  market_data_received_delegate_ptr quote_msg_recvr_delegate(
+      new qmessage_received_delegate(market_data_receiver));
 
   boost::thread_group io_workers;
   

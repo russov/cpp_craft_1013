@@ -21,6 +21,8 @@ namespace multicast_communication
     void initialize();
 
   protected:
+    // To prevent looking forward for appropriate parser (which 
+    // hasn't implemented yet), dummy "always true" implemented.
     virtual bool is_parseable(const std::string& msg) { return true; }
 
   public:

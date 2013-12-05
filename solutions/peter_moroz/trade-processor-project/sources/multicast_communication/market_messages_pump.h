@@ -11,22 +11,20 @@ namespace multicast_communication
 {
   typedef std::pair<std::string, unsigned int> connection_point;
 
-  inline boost::asio::ip::udp::endpoint cp_to_ep(const connection_point cp)
-  {
-    using namespace boost::asio;
-    return ip::udp::endpoint(ip::address::from_string(cp.first), cp.second);
-  }
-
   // class responsible for receiving data from network, parsing 
-  // stream of bytes into messages and buffering uncompleted messages
+  // transmission block into messages and buffering uncompleted messages
   class market_messages_pump
   {
     static const size_t kRecvBufferSize = 1000;
     typedef boost::system::error_code sys_err_code;
 
+    static const char SOH = 0x01;
+    static const char ETX = 0x03;
+    static const char US = 0x1F;
+
   public:
     explicit market_messages_pump(boost::asio::io_service& io_service,
-              const message_receiver_delegate_ptr& msg_recv_delegate);
+              const market_data_received_delegate_ptr& msg_recv_delegate);
     virtual ~market_messages_pump();
 
   public:
@@ -39,11 +37,16 @@ namespace multicast_communication
     void on_receive(char* buffer, const sys_err_code& error, 
                     const size_t recv_bytes_count);
 
+    void parse_transmission_block();
+    void transfer_message();
+
   private:
     bool started_;
     boost::asio::ip::udp::socket socket_;
-    message_receiver_delegate_ptr msg_recv_delegate_;
+    market_data_received_delegate_ptr msg_recv_delegate_;
     char recv_buffer_[kRecvBufferSize];
+    std::string transmission_block_;
+    std::string message_;
   };
 
   typedef boost::shared_ptr<market_messages_pump> market_messages_pump_ptr;
