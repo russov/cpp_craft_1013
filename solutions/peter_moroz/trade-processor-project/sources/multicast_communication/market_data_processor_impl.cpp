@@ -44,6 +44,7 @@ void mcast_comm::market_data_processor_impl::withdraw_quotas(
 void print_message(const mcast_comm::trade_message_ptr& message, std::ostream& os)
 {
   // assume, that output stream is STDOUT or text-file
+  // use standart manipulators and insertion operators
   os << 'T' << message->security_symbol() << ' ' 
     << std::setiosflags(std::ios::fixed) << std::setw(4) << std::setfill('0')
     << std::setprecision(2) << message->price() << ' '
@@ -52,6 +53,7 @@ void print_message(const mcast_comm::trade_message_ptr& message, std::ostream& o
 void print_message(const mcast_comm::quote_message_ptr& message, std::ostream& os)
 {
   // assume, that output stream is STDOUT or text-file
+  // use standart manipulators and insertion operators
   os << 'Q' << message->security_symbol() << ' ' 
     << std::setiosflags(std::ios::fixed) << std::setw(4) << std::setfill('0')
     << std::setprecision(2) << message->bid_price() << ' '

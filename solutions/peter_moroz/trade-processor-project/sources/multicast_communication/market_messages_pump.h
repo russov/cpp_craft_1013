@@ -11,16 +11,15 @@ namespace multicast_communication
 {
   typedef std::pair<std::string, unsigned int> connection_point;
 
-  // class responsible for receiving data from network, parsing 
-  // transmission block into messages and buffering uncompleted messages
+  // split transmission block into messages
+  void parse_transmission_block(const std::string& in_block,
+                                 std::vector<std::string>& out_messages);
+
+  // class responsible for receiving data from network
   class market_messages_pump
   {
     static const size_t kRecvBufferSize = 1000;
     typedef boost::system::error_code sys_err_code;
-
-    static const char SOH = 0x01;
-    static const char ETX = 0x03;
-    static const char US = 0x1F;
 
   public:
     explicit market_messages_pump(boost::asio::io_service& io_service,
@@ -37,8 +36,7 @@ namespace multicast_communication
     void on_receive(char* buffer, const sys_err_code& error, 
                     const size_t recv_bytes_count);
 
-    void parse_transmission_block();
-    void transfer_message();
+    void transfer_data();
 
   private:
     bool started_;
@@ -46,7 +44,6 @@ namespace multicast_communication
     market_data_received_delegate_ptr msg_recv_delegate_;
     char recv_buffer_[kRecvBufferSize];
     std::string transmission_block_;
-    std::string message_;
   };
 
   typedef boost::shared_ptr<market_messages_pump> market_messages_pump_ptr;
