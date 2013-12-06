@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <string>
 #include "boost\shared_ptr.hpp"
+#include "../../tests/multicast_communication_tests/test_registrator.h"
 
 typedef unsigned char byte;
 using namespace std;
@@ -29,10 +30,13 @@ void write_binary( std::ostream& out, T& t, const size_t len = sizeof( T ) )
 {
 	out.write( reinterpret_cast< const char* >( &t ), len );
 }
+// the stream that is passed in constructor should exist before read()
+// operation, it is controlled by divide_messages()
 class message
 {
+	friend void text_test::quote_trade_parse();
 protected:
-	istream& inp;
+	istream& inp; //possible to change to shared_ptr<istream>
 	size_t place; //where are we reading
 	bool inp_good;
 	string security_symbol_;
@@ -41,7 +45,8 @@ protected:
 		bond = 'B',
 		equity = 'E',
 		local_issue = 'L',
-		end_reached = -1
+		end_reached = -1,
+		empty = 'Y'
 	};
 	message_category categ;
 	enum message_type
@@ -91,6 +96,7 @@ public:
 	static int counter;
 	message(): inp(cin) // not neccessary construct
 	{
+		categ = empty;
 	}
 	message(istream& inf): inp(inf)
 	{
@@ -104,10 +110,14 @@ public:
 		inp_good = true;
 		place = 0;
 		inp.seekg(place);
+		categ = empty;
 
 	}
 	message_category read_category(); //search for listed above message_category
-	message* read_next();
+private:
+	message* read(); //invoke only one time, after throw exception error already read
+					//it is used in divide and tests
+public:
 	void get_byte(byte & b);
 	void get_char(char & c);
 	message_category get_categ()

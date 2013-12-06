@@ -1,21 +1,23 @@
 #include "message_parser.h"
+#include <stdexcept>
 
 int message::counter = 0;
-message::message_category message::read_category()
+message::message_category message::read_category() 
 {
 	byte ch = 0;
-	std::streampos pos = inp.tellg();//TODO: del; for tests
-	if( !inp_good )
-		return end_reached; // from enum message_category
-/*	while (ch != start) // from enum delim
+	try
 	{
-		if(inp.eof())
-		{
-			categ = end_reached;
-			return categ;
-		}
-		get_byte(ch);
-		}*/
+		if(!inp)
+			return end_reached;
+		std::streampos pos = inp.tellg();//TODO: del; for tests
+		if( !inp_good )
+			return end_reached; // from enum message_category
+	}
+	catch (exception e)
+	{
+		cout << e.what() << endl;
+		return end_reached;		
+	}
 	get_byte(ch);
 	bool test = (ch == start);
 	counter ++ ; // total delim:start 's
@@ -31,10 +33,15 @@ message::message_category message::read_category()
 
 }
 
-message* message::read_next()
+message* message::read()
 {
+	if((categ == bond)||(categ == equity)||(categ == local_issue)||(categ == end_reached))
+	{
+		throw std::logic_error("Read only one time");
+	}
 	try{
-	if(read_category() == -1) return this; //TODO: ret NULL and then check return if error
+	if(read_category() == -1) 
+		return NULL; //TODO: ret NULL and then check return if error
 	parse_rest();
 	return this;
 	}
@@ -75,13 +82,6 @@ void message::get_string( string & s, size_t pos, size_t len )
 {
 	streamoff cur_pos = inp.tellg();
 	inp.seekg(cur_pos + pos);
-	/*for (size_t k = 0; k < pos; k++) //for debug
-	{
-		char c;
-		get_char(c);
-		cout<< c;
-	}
-	cout<< endl;*/
 	char * cs = new char [len + 1];
 	for (size_t i = 0; i < len; i++)
 	{
@@ -120,14 +120,14 @@ void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std:
 					if(quotes)
 					{
 						boost::shared_ptr<quote> st (new quote(current_message));
-						st->read_next( );
+						st->read( );
 //						sm.reset( boost::static_pointer_cast<message, quote>(st));
 						sm = boost::static_pointer_cast<message, quote>(st);
 					}
 					else
 					{
 						boost::shared_ptr<trade> st (new trade(current_message));
-						st->read_next( );
+						st->read( );
 						sm = boost::static_pointer_cast<message, trade>(st);
 					}
 					vec_msgs.push_back(sm);

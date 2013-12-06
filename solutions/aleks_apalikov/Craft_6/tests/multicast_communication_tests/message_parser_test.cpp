@@ -10,6 +10,20 @@
 void text_test::quote_trade_parse()
 {
 	{
+		string str = data_path + string("233.200.79.128.udp");
+		ifstream fs; 
+		fs.open (str.c_str());
+		trade t(fs);
+		stringstream sout;
+		copy(istreambuf_iterator<char>(fs),
+			istreambuf_iterator<char>(),
+			ostreambuf_iterator<char>(sout));
+		vector_messages msgs;
+		message::divide_messages(msgs, boost::shared_ptr<string>(new string(sout.str())), false);
+
+	}
+
+	{
 		BOOST_CHECK_THROW(
 			message::denominator('J'),
 			std::logic_error
@@ -66,10 +80,10 @@ void text_test::quote_trade_parse()
 		processor.wr_quote( q );
 		ofs.flush();
 
-		BOOST_CHECK_NO_THROW(
-			q->read_next();
+		BOOST_CHECK_THROW(
+			q->read(),
+			std::logic_error
 		);
-		BOOST_CHECK_EQUAL((char)q->get_categ(), (char)-1);
 		ofs.close();
 
 	}
@@ -83,10 +97,21 @@ void text_test::quote_trade_parse()
 		ifstream inp; 
 		inp.open (str.c_str());
 		quote q(inp);
-		q.read_next();
+		q.read();
 		while( q.get_categ() != -1)
 		{
-			q.read_next();
+			q.categ = message::empty;
+			q.read();
+			char c = 0;
+			while(c != start)
+			{
+				q.get_char(c);
+				if(inp.peek() == EOF)
+				{
+					break;
+				}
+			}
+			inp.seekg((size_t)inp.tellg() - 1);
 		}
 	}
 	
@@ -110,6 +135,17 @@ void text_test::quote_trade_parse()
 		message m(sout);
 		while(m.read_category() != -1)
 		{
+			m.categ = message::empty;
+			char c = 0;
+			while(c != start)
+			{
+				m.get_char(c);
+				if(sout.peek() == EOF)
+				{
+					break;
+				}
+			}
+			sout.seekg((size_t)sout.tellg() - 1);
 		}
 	}
 
@@ -118,10 +154,25 @@ void text_test::quote_trade_parse()
 		ifstream fs; 
 		fs.open (str.c_str());
 		trade t(fs);
-		t.read_next();
+		t.read();
 		while( t.get_categ() != -1)
 		{
-			t.read_next();
+			t.categ = message::empty;
+			t.read();
+			char c = 0;
+			while(c != start)
+			{
+				t.get_char(c);
+				if(fs.peek() == EOF)
+				{
+					break;
+				}
+			}
+			if(fs.peek() != EOF)
+			{
+				fs.seekg((size_t)fs.tellg() - 1);
+			}
+			else break;
 		}
 	}
 
