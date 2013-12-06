@@ -14,20 +14,21 @@ namespace multicast_communication
     explicit trade_messages_processor();
     virtual ~trade_messages_processor();
 
+  protected:
+    trade_messages_processor(bool skip_initialize);
+
   private:
     void add_element_to_chain(trade_messages_processor* next);
 
   public:
     void initialize();
+    virtual trade_message_ptr parse_message(const std::string& msg);
 
   protected:
-    // To prevent looking forward for appropriate parser (which 
-    // hasn't implemented yet), dummy "always true" implemented.
-    virtual bool is_parseable(const std::string& msg) { return true; }
+    virtual bool is_parseable(const std::string& msg) { return false; }
 
-  public:
-    trade_messages_processor* get_parser(const std::string msg);
-    virtual trade_message_ptr parse_message(const std::string& msg)
+    trade_messages_processor* get_parser(const std::string& msg);
+    virtual trade_message_ptr do_parsing(const std::string& msg)
     {
       return trade_message_ptr(new trade_message());
     }
@@ -41,29 +42,64 @@ namespace multicast_communication
 
   class long_trade_messages_processor : public trade_messages_processor
   {
-  public:
-    explicit long_trade_messages_processor() {}
-    virtual ~long_trade_messages_processor() {}
+		enum FieldsLengthes
+		{
+			kMessageHeader 			                = 24,
+			kSecuritySymbol 			              = 11,
+			kTemporarySuffix			              = 1,
+			kTestMessageInd     		            = 1,
+			kTradeReportingFacilityId		        = 1,
+			kPrimaryListingMarketParticipantId  = 1,
+			kReserved1			 	                  = 1,
+			kFinancialStatus		 	              = 1,
+			kCurrencyInd		 	                  = 3,
+			kHeldTradeInd     		 	            = 1,
+			kInstrumentType		 	                = 1,
+			kSellerSaleDays	 		                = 3,
+			kSaleConditon 			                = 4,
+			kTradeThroughExemptInd      	      = 1,
+			kShortSaleRestrictionInd      	    = 1,
+			kReserved2				                  = 1,
+			kPriceDenominatorInd      		      = 1,
+			kTradePrice				                  = 12,
+			kTradeVolume			                  = 9,
+			// enough for our purpose
+		};
 
-  protected:
+  private:
+    long_trade_messages_processor() : trade_messages_processor(true) {}
+    ~long_trade_messages_processor() {}
+
+  private:
     virtual bool is_parseable(const std::string& msg);
+    virtual trade_message_ptr do_parsing(const std::string& msg);
 
-  public:
-    virtual trade_message_ptr parse_message(const std::string& msg);
+    friend class trade_messages_processor;
   };
 
 
   class short_trade_messages_processor : public trade_messages_processor
   {
-  public:
-    explicit short_trade_messages_processor() {}
-    virtual ~short_trade_messages_processor() {}
+		enum FieldsLengthes
+		{
+			kMessageHeader 		    = 24,
+			kSecuritySymbol 		  = 3,
+			kSaleCondition		    = 1,
+			kTradeVolume 		      = 4,
+			kPriceDenominatorInd	= 1,
+			kTradePrice		 	      = 8,
+			// enough for our purpose
+		};
 
-  protected:
+  private:
+    short_trade_messages_processor() : trade_messages_processor(true) {}
+    ~short_trade_messages_processor() {}
+
+  private:
     virtual bool is_parseable(const std::string& msg);
+    virtual trade_message_ptr do_parsing(const std::string& msg);
 
-  public:
-    virtual trade_message_ptr parse_message(const std::string& msg);
+    friend class trade_messages_processor;
   };
 }
 

@@ -39,27 +39,15 @@ namespace multicast_communication
   public:
     virtual void on_quote_message(const std::string& msg)
     {
-      // TO DO: might be good idea - to hide all following statements
-      // inside quote_message_processor, and just invoke method parse
-      quote_messages_processor* qmessage_parser = NULL;
-      qmessage_parser = quote_messages_processor_->get_parser(msg);
-      if (qmessage_parser != NULL)
-      {
-        quote_message_ptr qmessage = qmessage_parser->parse_message(msg);
-        if (qmessage != NULL)
-          market_data_processor_->new_quote(qmessage);
-      } 
+      quote_message_ptr qmessage = quote_messages_processor_->parse_message(msg);
+      if (qmessage != NULL)
+        market_data_processor_->new_quote(qmessage);
     }
     virtual void on_trade_message(const std::string& msg)
     {
-      trade_messages_processor* tmessage_parser = NULL;
-      tmessage_parser = trade_messages_processor_->get_parser(msg);
-      if (tmessage_parser != NULL)
-      {
-        trade_message_ptr tmessage = tmessage_parser->parse_message(msg);
-        if (tmessage != NULL)
-          market_data_processor_->new_trade(tmessage);
-      } 
+      trade_message_ptr tmessage = trade_messages_processor_->parse_message(msg);
+      if (tmessage != NULL)
+        market_data_processor_->new_trade(tmessage);
     }
   
   private:

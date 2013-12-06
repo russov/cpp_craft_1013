@@ -1,4 +1,5 @@
 #include "test_registrator.h"
+#include "test_detail.h"
 
 #include <market_messages_pump.h>
 
@@ -11,9 +12,6 @@ namespace multicast_communication
 		namespace detail
 		{
 			void service_thread(boost::asio::io_service& service);
-
-      // auxiliary function, which provides functionality of parsing datasource file 
-      void parse_datasource(std::ifstream& ifs, std::vector<std::string>& datablocks);
 
       // dummy market_receiver, which just accumulate received messages
       class test_market_data_receiver : public mcast_comm::message_received_events
@@ -60,31 +58,6 @@ namespace multicast_communication
 void mcast_comm::tests_::detail::service_thread(boost::asio::io_service& service)
 {
 	service.run();
-}
-void mcast_comm::tests_::detail::parse_datasource(
-    std::ifstream& ifs, std::vector<std::string>& datablocks)
-{
-  datablocks.clear();
-  std::string block;
-  while (!ifs.eof())
-  {
-    char x = '\0';
-    ifs.read(&x, sizeof(x));
-    if (ifs.good())
-    {
-      if (x == 0x01)
-      {
-        block.clear();
-        block.push_back(x);
-      }
-      else
-      {
-        block.push_back(x);
-        if (x == 0x03)
-          datablocks.push_back(block);
-      }
-    }
-  } // while (!ifs.eof())
 }
 
 void mcast_comm::tests_::market_messages_pump_tests()

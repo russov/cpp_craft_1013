@@ -1,7 +1,9 @@
-#include <vector>
 #include "test_registrator.h"
+#include "test_detail.h"
 
 #include <trade_messages_processor.h>
+// only for standalone function 'parse_transmission_block'
+#include <market_messages_pump.h>
 
 
 void multicast_communication::tests_::trade_messages_processor_tests()
@@ -13,46 +15,50 @@ void multicast_communication::tests_::trade_messages_processor_tests()
 
 	{
 		trade_messages_processor tm_processor;
-		std::string msg;
-		trade_messages_processor* tm_parser = NULL;
-		BOOST_CHECK_NO_THROW( (tm_parser = tm_processor.get_parser(msg)) );
-		trade_messages_processor* tm_processor_p = &tm_processor;
-		BOOST_CHECK_EQUAL( tm_parser, tm_processor_p );
-		trade_message_ptr tmessage_ptr;
-		BOOST_CHECK_NO_THROW( (tmessage_ptr = tm_parser->parse_message(msg)) );
-		
-		BOOST_CHECK_EQUAL( tmessage_ptr->security_symbol(), "" );
-		BOOST_CHECK_EQUAL( tmessage_ptr->price(), 0.0 );
-		BOOST_CHECK_EQUAL( tmessage_ptr->volume(), 0.0 );
-	}
-	
-	{
-		trade_messages_processor tm_processor;
+    const char* kDataDir = SOURCE_DIR "/tests/data/";
+    const std::string addr = "233.200.79.139";
 
-		const size_t messages_count = 16;
+    std::string fname = kDataDir;
+    fname.append(addr);
+    fname.append(".udp");
+    std::ifstream datasource(fname.c_str(), std::ios::binary);
+    BOOST_CHECK(datasource.is_open());
 
-		std::vector<trade_message_ptr> msg_p;
+    std::vector<std::string> datablocks;
+    detail::parse_datasource(datasource, datablocks);
 
-		for (size_t i = 0; i < messages_count; ++i)
-		{
-			std::string msg;
-			trade_messages_processor* tm_parser = NULL;
-			BOOST_CHECK_NO_THROW( (tm_parser = tm_processor.get_parser(msg)) );
-			trade_messages_processor* tm_processor_p = &tm_processor;
-			BOOST_CHECK_EQUAL( tm_parser, tm_processor_p );
-			trade_message_ptr tmessage_ptr;
-			BOOST_CHECK_NO_THROW( (tmessage_ptr = tm_parser->parse_message(msg)) );
-			msg_p.push_back(tmessage_ptr);
-		}
+    std::vector<std::string> original_messages;
+    for (size_t i = 0; i < datablocks.size(); ++i)
+    {
+      std::vector<std::string> messages;
+      parse_transmission_block(datablocks[i], messages);
+      for (size_t j = 0; j < messages.size(); ++j)
+        original_messages.push_back(messages[j]);
+    }
 
-		BOOST_CHECK_EQUAL( msg_p.size(), messages_count );
-
-		for (size_t i = 0; i < msg_p.size(); ++i)
-		{
-			BOOST_CHECK_EQUAL( msg_p[i]->security_symbol(), "" );
-			BOOST_CHECK_EQUAL( msg_p[i]->price(), 0.0 );
-			BOOST_CHECK_EQUAL( msg_p[i]->volume(), 0.0 );
-		}
-		
+    for (size_t i = 0; i < original_messages.size(); ++i)
+    {
+      const std::string& msg = original_messages[i];
+      char msg_category = msg[0];
+      char msg_type = msg[1];
+      if (msg_type == 'B')
+      {
+        // long trade messages
+        if (msg_category == 'B' || msg_category == 'E' || msg_category == 'L')
+        {
+          trade_message_ptr tmp = tm_processor.parse_message(msg);
+          BOOST_CHECK(tmp.get() != NULL);
+        }
+      }
+      else if (msg_type == 'I')
+      {
+        // short trade messages
+        if (msg_category == 'E' || msg_category == 'L')
+        {
+          trade_message_ptr tmp = tm_processor.parse_message(msg);
+          BOOST_CHECK(tmp.get() != NULL);
+        }
+      }
+    }
 	}
 }

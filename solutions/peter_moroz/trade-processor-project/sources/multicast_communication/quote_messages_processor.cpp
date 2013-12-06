@@ -9,10 +9,18 @@ namespace mcast_comm = multicast_communication;
 mcast_comm::quote_messages_processor::quote_messages_processor() 
   : next_(NULL)
 {
+  initialize();
 }
 mcast_comm::quote_messages_processor::~quote_messages_processor()
 {
   delete next_;
+}
+
+mcast_comm::quote_messages_processor::quote_messages_processor(bool skip_initialize) 
+  : next_(NULL)
+{
+  if (!skip_initialize)
+    initialize();
 }
 
 
@@ -39,7 +47,7 @@ void mcast_comm::quote_messages_processor::add_element_to_chain(
   if (next_ == NULL)
     next_ = next;
   else
-    add_element_to_chain(next);
+    next_->add_element_to_chain(next);
 }
 
 // everyone, who want to add some extra handlers to chain
@@ -49,33 +57,63 @@ void mcast_comm::quote_messages_processor::initialize()
   add_element_to_chain(new long_quote_messages_processor());
   add_element_to_chain(new short_quote_messages_processor());
 }
+mcast_comm::quote_message_ptr 
+    mcast_comm::quote_messages_processor::parse_message(const std::string& m)
+{
+  quote_messages_processor* parser = get_parser(m);
+  if (parser != NULL)
+    return parser->do_parsing(m);
+  return quote_message_ptr();
+}
 
 mcast_comm::quote_messages_processor*
-    mcast_comm::quote_messages_processor::get_parser(const std::string msg)
+    mcast_comm::quote_messages_processor::get_parser(const std::string& msg)
 {
   if (is_parseable(msg))
     return this;
-
-  if (next_ != NULL)
-    return next_->get_parser(msg);
-
-  return NULL;
+  return next_ != NULL ? next_->get_parser(msg) : NULL;
 }
 
 bool mcast_comm::long_quote_messages_processor::is_parseable(const std::string& m)
 {
-  return false;
+  // m[0] contains CATEGORY, m[1] contains TYPE
+  return (m[1] == 'B') ? (m[0] == 'B' || m[0] == 'E' || m[0] == 'L') : false;
 }
 
 mcast_comm::quote_message_ptr 
-    mcast_comm::long_quote_messages_processor::parse_message(const std::string& m)
+    mcast_comm::long_quote_messages_processor::do_parsing(
+    const std::string& m)
 {
-  std::string security_symbol = "";
-  std::string b_price = "";
-  std::string b_volume = "";
-  std::string o_price = "";
-  std::string o_volume = "";
+	size_t offset = kMessageHeader;
 
+	std::string security_symbol = m.substr(offset, kSecuritySymbol);
+
+	offset += kSecuritySymbol 
+         + kTemporarySuffix 
+         + kTestMessageIndicator
+         + kPrimaryListingMarketParticipantInd
+         + kSIP_GeneratedMessageInd
+         + kReserved1
+         + kFinancialStatus
+         + kCurrencyIndicator
+         + kInstrumentType
+         + kCancelCorrectionInd
+         + kSettlementCondition
+         + kMarketCondition
+         + kQuoteCondition
+         + kLULD_Indicator 
+         + kRetailInterestInd
+         + kBidPriceDenominatorInd;
+
+	std::string b_price = m.substr(offset, kBidPrice);
+	offset += kBidPrice;
+	std::string b_volume = m.substr(offset, kBidSizeInUnitsOfTrade);
+	offset += kBidSizeInUnitsOfTrade
+         + kOfferPriceDenominatorInd;
+	std::string o_price = m.substr(offset, kOfferPrice);
+	offset += kOfferPrice;
+	std::string o_volume = m.substr(offset, kOfferSizeInUnitsOfTrade);
+	
   double bid_price = 0.0;
   double bid_volume = 0.0;
   double offer_price = 0.0;
@@ -98,17 +136,32 @@ mcast_comm::quote_message_ptr
 
 bool mcast_comm::short_quote_messages_processor::is_parseable(const std::string& m)
 {
-  return false;
+  // m[0] contains CATEGORY, m[1] contains TYPE
+  return (m[1] == 'D') ? (m[0] == 'E' || m[0] == 'L') : false;
 }
 mcast_comm::quote_message_ptr 
-    mcast_comm::short_quote_messages_processor::parse_message(const std::string& m)
+    mcast_comm::short_quote_messages_processor::do_parsing(
+    const std::string& m)
 {
-  std::string security_symbol = "";
-  std::string b_price = "";
-  std::string b_volume = "";
-  std::string o_price = "";
-  std::string o_volume = "";
+	size_t offset = kMessageHeader;
 
+	std::string security_symbol = m.substr(offset, kSecuritySymbol);
+
+	offset += kSecuritySymbol 
+		     + kQuoteCondition 
+         + kLULD_Indicator 
+         + kReserved1
+         + kBidPriceDenominatorInd;
+	std::string b_price = m.substr(offset, kBidShortPrice);
+	offset += kBidShortPrice;
+	std::string b_volume = m.substr(offset, kBidSizeUnitsOfTrade);
+	offset += kBidSizeUnitsOfTrade
+         + kReserved2Length
+         + kOfferPriceDenominatorInd;
+	std::string o_price = m.substr(offset, kOfferShortPrice);
+	offset += kOfferShortPrice;
+	std::string o_volume = m.substr(offset, kOfferSizeInUnitsOfTrade);
+	
   double bid_price = 0.0;
   double bid_volume = 0.0;
   double offer_price = 0.0;

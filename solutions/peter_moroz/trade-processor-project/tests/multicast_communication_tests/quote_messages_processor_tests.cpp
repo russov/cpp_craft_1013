@@ -1,7 +1,9 @@
-#include <vector>
 #include "test_registrator.h"
+#include "test_detail.h"
 
 #include <quote_messages_processor.h>
+// only for standalone function 'parse_transmission_block'
+#include <market_messages_pump.h>
 
 
 void multicast_communication::tests_::quote_messages_processor_tests()
@@ -13,50 +15,50 @@ void multicast_communication::tests_::quote_messages_processor_tests()
 
 	{
 		quote_messages_processor qm_processor;
-		std::string msg;
-		quote_messages_processor* qm_parser = NULL;
-		BOOST_CHECK_NO_THROW( (qm_parser = qm_processor.get_parser(msg)) );
-		quote_messages_processor* qm_processor_p = &qm_processor;
-		BOOST_CHECK_EQUAL( qm_parser, qm_processor_p );
-		quote_message_ptr qmessage_ptr;
-		BOOST_CHECK_NO_THROW( (qmessage_ptr = qm_parser->parse_message(msg)) );
-		
-		BOOST_CHECK_EQUAL( qmessage_ptr->security_symbol(), "" );
-		BOOST_CHECK_EQUAL( qmessage_ptr->bid_price(), 0.0 );
-		BOOST_CHECK_EQUAL( qmessage_ptr->offer_price(), 0.0 );
-		BOOST_CHECK_EQUAL( qmessage_ptr->bid_volume(), 0.0 );
-		BOOST_CHECK_EQUAL( qmessage_ptr->offer_volume(), 0.0 );
-	}
-	
-	{
-		quote_messages_processor qm_processor;
+    const char* kDataDir = SOURCE_DIR "/tests/data/";
+    const std::string addr = "233.200.79.9";
 
-		const size_t messages_count = 16;
+    std::string fname = kDataDir;
+    fname.append(addr);
+    fname.append(".udp");
+    std::ifstream datasource(fname.c_str(), std::ios::binary);
+    BOOST_CHECK(datasource.is_open());
 
-		std::vector<quote_message_ptr> msg_p;
+    std::vector<std::string> datablocks;
+    detail::parse_datasource(datasource, datablocks);
 
-		for (size_t i = 0; i < messages_count; ++i)
-		{
-			std::string msg;
-			quote_messages_processor* qm_parser = NULL;
-			BOOST_CHECK_NO_THROW( (qm_parser = qm_processor.get_parser(msg)) );
-			quote_messages_processor* qm_processor_p = &qm_processor;
-			BOOST_CHECK_EQUAL( qm_parser, qm_processor_p );
-			quote_message_ptr qmessage_ptr;
-			BOOST_CHECK_NO_THROW( (qmessage_ptr = qm_parser->parse_message(msg)) );
-			msg_p.push_back(qmessage_ptr);
-		}
+    std::vector<std::string> original_messages;
+    for (size_t i = 0; i < datablocks.size(); ++i)
+    {
+      std::vector<std::string> messages;
+      parse_transmission_block(datablocks[i], messages);
+      for (size_t j = 0; j < messages.size(); ++j)
+        original_messages.push_back(messages[j]);
+    }
 
-		BOOST_CHECK_EQUAL( msg_p.size(), messages_count );
-
-		for (size_t i = 0; i < msg_p.size(); ++i)
-		{
-			BOOST_CHECK_EQUAL( msg_p[i]->security_symbol(), "" );
-			BOOST_CHECK_EQUAL( msg_p[i]->bid_price(), 0.0 );
-			BOOST_CHECK_EQUAL( msg_p[i]->offer_price(), 0.0 );
-			BOOST_CHECK_EQUAL( msg_p[i]->bid_volume(), 0.0 );
-			BOOST_CHECK_EQUAL( msg_p[i]->offer_volume(), 0.0 );
-		}
-		
+    for (size_t i = 0; i < original_messages.size(); ++i)
+    {
+      const std::string& msg = original_messages[i];
+      char msg_category = msg[0];
+      char msg_type = msg[1];
+      if (msg_type == 'B')
+      {
+        // long quote messages
+        if (msg_category == 'B' || msg_category == 'E' || msg_category == 'L')
+        {
+          quote_message_ptr qmp = qm_processor.parse_message(msg);
+          BOOST_CHECK(qmp.get() != NULL);
+        }
+      }
+      else if (msg_type == 'D')
+      {
+        // short quote messages
+        if (msg_category == 'E' || msg_category == 'L')
+        {
+          quote_message_ptr qmp = qm_processor.parse_message(msg);
+          BOOST_CHECK(qmp.get() != NULL);
+        }
+      }
+    }
 	}
 }
