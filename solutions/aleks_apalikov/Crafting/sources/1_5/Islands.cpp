@@ -37,6 +37,12 @@ Islands::Islands(const string& fileName)
 	{
 		rows --;
 	}
+	if(Map.size() == 0) //empty file
+	{
+		Map.resize(1);
+		Map[0].push_back(0);
+		rows = 1;
+	}
 	columns = Map[0].size();
 	string out_s = BINARY_DIR + string("/") + "Output3.txt";
 	of.open(out_s.c_str(), fstream::out  | fstream::trunc );
@@ -57,7 +63,22 @@ Islands::~Islands(void)
 }
 int Islands::Trace()
 {
-	count = 1; //do not forget to decrease at the end
+	count = 1;
+	if((rows == 1) && (columns == 1))
+	{
+		count = Map[0][0];
+		return count;
+	}
+	if((rows == 2) && (columns == 1))
+	{
+		count = ((Map[0][0] == 1) || (Map[1][0] == 1)) ? 1 : 0; 
+		return count; 
+	}
+	if((rows == 1) && (columns == 2))
+	{
+		count = ((Map[0][1] == 1) || (Map[0][1] == 1)) ? 1 : 0;
+		return count;
+	}
 	for(int i = 0; i < rows; ++i)
 	{
 		for(int j = 0; j < columns; ++j)
@@ -127,7 +148,9 @@ void Islands::changeAll(const int old, const int ne )
 
 int Islands::Count()
 {
-	Trace();
+	int trace = Trace();
+	if (count < 2) // no groups was founded
+		return trace;
 	int* numbers = new int[count];
 	int k;
 	for(k = 0; k < count; k++)

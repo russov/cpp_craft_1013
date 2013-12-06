@@ -6,6 +6,7 @@
 #include "market_data_processor.h"
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
+#include "config.h"
 
 void service_thread( boost::asio::io_service& service )
 {
@@ -14,6 +15,25 @@ void service_thread( boost::asio::io_service& service )
 
 void async_udp::receiver_test()
 {
+	{
+		stock_receiver sr;
+		boost::asio::io_service service;
+		config c(data_path + string("config.ini"));
+		typedef addresses::iterator iter;
+		using namespace boost::asio::ip;
+		vector<boost::asio::ip::udp::endpoint> trades;
+		vector<boost::asio::ip::udp::endpoint> quotes;
+		typedef boost::asio::ip::udp::endpoint endpoint;
+
+		for (iter i = c.get_trades().begin(); i != c.get_trades().end(); ++i )
+		{
+			trades.push_back( endpoint(address::from_string( i->first ), i->second ));
+		}
+		//	boost::thread receive_messages( boost::bind( service_thread, boost::ref( service ) ) );
+
+		stringstream ss;
+
+	}
 	{
 		stock_receiver sr;
 		boost::asio::io_service service;
@@ -33,9 +53,6 @@ void async_udp::receiver_test()
 			boost::this_thread::sleep_for( boost::chrono::nanoseconds( 100 ) );
 		}
 		sr.stop();
-	}
-	{
-
 	}
 
 }

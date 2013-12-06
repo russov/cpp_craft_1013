@@ -36,11 +36,11 @@ ReversedStr::~ReversedStr(void)
 int ReversedStr::findNext()
 {
 	count = 0;
-	getline(fs, current);
-	if(current.length() <= 1)
+	if(fs.peek() <= EOF)
 	{
 		return -1;
 	}
+	getline(fs, current);
 	string rev = "";
 	for( string::reverse_iterator it = current.rbegin(); it < current.rend(); it++)
 	{
