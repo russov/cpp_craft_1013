@@ -25,10 +25,19 @@ void async_udp::receiver_test()
 		vector<boost::asio::ip::udp::endpoint> quotes;
 		typedef boost::asio::ip::udp::endpoint endpoint;
 
+		vector<ifstream> trade_files;
 		for (iter i = c.get_trades().begin(); i != c.get_trades().end(); ++i )
 		{
 			trades.push_back( endpoint(address::from_string( i->first ), i->second ));
+			trade_files.push_back(ifstream (data_path + i->first) );
 		}
+		vector<ifstream> quote_files;
+		for (iter q = c.get_quotes().begin(); q != c.get_quotes().end(); ++q )
+		{
+			trades.push_back( endpoint(address::from_string( q->first ), q->second ));
+			quote_files.push_back(ifstream (data_path + q->first) + ".udp" );
+		}
+	
 		//	boost::thread receive_messages( boost::bind( service_thread, boost::ref( service ) ) );
 
 		stringstream ss;

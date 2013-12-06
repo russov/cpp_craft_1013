@@ -1,9 +1,8 @@
-
-#include "RatioNum.h"
+#include "reversedStr.h"
 
 int main()
 {
-	RatioNum rN("Input2.txt");
-	rN.check();
+	ReversedStr rs;//("Input.txt"); // can be found in source dir and copy plz to BINARY_DIR
+	rs.findAll();
 	return 1;
 }

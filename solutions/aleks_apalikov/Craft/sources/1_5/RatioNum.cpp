@@ -1,6 +1,8 @@
 #include "RatioNum.h"
 #include <math.h>
 #include <string>
+#include <cmath> 
+#include <limits>
 
 RatioNum::RatioNum(const string& fileName)
 {
@@ -12,7 +14,7 @@ RatioNum::RatioNum(const string& fileName)
 		printf("fs failed to open!");
 	}
 	fs >> n;
-	double cod;
+	code_d cod;
 	for (int i = 0; i < n; i++)
 	{
 		fs >> cod;
@@ -35,7 +37,7 @@ RatioNum::~RatioNum(void)
 
 int RatioNum::check()
 {
-	double pass;
+	code_d pass;
 	bool concur;
 	while (!fs.eof())
 	{
@@ -44,10 +46,10 @@ int RatioNum::check()
 		if(fs.peek() == EOF)
 			break;
 		fs>>pass;
-		code_t pass_i = convert(pass);
-		for(vector<code_t>::iterator it = codes.begin(); it < codes.end(); it++)
+		int check_this = convert(pass);
+		for(vector<int>::iterator it = codes.begin(); it < codes.end(); it++)
 		{
-			concur |= (*it == pass_i);
+			concur |= (*it == check_this);
 		}
 		string ans = concur ? "Yes\n" : "No\n";
 		of << ans.c_str();
@@ -64,12 +66,20 @@ void RatioNum::trunc( double& num )
 }
 
 
-void RatioNum::push_code( double num)
+void RatioNum::push_code( code_d num)
 {
-	codes.push_back(convert(num));
+	codes.push_back(validate(num));
 }
-
-code_t RatioNum::convert( double d)
+int RatioNum::validate(code_d num)
 {
-	return (code_t) (d * 10000);
+	code_d next = num + fabs(num) * std::numeric_limits<double>::epsilon();
+	if(convert(num) != convert(next) )
+	{		
+		return convert(next);
+	}
+	return convert(num);
+}
+int RatioNum::convert( double d)
+{
+	return (int) (d * 10000);
 }

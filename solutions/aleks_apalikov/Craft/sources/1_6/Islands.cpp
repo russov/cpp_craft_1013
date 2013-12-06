@@ -54,6 +54,7 @@ Islands::Islands(const string& fileName)
 
 Islands::~Islands(void)
 {
+	of.close();
 	for(vector<vector<int>>::iterator it = Map.begin(); it < Map.end(); it++)
 	{
 		it->erase(it->begin(), it->end());
@@ -150,7 +151,21 @@ int Islands::Count()
 {
 	int trace = Trace();
 	if (count < 2) // no groups was founded
-		return trace;
+	{
+		int summ = 0;
+		for(int i = 0; i < rows; ++i)
+		{
+			for(int j = 0; j < columns; ++j)
+			{
+				if( Map[i][j] == 1)
+				{
+					summ++;
+				}
+			}
+		}
+		of << summ;
+		return summ;
+	}
 	int* numbers = new int[count];
 	int k;
 	for(k = 0; k < count; k++)
