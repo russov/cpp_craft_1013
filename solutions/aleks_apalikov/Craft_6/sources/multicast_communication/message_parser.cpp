@@ -106,6 +106,11 @@ void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std:
 	{
 		if((*it == start) || (*it == unit_separator) ) //from enum delim
 		{
+			if(*it == unit_separator)
+			{
+				it++;
+				current_message << start;
+			}
 			while( it != buffer->end())
 			{
 				current_message << *it;
@@ -134,9 +139,15 @@ void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std:
 				it++;
 			}
 			if(it != buffer->end() )
+			{
+				if((*it == unit_separator) && (it != buffer->begin()))
+				{
+					it--;
+				}
 				continue;
+			}
 			else break;
-		};
+		}
 	}
 }
 

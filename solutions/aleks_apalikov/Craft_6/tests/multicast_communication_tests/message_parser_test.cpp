@@ -29,11 +29,10 @@ void text_test::quote_trade_parse()
 			<<"EDEO A  003759121P:J_428AINR  D00352000001 F00354300001 02" + string("\x1f")
 			<<"LDEO A  003759122N:J_432ALJR  F00124900003 D00125100001 02";
 		//shared_ptr<quote> q (quote(ss));
-		boost::shared_ptr<quote> q (new quote(ss)) ;
+		boost::shared_ptr<quote> q;
 		using namespace boost;
 		vector_messages msgs;
 		vector_messages::iterator it;
-		string* s = new string(ss.str());
 		boost::shared_ptr<string> shar_str ( new string( ss.str()) );
 		message::divide_messages(msgs, shar_str, true);	
 		it = msgs.begin();
@@ -48,7 +47,7 @@ void text_test::quote_trade_parse()
 		processor.wr_quote( q );
 
 		it++;
-		q = boost::static_pointer_cast<quote, message> (*it) ;
+		q = boost::static_pointer_cast<quote, message> (*it);
 		BOOST_CHECK_EQUAL(q->bid_denom(), 'D');
 		BOOST_CHECK_EQUAL(q->bid_price(), 352000.0);
 		BOOST_CHECK_EQUAL(q->bid_volume(), 1);
@@ -65,12 +64,12 @@ void text_test::quote_trade_parse()
 		BOOST_CHECK_EQUAL((char)q->get_type(), 'D');
 		BOOST_CHECK_EQUAL((char)q->get_categ(), 'L');
 		processor.wr_quote( q );
-		ofs.close();
+		ofs.flush();
 
-	/*	BOOST_CHECK_NO_THROW(
+		BOOST_CHECK_NO_THROW(
 			q->read_next();
 		);
-		BOOST_CHECK_EQUAL((char)q->get_categ(), (char)-1);*/
+		BOOST_CHECK_EQUAL((char)q->get_categ(), (char)-1);
 		ofs.close();
 
 	}
