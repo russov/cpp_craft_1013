@@ -46,8 +46,8 @@ int RatioNum::check()
 		if(fs.peek() == EOF)
 			break;
 		fs>>pass;
-		int check_this = convert(pass);
-		for(vector<int>::iterator it = codes.begin(); it < codes.end(); it++)
+		val_t check_this = validate(pass);
+		for(vector<val_t>::iterator it = codes.begin(); it < codes.end(); it++)
 		{
 			concur |= (*it == check_this);
 		}
@@ -70,7 +70,7 @@ void RatioNum::push_code( code_d num)
 {
 	codes.push_back(validate(num));
 }
-int RatioNum::validate(code_d num)
+val_t RatioNum::validate(code_d num)
 {
 	code_d next = num + fabs(num) * std::numeric_limits<double>::epsilon();
 	if(convert(num) != convert(next) )
@@ -79,7 +79,7 @@ int RatioNum::validate(code_d num)
 	}
 	return convert(num);
 }
-int RatioNum::convert( double d)
+val_t RatioNum::convert( double d)
 {
-	return (int) (d * 10000);
+	return (val_t) (d * 10000);
 }
