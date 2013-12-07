@@ -1,5 +1,5 @@
 
-export SOLUTION_NAME=Week1
+export SOLUTION_NAME=Week2
 
 export BUILD_TYPE=Debug
 if [ "$1" == 'Release' ];
