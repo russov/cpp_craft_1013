@@ -2,7 +2,7 @@
 
 int market_data_processor::wr_trade( shared_trade trad )
 {
-	outp << "T "<< trad->security_symbol() << " "
+	outp << "T " << std::fixed << trad->security_symbol() << " "
 		<< std::setprecision(2) << ( trad->price() / trad->denom()) << " "
 		<< std::setprecision(1) << trad->volume() << std::endl;
 	return 1;

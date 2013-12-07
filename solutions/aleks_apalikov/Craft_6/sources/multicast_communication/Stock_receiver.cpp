@@ -18,10 +18,13 @@ stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini")
 	for(size_t i = 0; i < c.trade_threads() && denom != 0; i++ )
 	{
 		threads.create_thread(boost::bind(&stock_receiver::service_run, this, trade_services[i % denom]));
-
 	}
 
-
+	denom = c.get_quotes().size();
+	for(size_t i = 0; i < c.quote_threads() && denom != 0; i++ )
+	{
+		threads.create_thread(boost::bind(&stock_receiver::service_run, this, quote_services[i % denom]));
+	}
 }
 
 
@@ -76,11 +79,23 @@ int stock_receiver::wait_some_data()
 			message::divide_messages(msgs, 
 				trade_listeners[i]->messages_pop() , false);
 			processor.wr_trades(msgs);
+			break;
+		}
+	}
+
+	for(size_t i = 0; i < quote_listeners.size(); ++i) { 
+		if (quote_listeners[i]->messages().size() > 0 )
+		{
+			vector_messages msgs;
+			boost::mutex::scoped_lock lock (quote_listeners[i]->protect_messages() );
+			message::divide_messages(msgs, 
+				quote_listeners[i]->messages_pop() , true);
+			processor.wr_quotes(msgs);
 			return static_cast<int>( i );
 		}
 	}
 	processor.flush();
-	cout<<"Msgs clear!"<<endl;
+//	cout<<"Msgs clear!"<<endl;
 	return -1;
 }
 

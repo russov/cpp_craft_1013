@@ -86,14 +86,15 @@ void message::read_block( stringstream& ss, ifstream& fs )
 	}
 	if(fs.peek() != EOF)
 	{
-		fs >> c;
-		ss << c;
+		read_binary(fs, c);
+		write_binary(ss, c);
 	}
 	while (c != delim::end && fs.peek() != EOF)
 	{
-		fs >> c;
-		ss << c;
+		read_binary(fs, c);
+		write_binary(ss, c);
 	}
+	count++;
 }
 
 
@@ -140,14 +141,20 @@ void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std:
 					{
 						boost::shared_ptr<quote> st (new quote(current_message));
 						st->read( );
-//						sm.reset( boost::static_pointer_cast<message, quote>(st));
-						sm = boost::static_pointer_cast<message, quote>(st);
+						if(st->get_categ() != end_reached)						
+							sm = boost::static_pointer_cast<message, quote>(st);
+						else 
+							break;
 					}
 					else
 					{
 						boost::shared_ptr<trade> st (new trade(current_message));
 						st->read( );
-						sm = boost::static_pointer_cast<message, trade>(st);
+						
+						if(st->get_categ() != end_reached)		
+							sm = boost::static_pointer_cast<message, trade>(st);
+						else
+							break;
 					}
 					vec_msgs.push_back(sm);
 					sm.reset();
@@ -169,6 +176,8 @@ void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std:
 		}
 	}
 }
+
+int message::count = 0;
 
 
 int quote::parse_rest()

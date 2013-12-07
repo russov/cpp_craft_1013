@@ -32,6 +32,7 @@ bool all_empty(vector<ifstream> & tr, vector<ifstream> & q)
 void async_udp::receiver_test()
 {
 	{
+		cout << data_path << endl;
 		stock_receiver sr;
 		boost::asio::io_service service;
 		boost::asio::ip::udp::endpoint endp( boost::asio::ip::address::from_string( "233.200.79.128" ), 62128 ); 
@@ -84,9 +85,9 @@ void async_udp::receiver_test()
 		}
 		//	boost::thread receive_messages( boost::bind( service_thread, boost::ref( service ) ) );
 
-
+		cout << "Total messages was parsed and passed: " << message::count << endl; 
 	}
-	{
+/*	{
 		stock_receiver sr;
 		boost::asio::io_service service;
 		boost::asio::ip::udp::endpoint endp( boost::asio::ip::address::from_string( "233.200.79.128" ), 62128 ); 
@@ -105,7 +106,7 @@ void async_udp::receiver_test()
 			boost::this_thread::sleep_for( boost::chrono::nanoseconds( 100 ) );
 		}
 		sr.stop();
-	}
+	}*/
 
 }
 

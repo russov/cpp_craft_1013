@@ -2,7 +2,7 @@
 
 #include <boost/bind.hpp>
 
-const size_t async_udp::udp_listener::default_buffer_size = 160ul;
+const size_t async_udp::udp_listener::default_buffer_size = 1000ul;
 
 async_udp::udp_listener::udp_listener( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port )
 	: io_service_( io_service )

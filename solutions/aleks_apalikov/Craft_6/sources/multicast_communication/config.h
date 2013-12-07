@@ -9,8 +9,9 @@ using namespace std;
 typedef string ip_address;
 typedef unsigned short port;
 typedef vector<pair<ip_address, port>> addresses;
-static const string data_path ("D:/CppCraft/solutions/aleks_apalikov/Craft_6/sources/data/") ;
+//static const string data_path ("D:/CppCraft/solutions/aleks_apalikov/Craft_6/sources/data/") ;
 //static const string data_path ("F:/Cpp_Craft/cpp/solutions/aleks_apalikov/Craft_6/sources/data/") ;
+static const string data_path (BINARY_DIR "/");
 
 class config
 {
