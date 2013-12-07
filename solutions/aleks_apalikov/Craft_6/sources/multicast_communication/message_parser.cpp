@@ -84,8 +84,12 @@ void message::read_block( stringstream& ss, ifstream& fs )
 		cout << "udp file was not open";	
 		return;
 	}
-	fs >> c;
-	while (c != delim::end || fs.peek() == EOF)
+	if(fs.peek() != EOF)
+	{
+		fs >> c;
+		ss << c;
+	}
+	while (c != delim::end && fs.peek() != EOF)
 	{
 		fs >> c;
 		ss << c;

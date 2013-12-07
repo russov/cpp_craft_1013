@@ -17,6 +17,7 @@ public:
 	{
 		string str = data_path + "results.txt";
 		outp.open( str.c_str() );
+		cout << "processor opened file"<<endl;
 	}
 /*	market_data_processor(ofstream output)
 	{

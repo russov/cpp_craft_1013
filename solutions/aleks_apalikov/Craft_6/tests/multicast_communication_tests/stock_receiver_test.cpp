@@ -61,17 +61,23 @@ void async_udp::receiver_test()
 			for (e_iter t = trades.begin(); t != trades.end(); t++, tf++ )
 			{
 				stringstream ss;
-				message::read_block(ss, *tf);
-				socket.send_to( boost::asio::buffer( ss.str().c_str(), ss.str().size() ), *t );
-				ss.str("");
+				if(tf->peek() != EOF)
+				{
+					message::read_block(ss, *tf);
+					socket.send_to( boost::asio::buffer( ss.str().c_str(), ss.str().size() ), *t );
+					ss.str("");
+				}				
 			}
 			f_iter qf = quote_files.begin();
 			for (e_iter q = quotes.begin(); q != quotes.end(); q++, qf++ )
 			{
 				stringstream ss;
-				message::read_block(ss, *qf);
-				socket.send_to( boost::asio::buffer( ss.str().c_str(), ss.str().size() ), *q );
-				ss.str("");
+				if(qf->peek() != EOF)
+				{		
+					message::read_block(ss, *qf);
+					socket.send_to( boost::asio::buffer( ss.str().c_str(), ss.str().size() ), *q );
+					ss.str("");
+				}	
 			}
 			boost::this_thread::sleep_for( boost::chrono::nanoseconds( 100 ) );
 			sr.wait_some_data();

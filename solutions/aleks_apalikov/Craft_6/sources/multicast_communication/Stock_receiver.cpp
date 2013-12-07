@@ -80,6 +80,7 @@ int stock_receiver::wait_some_data()
 		}
 	}
 	processor.flush();
+	cout<<"Msgs clear!"<<endl;
 	return -1;
 }
 
@@ -91,6 +92,7 @@ void stock_receiver::service_run(shared_service serv)
 void stock_receiver::stop()
 {
 	vector<shared_service>::iterator it;
+	processor.close();
 	for (it = quote_services.begin(); it != quote_services.end(); it++)
 	{
 		(*(it))->stop();
