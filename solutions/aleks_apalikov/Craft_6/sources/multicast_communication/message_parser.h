@@ -120,6 +120,7 @@ private:
 public:
 	void get_byte(byte & b);
 	void get_char(char & c);
+	static void read_block(stringstream& ss, ifstream& fs);
 	message_category get_categ()
 	{
 		return categ;

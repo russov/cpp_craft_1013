@@ -1,7 +1,8 @@
 #include "Stock_receiver.h"
 
 
-stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini")))
+stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini"))),
+	processor ( market_data_processor() )
 {
 	c.get_trades();
 	c.trade_threads();
@@ -13,8 +14,8 @@ stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini")
 	init_listeners(true);
 	init_listeners(false);
 
-	int denom = c.get_trades().size();
-	for(size_t i = 0; i < c.trade_threads(); i++ )
+	size_t denom = c.get_trades().size();
+	for(size_t i = 0; i < c.trade_threads() && denom != 0; i++ )
 	{
 		threads.create_thread(boost::bind(&stock_receiver::service_run, this, trade_services[i % denom]));
 
@@ -33,6 +34,10 @@ void stock_receiver::init_services( vector<shared_service> & vs, config & c, con
 {
 	size_t siz =
 	quotes ? c.quote_threads() : c.trade_threads();
+	if(siz == 0)
+	{
+		return;
+	}
 	vs.reserve(siz);
 	for(size_t i = 0; i != siz; i++)
 	{
@@ -48,6 +53,10 @@ void stock_receiver::init_listeners( const bool quotes )
 	vector<shared_service> & vs = quotes ? quote_services : trade_services;
 	size_t siz = quotes ? c.quote_ports() : c.trade_ports();
 	addresses & a = quotes ? c.get_quotes() : c.get_trades();
+	if (a.size() == 0)
+	{
+		return;
+	}
 	lv.reserve(a.size());
 	for(size_t i = 0; i < siz; i++)
 	{
@@ -65,10 +74,12 @@ int stock_receiver::wait_some_data()
 			vector_messages msgs;
 			boost::mutex::scoped_lock lock (trade_listeners[i]->protect_messages() );
 			message::divide_messages(msgs, 
-				trade_listeners[i]->messages_pop() , false);			
-			return i;
+				trade_listeners[i]->messages_pop() , false);
+			processor.wr_trades(msgs);
+			return static_cast<int>( i );
 		}
 	}
+	processor.flush();
 	return -1;
 }
 

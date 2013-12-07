@@ -20,23 +20,23 @@ int market_data_processor::wr_quote( shared_quote quot )
 
 int market_data_processor::wr_trades( vector_messages& msgs )
 {
-	int siz = msgs.size();
+	size_t siz = msgs.size();
 	while (!msgs.empty())
 	{
 		wr_trade(boost::static_pointer_cast<trade, message>(msgs.back()));
 		msgs.pop_back();
 	}
-	return siz;
+	return  static_cast<int>( siz );
 }
 
 int market_data_processor::wr_quotes( vector_messages& msgs )
 {
-	int siz = msgs.size();
+	size_t siz = msgs.size();
 	while (!msgs.empty())
 	{
 		wr_quote(boost::static_pointer_cast<quote, message>(msgs.back()));
 		msgs.pop_back();
 	}
-	return siz;
+	return  static_cast<int>( siz );
 }
 

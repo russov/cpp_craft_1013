@@ -5,17 +5,24 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include "config.h"
 
 using namespace std;
 class market_data_processor
 {
-	ofstream& outp;
+	ofstream outp;
 	boost::mutex mtx;
 public:
-	market_data_processor(ofstream& output): outp ( output)
+	market_data_processor()
 	{
-
+		string str = data_path + "results.txt";
+		outp.open( str.c_str() );
 	}
+/*	market_data_processor(ofstream output)
+	{
+		outp = output;
+
+	}*/
 	~market_data_processor()
 	{
 		close();
@@ -23,6 +30,10 @@ public:
 	void close()
 	{
 		outp.close();
+	}
+	void flush()
+	{
+		outp.flush();
 	}
 	int wr_trade(shared_trade trad);
 	int wr_trades(vector_messages& msgs);

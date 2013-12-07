@@ -38,7 +38,7 @@ void text_test::quote_trade_parse()
 		string str = data_path + string("1.udp");
 		ofstream ofs; 
 		ofs.open(str.c_str());
-		market_data_processor processor(ofs);
+		market_data_processor processor;
 		ss << "EBEO A  003759557N:J_735AVB             0    AAAR B30000012127000000001D0000012137000000001     A   62TB00012130001 BB00012137001 "
 			<<"EDEO A  003759121P:J_428AINR  D00352000001 F00354300001 02" + string("\x1f")
 			<<"LDEO A  003759122N:J_432ALJR  F00124900003 D00125100001 02";

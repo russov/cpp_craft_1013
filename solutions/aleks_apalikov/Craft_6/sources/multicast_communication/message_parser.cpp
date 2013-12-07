@@ -76,6 +76,21 @@ void message::get_char( char & ch )
 	read_binary(inp, ch);
 	place++;
 }
+void message::read_block( stringstream& ss, ifstream& fs )
+{
+	char c;
+	if(! fs.is_open())
+	{
+		cout << "udp file was not open";	
+		return;
+	}
+	fs >> c;
+	while (c != delim::end || fs.peek() == EOF)
+	{
+		fs >> c;
+		ss << c;
+	}
+}
 
 
 void message::get_string( string & s, size_t pos, size_t len )

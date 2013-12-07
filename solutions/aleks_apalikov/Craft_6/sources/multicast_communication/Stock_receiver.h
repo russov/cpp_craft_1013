@@ -8,6 +8,7 @@
 #include "boost/thread.hpp"
 #include "message_parser.h"
 #include <stdexcept>
+#include "market_data_processor.h"
 
 using namespace std;
 using namespace async_udp;
@@ -21,6 +22,7 @@ class stock_receiver
 	typedef vector<boost::shared_ptr<udp_listener>> listeners_vec;
 	listeners_vec quote_listeners;
 	listeners_vec trade_listeners;
+	market_data_processor processor;
 	static void init_services(vector<shared_service> & vs, config & c, const bool quotes);
 	void init_listeners( bool quotes);
 	config c;
