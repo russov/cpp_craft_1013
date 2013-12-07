@@ -29,7 +29,7 @@ class stock_receiver
 public:
 	int wait_some_data();
 	void service_run(shared_service serv);
-	stock_receiver(void);
+	stock_receiver(char * str = "");
 	void stop();
 	~stock_receiver(void);
 };

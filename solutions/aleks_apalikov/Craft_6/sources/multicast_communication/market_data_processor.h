@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include "config.h"
+#include <string>
 
 using namespace std;
 class market_data_processor
@@ -13,11 +14,17 @@ class market_data_processor
 	ofstream outp;
 	boost::mutex mtx;
 public:
-	market_data_processor()
+	market_data_processor( char * str = "")
 	{
-		string str = data_path + "results.txt";
-		outp.open( str.c_str() );
-		cout << "processor opened file"<<endl;
+		string fileName;
+		string def = data_path + "results.txt";
+		if(strlen(str) == 0 ) 
+			fileName = def;
+		else 
+			fileName = str;
+		outp.open( fileName.c_str() );
+		if(outp.is_open())
+			cout << "processor opened file"<<endl;
 	}
 /*	market_data_processor(ofstream output)
 	{

@@ -1,8 +1,8 @@
 #include "Stock_receiver.h"
 
 
-stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini"))),
-	processor ( market_data_processor() )
+stock_receiver::stock_receiver(char * str): c(config (data_path + string("config.ini"))),
+	processor ( market_data_processor(str) )
 {
 	c.get_trades();
 	c.trade_threads();
@@ -26,7 +26,6 @@ stock_receiver::stock_receiver(void): c(config (data_path + string("config.ini")
 		threads.create_thread(boost::bind(&stock_receiver::service_run, this, quote_services[i % denom]));
 	}
 }
-
 
 stock_receiver::~stock_receiver(void)
 {
@@ -71,6 +70,7 @@ void stock_receiver::init_listeners( const bool quotes )
 
 int stock_receiver::wait_some_data()
 {
+	int ret_val = -1;
 	for(size_t i = 0; i < trade_listeners.size(); ++i) { 
 		if (trade_listeners[i]->messages().size() > 0 )
 		{
@@ -79,6 +79,7 @@ int stock_receiver::wait_some_data()
 			message::divide_messages(msgs, 
 				trade_listeners[i]->messages_pop() , false);
 			processor.wr_trades(msgs);
+			ret_val = static_cast<int>( i );
 			break;
 		}
 	}
@@ -96,7 +97,7 @@ int stock_receiver::wait_some_data()
 	}
 	processor.flush();
 //	cout<<"Msgs clear!"<<endl;
-	return -1;
+	return ret_val;
 }
 
 void stock_receiver::service_run(shared_service serv)

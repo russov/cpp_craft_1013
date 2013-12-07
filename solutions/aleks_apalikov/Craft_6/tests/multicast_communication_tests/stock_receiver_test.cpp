@@ -86,18 +86,23 @@ void async_udp::receiver_test()
 		//	boost::thread receive_messages( boost::bind( service_thread, boost::ref( service ) ) );
 
 		cout << "Total messages was parsed and passed: " << message::count << endl; 
+
+		while( sr.wait_some_data() != -1 )
+		{
+			boost::this_thread::sleep_for( boost::chrono::nanoseconds( 1 ) );
+		}
 	}
-/*	{
-		stock_receiver sr;
+	{
+		stock_receiver sr("results2.txt");
 		boost::asio::io_service service;
 		boost::asio::ip::udp::endpoint endp( boost::asio::ip::address::from_string( "233.200.79.128" ), 62128 ); 
 		boost::asio::ip::udp::socket socket( service, endp.protocol() );
 		//	boost::thread receive_messages( boost::bind( service_thread, boost::ref( service ) ) );
 
 		stringstream ss;
-		ss << "EBEO A  003759557N:J_735AVB             0    AAAR B30000012127000000001D0000012137000000001     A   62TB00012130001 BB00012137001 "
-			<<"EDEO A  003759121P:J_428AINR  D00352000001 F00354300001 02"
-			<<"LDEO A  003759122N:J_432ALJR  F00124900003 D00125100001 02";
+		ss << "\x01""EBEO A  003759557N:J_735AVB             0    AAAR B30000012127000000001D0000012137000000001     A   62TB00012130001 BB00012137001 "
+			<<"\x1f""EDEO A  003759121P:J_428AINR  D00352000001 F00354300001 02"
+			<<"\x1f""LDEO A  003759122N:J_432ALJR  F00124900003 D00125100001 02""\x03";
 		string str = ss.str();
 		socket.send_to( boost::asio::buffer( str.c_str(), str.size() ), endp );
 		while( sr.wait_some_data() == -1 )
@@ -106,7 +111,7 @@ void async_udp::receiver_test()
 			boost::this_thread::sleep_for( boost::chrono::nanoseconds( 100 ) );
 		}
 		sr.stop();
-	}*/
+	}
 
 }
 

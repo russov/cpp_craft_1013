@@ -94,7 +94,8 @@ void message::read_block( stringstream& ss, ifstream& fs )
 		read_binary(fs, c);
 		write_binary(ss, c);
 	}
-	count++;
+	if (ss.str().size() > 0)
+		count++;
 }
 
 
