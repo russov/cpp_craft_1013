@@ -11,10 +11,6 @@
 typedef vector<ifstream>::iterator f_iter;
 typedef boost::asio::ip::udp::endpoint endpoint;
 typedef vector<endpoint>::iterator e_iter;
-void service_thread( boost::asio::io_service& service )
-{
-	service.run();
-}
 bool all_empty(vector<ifstream> & tr, vector<ifstream> & q)
 {
 	bool b = true;
@@ -83,7 +79,6 @@ void async_udp::receiver_test()
 			boost::this_thread::sleep_for( boost::chrono::nanoseconds( 100 ) );
 			sr.wait_some_data();
 		}
-		//	boost::thread receive_messages( boost::bind( service_thread, boost::ref( service ) ) );
 
 		cout << "Total messages was parsed and passed: " << message::count << endl; 
 
@@ -97,7 +92,6 @@ void async_udp::receiver_test()
 		boost::asio::io_service service;
 		boost::asio::ip::udp::endpoint endp( boost::asio::ip::address::from_string( "233.200.79.128" ), 62128 ); 
 		boost::asio::ip::udp::socket socket( service, endp.protocol() );
-		//	boost::thread receive_messages( boost::bind( service_thread, boost::ref( service ) ) );
 
 		stringstream ss;
 		ss << "\x01""EBEO A  003759557N:J_735AVB             0    AAAR B30000012127000000001D0000012137000000001     A   62TB00012130001 BB00012137001 "

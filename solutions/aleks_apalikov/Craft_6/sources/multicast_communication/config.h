@@ -42,7 +42,7 @@ public:
 			port num;
 			char address_line[ip_char_len];
 			conf.getline(address_line, ip_char_len, ' ');
-			ip_address ip(address_line + 1); // to del \n
+			ip_address ip(address_line + 1); // + 1 - to del \n
 			conf >> num;
 			trades.push_back(make_pair(ip, num));
 		}

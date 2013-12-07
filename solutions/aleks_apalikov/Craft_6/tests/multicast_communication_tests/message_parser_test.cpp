@@ -42,7 +42,6 @@ void text_test::quote_trade_parse()
 		ss << "EBEO A  003759557N:J_735AVB             0    AAAR B30000012127000000001D0000012137000000001     A   62TB00012130001 BB00012137001 "
 			<<"EDEO A  003759121P:J_428AINR  D00352000001 F00354300001 02" + string("\x1f")
 			<<"LDEO A  003759122N:J_432ALJR  F00124900003 D00125100001 02";
-		//shared_ptr<quote> q (quote(ss));
 		boost::shared_ptr<quote> q;
 		using namespace boost;
 		vector_messages msgs;
@@ -116,7 +115,6 @@ void text_test::quote_trade_parse()
 	}
 	
 	{
-//		trade t12(stringstream());
 		const trade::trade_t* t1 = & trade::get_short() ;
 		const trade::trade_t& t2 = trade::get_long();
 		BOOST_CHECK_EQUAL(t1->denom_of, 5) ;

@@ -9,7 +9,6 @@ message::message_category message::read_category()
 	{
 		if(!inp)
 			return end_reached;
-		std::streampos pos = inp.tellg();//TODO: del; for tests
 		if( !inp_good )
 			return end_reached; // from enum message_category
 	}
@@ -41,13 +40,13 @@ message* message::read()
 	}
 	try{
 	if(read_category() == -1) 
-		return NULL; //TODO: ret NULL and then check return if error
+		return NULL;
 	parse_rest();
 	return this;
 	}
 	catch( std::exception e )
 	{
-		cout << e.what();
+		cout << e.what() << endl;
 		categ = end_reached;
 		return this;
 	}
@@ -160,7 +159,6 @@ void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std:
 					vec_msgs.push_back(sm);
 					sm.reset();
 					current_message.str(string()); //empty current_message
-	//				it++;
 					break;
 				}
 				it++;
@@ -218,7 +216,7 @@ void quote::parse( const quote::quote_t* cur_trade )
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->bid_denom_of + sec_symb, ios_base::beg);
 	get_char(bid_denom_);
-	denominator(bid_denom_); //TODO: del before pull req
+	denominator(bid_denom_); //test if wrong than wouldn't output to file
 	inp.seekg(cur_trade->bid_pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->bid_pr_len);
@@ -303,7 +301,7 @@ void trade::parse(const trade::trade_t* cur_trade )
 	streamoff sec_symb = inp.tellg();
 	inp.seekg(cur_trade->denom_of + sec_symb, ios_base::beg);
 	get_char(denom_);
-//	denominator(denom_); //TODO: del before pull req
+	denominator(denom_); //validate full message like in quote
 	inp.seekg(cur_trade->pr_of + sec_symb, ios_base::beg);
 	string s;
 	get_string(s, 0, cur_trade->pr_len);

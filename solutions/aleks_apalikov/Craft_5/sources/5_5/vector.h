@@ -55,12 +55,15 @@ namespace task5_5
 	template< typename T >
 	vector< T >::vector( const vector< T >& copy )
 	{
+		cap = 0;
 		operator=(copy);
 	}
 	template< typename T >
 	vector< T >& vector< T >::operator=( const vector< T >& copy_from )
 	{
 		len = copy_from.size();
+		if(cap != 0 && mem)
+			delete [] mem;
 		cap = copy_from.capacity();
 		mem = new T[cap];
 		int i = 0;
@@ -103,6 +106,8 @@ namespace task5_5
 	template< typename T >
 	void vector< T >::insert( const size_t index, const T& value )
 	{
+		if(index < 0)
+			return;
 		if(index > len)
 		{
 			throw std::out_of_range("error in insert");
@@ -111,8 +116,8 @@ namespace task5_5
 		{
 			reserve(cap*times);
 		}
-		int i = len - 1;
-		while(i >= (int)index)
+		int i =  static_cast<int> (len) - 1;
+		while(i >= static_cast<int>(index))
 		{
 			mem[i+1] = mem[i];
 			--i;
@@ -136,7 +141,7 @@ namespace task5_5
 	{
 		if(index >= len)
 		{
-			throw std::out_of_range("error in cosnt []");
+			throw std::out_of_range("error in const []");
 		}
 		return mem[index];
 	}
