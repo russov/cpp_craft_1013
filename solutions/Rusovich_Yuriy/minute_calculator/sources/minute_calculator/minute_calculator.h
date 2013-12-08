@@ -15,16 +15,18 @@ namespace minute_calculator
 		explicit minute_calculator_process();
 		~minute_calculator_process();
 
+		void add_quote_data(const common_data::quote_data &quote);
+		void add_trade_data(const common_data::trade_data &trade);
 		
-
+		void stop();
+	
 	protected:
 		void create_thread();
 
+		
+
 		void quote_calculate();
 		void trade_calculate();
-
-		void add_quote_data(const common_data::quote_data &quote);
-		void add_trade_data(const common_data::trade_data &trade);
 
 		boost::thread_group calculate_group;
 		std::vector < common_data::quote_data > quote_datas;
