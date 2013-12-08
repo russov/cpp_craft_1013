@@ -3,34 +3,11 @@
 #include <stdexcept>
 
 #include "trade_message.h"
-#include "parser.h"
 
-namespace multicast_communication
+namespace common
 {
     trade_message::trade_message( message_type const& m ) : raw_( m )
-    {
-        if(parser<short_trade_message>::is_valid_type(m))
-        {
-            parse_raw<short_trade_message>();
-        } else if(parser<long_trade_message>::is_valid_type(m))
-        {
-            parse_raw<long_trade_message>();
-        }
-    }
-    std::string trade_message::security_symbol() const
-    {
-        return security_symbol_; 
-    }
-
-    double trade_message::price() const
-    {
-        return price_;
-    }
-
-    double trade_message::volume() const
-    {
-        return volume_;
-    } 
+    { }
 
     std::ostream& operator<<(std::ostream& os, trade_message const&m)
     {       
@@ -41,7 +18,7 @@ namespace multicast_communication
     }
 
     const int long_trade_message::LENGTH[long_trade_message::FIELDS] = {
-        24, //Message Header                               
+        6,  //Timestamp
         11, //Security Symbol                              
         1,  //Temporary Suffix                             
         1,  //Test Message Indicator                       
@@ -68,7 +45,7 @@ namespace multicast_communication
 
     const int long_trade_message::OFFSET[long_trade_message::FIELDS] = 
     {
-        0,  //Message Header                               
+        18, //Timestamp
         24, //Security Symbol                              
         35, //Temporary Suffix                             
         36, //Test Message Indicator                       
@@ -95,7 +72,7 @@ namespace multicast_communication
 
     const int short_trade_message::LENGTH[short_trade_message::FIELDS] = 
     {
-        24,//Message Header                          
+        6,//Timestamp
         3, //Security Symbol                         
         1, //Sale Condition                          
         4, //Trade Volume                            
@@ -108,7 +85,7 @@ namespace multicast_communication
 
     const int short_trade_message::OFFSET[short_trade_message::FIELDS] = 
     {
-        0,  //Message Header                          
+        18, //Timestamp
         24, //Security Symbol                         
         27, //Sale Condition                          
         28, //Trade Volume                            
@@ -144,11 +121,5 @@ namespace multicast_communication
         'E',
         'L'
     };
-
-    bool trade_message::is_valid_type(message_type const& m)
-    {
-        return parser<short_trade_message>::is_valid_type(m) ||
-            parser<long_trade_message>::is_valid_type(m);
-    } 
-
+    
 }

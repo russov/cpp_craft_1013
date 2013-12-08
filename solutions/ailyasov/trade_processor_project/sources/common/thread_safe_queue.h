@@ -7,7 +7,7 @@
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 
-namespace multicast_communication
+namespace common
 {
     template< typename T >
         class thread_safe_queue

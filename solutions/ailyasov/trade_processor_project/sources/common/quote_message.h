@@ -8,51 +8,27 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
-#include "parser.h"
-#include "util.h"
-
-namespace multicast_communication
+namespace common
 {
-    class quote_message: virtual private boost::noncopyable
+    typedef std::vector<char> message_type;
+
+    struct quote_message: virtual private boost::noncopyable
     { 
-        public:
-            quote_message(message_type const&);
-            std::string security_symbol() const;
-            double bid_price() const;
-            double bid_volume() const;
-            double offer_price() const;
-            double offer_volume() const;
-            static bool is_valid_type(message_type const&);
-            friend std::ostream& operator<<(std::ostream&, quote_message const&);
-        private:
+        quote_message(message_type const&);
+        std::string security_symbol() const;
+        friend std::ostream& operator<<(std::ostream&, quote_message const&);
+        message_type raw_;
 
-            template <typename T>
-                void parse_raw()
-                {
-                    parser<T> p(raw_);
-                    category_ = raw_[0];
-                    type_ = raw_[1];
-                    security_symbol_ = p.template extract<std::string>(T::SECURITY_SYMBOL);                    
-                    bid_price_demoninator_indicator_ = p.template extract<char>(T::BID_PRICE_DENOMINATOR_INDICATOR);
-                    bid_price_ = p.template extract<double>(T::BID_PRICE) 
-                        / util::get_denom(bid_price_demoninator_indicator_);
-                    bid_size_ = p.template extract<double>(T::BID_SIZE);
-                    offer_price_denominator_indicator_ = p.template extract<char>(T::OFFER_PRICE_DENOMINATOR_INDICATOR);
-                    offer_price_ = p.template extract<double>(T::OFFER_PRICE) 
-                        / util::get_denom(offer_price_denominator_indicator_);
-                    offer_size_ = p.template extract<double>(T::OFFER_SIZE);
-                }
-
-            message_type raw_;
-            std::string security_symbol_;
-            char bid_price_demoninator_indicator_;
-            double bid_price_;
-            double bid_size_;
-            char offer_price_denominator_indicator_;
-            double offer_price_;
-            double offer_size_;
-            char category_;
-            char type_;
+        std::string security_symbol_;
+        char bid_price_demoninator_indicator_;
+        double bid_price_;
+        double bid_size_;
+        char offer_price_denominator_indicator_;
+        double offer_price_;
+        double offer_size_;
+        char category_;
+        char type_;
+        std::string timestamp_;
     };
 
     struct long_quote_message
@@ -63,7 +39,7 @@ namespace multicast_communication
         static const size_t RESTRICTION_SIZE = 3;
         enum
         {
-            MESSAGE_HEADER,
+            TIMESTAMP,
             SECURITY_SYMBOL,
             TEMPORARY_SUFFIX,
             TEST_MESSAGE_INDICATOR,
@@ -109,7 +85,7 @@ namespace multicast_communication
         static const size_t RESTRICTION_SIZE = 3;
         enum
         {
-            MESSAGE_HEADER,
+            TIMESTAMP,
             SECURITY_SYMBOL,
             QUOTE_CONDITION,
             LIMIT_UP_LIMIT_DOWN_LULD_INDICATOR,

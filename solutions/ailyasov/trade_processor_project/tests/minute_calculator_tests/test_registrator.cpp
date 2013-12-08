@@ -11,10 +11,9 @@
 	using boost::unit_test_framework::test_case;
 	boost::unit_test_framework::test_suite& master_test_suite = boost::unit_test::framework::master_test_suite();
 
-	using namespace multicast_communication::tests_;
+	using namespace minute_calculator::tests_;
 
-	master_test_suite.add( BOOST_TEST_CASE( &market_data_processor_tests ) );
-	master_test_suite.add( BOOST_TEST_CASE( &market_data_receiver_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &minute_calculator_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif

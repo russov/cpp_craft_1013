@@ -15,48 +15,47 @@
 
 namespace multicast_communication 
 {
-    class market_data_receiver : virtual private boost::noncopyable
+    class market_data_receiver : virtual protected boost::noncopyable
     {
         public: 
+            market_data_receiver( 
+                    size_t const trade_thread_size,
+                    size_t const quote_thread_size,
+                    std::vector<udp_listener::endpoint_addr> const& trade_ports,
+                    std::vector<udp_listener::endpoint_addr> const& quote_ports,
+                    market_data_processor&);
 
-        explicit market_data_receiver( 
-                size_t const trade_thread_size,
-                size_t const quote_thread_size,
-                std::vector<udp_listener::endpoint_addr> const& trade_ports,
-                std::vector<udp_listener::endpoint_addr> const& quote_ports,
-                market_data_processor&);
+            virtual ~market_data_receiver();
 
-        ~market_data_receiver();
-
-        void start(); 
-        void stop(); 
-        void join();
-        size_t trades_size() const;
-        size_t quotes_size() const;
-        friend class udp_listener;
+            void start(); 
+            void stop(); 
+            void join();
+            size_t trades_size() const;
+            size_t quotes_size() const;
+            friend class udp_listener;
         private:
-        boost::asio::io_service io_service_;
+            boost::asio::io_service io_service_;
 
-        thread_safe_queue< message_type > trade_queue_;
-        mutable boost::mutex protect_trade_queue_;
-        thread_safe_queue< message_type > quote_queue_;
-        mutable boost::mutex protect_quote_queue_;
+            thread_safe_queue< message_type > trade_queue_;
+            mutable boost::mutex protect_trade_queue_;
+            thread_safe_queue< message_type > quote_queue_;
+            mutable boost::mutex protect_quote_queue_;
 
-        boost::thread_group t_group_; 
+            boost::thread_group t_group_; 
 
-        size_t const trade_thread_size_;
-        size_t const quote_thread_size_;
+            size_t const trade_thread_size_;
+            size_t const quote_thread_size_;
 
-        void process_trades_();
-        void process_quotes_();
-        void receive(udp_listener::message const&);
+            void process_trades_();
+            void process_quotes_();
 
-        std::vector< udp_listener::udp_listener_ptr > listeners_; 
+            virtual void receive(udp_listener::message const&);
 
-        market_data_processor& processor_; 
+            std::vector< udp_listener::udp_listener_ptr > listeners_; 
 
-        bool stop_; 
+            market_data_processor& processor_; 
 
+            bool stop_;
     };
 }
 #endif

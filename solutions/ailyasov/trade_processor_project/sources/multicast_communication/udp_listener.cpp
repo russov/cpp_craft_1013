@@ -11,7 +11,7 @@ namespace multicast_communication
         : io_service_(service), func_(f), addr_(addr), type_(type)
     {
         socket_.reset(new boost::asio::ip::udp::socket( boost::ref( io_service_ ) ) );
-        endpoint_.reset( new boost::asio::ip::udp::endpoint( boost::asio::ip::address::from_string( "0.0.0.0" ), addr.second ));
+        endpoint_.reset(new boost::asio::ip::udp::endpoint( boost::asio::ip::address::from_string( "0.0.0.0" ), addr.second ));
     }
 
     void udp_listener::socket_reload_()
@@ -28,6 +28,7 @@ namespace multicast_communication
 
     void udp_listener::register_listen_( buffer_type pre_buffer, const size_t previous_size )
     {
+
         buffer_type buffer;
 
         if( pre_buffer )
@@ -44,12 +45,35 @@ namespace multicast_communication
 
     void udp_listener::listen_handler_( buffer_type bt, const boost::system::error_code& error, const size_t bytes_received )
     {
-        message_type data( bt->begin(), bt->begin() + bytes_received );
-        message m;
-        m.data = data;
-        m.type_ = type_;
-        func_(m);
-        this->register_listen_( );
+        if ( error )
+        {
+            static const int NO_ENOUGHT_BUFFER = 234;
+            if ( error.value() == NO_ENOUGHT_BUFFER )
+            {
+                enlarge_buffer_( bt );
+                register_listen_( bt, bytes_received );
+            }
+            return;
+        }
+        if ( bytes_received == bt->size() && (*bt)[ bytes_received - 1 ] != '\0' )
+        {
+            enlarge_buffer_( bt );
+            register_listen_( bt, bytes_received );
+        }
+        else
+        {
+            message_type data( bt->begin(), bt->begin() + bytes_received );
+            message m;
+            m.data = data;
+            m.type_ = type_;
+            func_(m);
+            this->register_listen_( );
+        }
+    }
+
+    void udp_listener::enlarge_buffer_( buffer_type& bt )
+    {
+        bt->resize( bt->size() + default_buffer_size );
     }
 
     const size_t udp_listener::default_buffer_size = 1000ul;

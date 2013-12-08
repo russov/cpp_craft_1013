@@ -28,10 +28,11 @@ namespace multicast_communication
 
             udp_listener( endpoint_addr, boost::function<void (message const&)>, message::TYPE type, boost::asio::io_service& );
 
-            void register_listen_( buffer_type pre_buffer = buffer_type(), const size_t previous_size = 0 );
-            void listen_handler_( buffer_type bt, const boost::system::error_code& error, const size_t bytes_received );
             void socket_reload_();
+            void register_listen_( buffer_type pre_buffer = buffer_type(), const size_t previous_size = 0 );
         private: 
+            void listen_handler_( buffer_type bt, const boost::system::error_code& error, const size_t bytes_received );
+            void enlarge_buffer_( buffer_type& bt );
             static const size_t default_buffer_size; 
             boost::asio::io_service& io_service_;
             boost::function< void (message const&) > func_;

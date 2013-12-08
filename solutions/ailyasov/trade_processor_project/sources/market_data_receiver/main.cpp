@@ -12,13 +12,11 @@
 
 using namespace multicast_communication;
 
-static market_data_processor_impl processor; 
+static market_data_processor processor; 
 static boost::condition_variable cond_var; 
-static boost::mutex ctrl_c; 
 
-static void sighandler(int sig)
+static void sighandler(int)
 {
-    processor.dump(SOURCE_DIR "/market_data.dat");
     cond_var.notify_one();
 }
 
@@ -31,6 +29,7 @@ int main()
     property::reader reader(SOURCE_DIR "/config.ini");
     if(reader.opened())
     { 
+        boost::mutex ctrl_c; 
         size_t trade_threads_size = reader.trade_thread_size();
         size_t quote_threads_size  = reader.quote_thread_size();
 
@@ -43,6 +42,7 @@ int main()
         boost::mutex::scoped_lock lock(ctrl_c);
         cond_var.wait(lock); 
         receiver.stop();
+        processor.save(SOURCE_DIR "/market_data.dat");
     } else 
     {
         std::cerr << "Unable to open config file at " SOURCE_DIR " /config.ini" << std::endl;

@@ -8,39 +8,24 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
-#include "parser.h"
-#include "util.h"
-
-namespace multicast_communication
+namespace common
 {
-    class trade_message: virtual private boost::noncopyable
+    typedef std::vector<char> message_type;
+
+    struct trade_message: virtual private boost::noncopyable
     {
-        public:
-            trade_message(message_type const&);
-            std::string security_symbol() const;
-            double price() const;
-            double volume() const;
-            static bool is_valid_type(message_type const&);
-            friend std::ostream& operator<<(std::ostream&, trade_message const&);
-        private:
-            template<typename T>
-                void parse_raw()
-                {
-                    parser<T> p(raw_);
-                    category_ = raw_[0];
-                    type_ = raw_[1];
-                    security_symbol_ = p.template extract<std::string>(T::SECURITY_SYMBOL);
-                    price_denom_code_ = p.template extract<char>(T::PRICE_DENOMINATOR_INDICATOR);
-                    price_ = p.template extract<double>(T::TRADE_PRICE) / util::get_denom(price_denom_code_);
-                    volume_ = p.template extract<double>(T::TRADE_VOLUME);
-                }
-            message_type raw_;
-            std::string security_symbol_;
-            double price_;
-            double volume_;
-            char category_;
-            char type_;
-            char price_denom_code_;
+        trade_message(message_type const&);
+        std::string security_symbol() const;
+        friend std::ostream& operator<<(std::ostream&, trade_message const&);
+        message_type raw_;
+
+        std::string security_symbol_;
+        double price_;
+        double volume_;
+        char category_;
+        char type_;
+        char price_denom_code_;
+        std::string timestamp_;
     };
 
     typedef boost::shared_ptr< trade_message > trade_message_ptr;
@@ -53,7 +38,7 @@ namespace multicast_communication
 
         enum
         {
-            MESSAGE_HEADER,
+            TIMESTAMP,
             SECURITY_SYMBOL,
             TEMPORARY_SUFFIX,
             TEST_MESSAGE_INDICATOR,
@@ -92,7 +77,7 @@ namespace multicast_communication
 
         enum
         {
-            MESSAGE_HEADER,
+            TIMESTAMP,
             SECURITY_SYMBOL,
             SALE_CONDITION,
             TRADE_VOLUME,

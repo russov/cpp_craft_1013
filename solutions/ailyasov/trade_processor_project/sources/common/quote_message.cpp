@@ -4,55 +4,13 @@
 
 #include "quote_message.h"
 
-namespace multicast_communication
+namespace common
 {
     quote_message::quote_message(message_type const& m) : raw_(m)
-    {
-        if(parser<long_quote_message>::is_valid_type(raw_))
-            parse_raw<long_quote_message>();
-        else if(parser<short_quote_message>::is_valid_type(raw_))
-            parse_raw<short_quote_message>();
-    }
-    std::string quote_message::security_symbol() const
-    {
-        return security_symbol_;
-    }
-
-    double quote_message::bid_price() const
-    {
-        return bid_price_;
-    }
-
-    double quote_message::bid_volume() const
-    {
-        return bid_size_;
-    }
-
-    double quote_message::offer_price() const
-    {
-        return offer_price_;
-    }
-
-    double quote_message::offer_volume() const
-    {
-        return offer_size_;
-    } 
-
-    std::ostream& operator<<(std::ostream& os, quote_message const&m)
-    {
-        os << m.category_ << m.type_ << std::endl;
-        os << m.security_symbol_ << std::endl;
-        os << m.bid_price_ << std::endl;
-        os << m.bid_size_ << std::endl;;
-        os << m.offer_price_ << std::endl;
-        os << m.offer_size_  << std::endl;
-        os << std::endl;
-        return os;
-    }
-
+    { } 
 
     const int long_quote_message::LENGTH[long_quote_message::FIELDS] = {
-        24,// Message Header
+        6,// Timestamp
         11,// Security Symbol
         1, // Temporary Suffix
         1, // Test Message Indicator
@@ -85,7 +43,7 @@ namespace multicast_communication
     };     // Total Length 102
     const int long_quote_message::OFFSET[long_quote_message::FIELDS] =
     {
-        0,  // Message Header
+        18, // Timestamp
         24, // Security Symbol
         35, // Temporary Suffix
         36, // Test Message Indicator
@@ -119,7 +77,7 @@ namespace multicast_communication
 
     const int short_quote_message::LENGTH[short_quote_message::FIELDS] =
     {
-        24, //Message Header
+        6, //Message Header
         3,  //Security Symbol
         1,  //Quote Condition
         1,  //Limit Up Limit Down (LULD) Indicator
@@ -138,7 +96,7 @@ namespace multicast_communication
 
     const int short_quote_message::OFFSET[short_quote_message::FIELDS] =
     {
-        0,  //Message Header
+        18,  //Message Header
         24, //Security Symbol
         27, //Quote Condition
         28, //Limit Up Limit Down (LULD) Indicator
@@ -179,11 +137,18 @@ namespace multicast_communication
         'B',
         'E',
         'L'
-    };
+    }; 
 
-    bool quote_message::is_valid_type(message_type const& m)
+    std::ostream& operator<<(std::ostream& os, quote_message const&m)
     {
-        return parser<short_quote_message>::is_valid_type(m) ||
-            parser<long_quote_message>::is_valid_type(m);
-    } 
+        os << m.category_ << m.type_ << std::endl;
+        os << m.security_symbol_ << std::endl;
+        os << m.bid_price_ << std::endl;
+        os << m.bid_size_ << std::endl;;
+        os << m.offer_price_ << std::endl;
+        os << m.offer_size_  << std::endl;
+        os << std::endl;
+        return os;
+    }
+
 }

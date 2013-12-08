@@ -1,7 +1,4 @@
-
 export SOLUTION_NAME=trade_processor_project
-export BOOST_ROOT=~/boost_1_54_0
-export SYSTEM_UTILITIES_ROOT=/mnt/data/projects/system_utilities
 
 export BUILD_TYPE=Debug
 if [ "$1" == 'Release' ];
