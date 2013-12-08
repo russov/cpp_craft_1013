@@ -5,5 +5,6 @@ project( ${SOLUTION_NAME} )
 include( environment.cmake required )
 
 modules( multicast_communication )
+binaries( data_collector )
 
 compile()
