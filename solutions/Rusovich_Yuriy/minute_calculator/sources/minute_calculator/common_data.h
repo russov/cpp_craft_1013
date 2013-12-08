@@ -5,24 +5,23 @@ namespace common_data
 {
 	struct quote_data
 	{
-		char[16] security_symbol;
-		double price;
-		boost::uint32_t time;
+		char security_symbol[16];
+		boost::uint32_t time; // (значение времени в секундах начиная от 1900.01.01 00:00:00);
 		double bid_price;
 		double offer_price;
-	}
+	};
 
 	struct trade_data
 	{
-		char[16] security_symbol;
+		char security_symbol[16];
 		double price;
 		boost::uint32_t time;
-	}
+	};
 
 	struct minute_datafeed
 	{
 		boost::uint32_t minute;// (значение времени в секундах начиная от 1900.01.01 00:00:00);
-		char [16] stock_name; //(null-terminated);
+		char stock_name[16]; //(null-terminated);
 		double open_price;
 		double high_price;
 		double low_price;
