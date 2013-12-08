@@ -127,6 +127,7 @@ void minute_calculator::minute_calculator_process::add_trade_data(const common_d
 	if ( trade.price == 0 || std::strcmp(trade.security_symbol, "") == 0 )
 	{
 		throw std::logic_error("empty trade data");
+		return;
 	}
 	trade_datas.push_back(trade);
 }
