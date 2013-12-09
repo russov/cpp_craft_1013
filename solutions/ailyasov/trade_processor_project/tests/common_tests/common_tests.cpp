@@ -69,6 +69,7 @@ namespace common
                     Result r = s.insert(a); 
                     BOOST_CHECK_EQUAL(true, r.second);
                 }
+                BOOST_CHECK_EQUAL(0, q.size());
             }
             {
                 thread_safe_queue<long long int> q;
