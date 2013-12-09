@@ -91,6 +91,33 @@ namespace multicast_communication
                 std::vector<char> source(s.begin(), s.end());
                 market_data_processor::split_block(source, dest);
                 BOOST_CHECK_EQUAL(3, dest.size());
+            } 
+            static void test_is_valid_type()
+            {
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<short_trade_message>(
+                            message("EIAO A  000146235T:3]008ACN@0100B00007790DD")));
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<short_trade_message>(
+                            message("LIAO A  000146235T:3]008ACN@0100B00007790DD"))); 
+
+
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<long_trade_message>(
+                            message("BBAO A  000146235T:3]008ACN@0100B00007790DD")));
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<long_trade_message>(
+                            message("EBAO A  000146235T:3]008ACN@0100B00007790DD")));
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<long_trade_message>(
+                            message("LBAO A  000146235T:3]008ACN@0100B00007790DD")));
+
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<short_quote_message>(
+                            message("EDAO A  000146235T:3]008ACN@0100B00007790DD")));
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<short_quote_message>(
+                            message("LDAO A  000146235T:3]008ACN@0100B00007790DD"))); 
+
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<long_quote_message>(
+                            message("BBAO A  000146235T:3]008ACN@0100B00007790DD")));
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<long_quote_message>(
+                            message("EBAO A  000146235T:3]008ACN@0100B00007790DD")));
+                BOOST_CHECK_EQUAL(true, market_data_processor::is_valid_type<long_quote_message>(
+                            message("LBAO A  000146235T:3]008ACN@0100B00007790DD")));
             }
 
         };
@@ -102,6 +129,7 @@ namespace multicast_communication
             market_data_processor_helper::test_parse_short_trade();
             market_data_processor_helper::test_parse_long_trade();
             market_data_processor_helper::test_split_block();
+            market_data_processor_helper::test_is_valid_type();
         }
     }
 }

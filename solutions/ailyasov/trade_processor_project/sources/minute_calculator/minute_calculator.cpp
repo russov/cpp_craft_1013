@@ -32,9 +32,17 @@ namespace minute_calculator
     {
         try{ this->stop(); } catch(...) {}
     }
+        
+    static const double eps = 0.000001;
 
     void calculator::merge_trade_df(minute_datafeed_ptr m1, minute_datafeed_ptr m2)
     {
+        BOOST_ASSERT((m1->open_price_ - 0.0) < eps);
+        BOOST_ASSERT((m1->high_price_ - 0.0) < eps);
+        BOOST_ASSERT((m1->low_price_ - 0.0) < eps);
+        BOOST_ASSERT((m1->close_price_ - 0.0) < eps);
+        BOOST_ASSERT((m1->volume_ - 0.0) < eps);
+
         m1->open_price_ = m2->open_price_;
         m1->high_price_ = m2->high_price_;
         m1->low_price_ = m2->low_price_;
@@ -43,6 +51,9 @@ namespace minute_calculator
     }
     void calculator::merge_quote_df(minute_datafeed_ptr m1, minute_datafeed_ptr m2)
     {
+        BOOST_ASSERT((m1->bid_ - 0.0) < eps);
+        BOOST_ASSERT((m1->ask_ - 0.0) < eps);
+
         m1->bid_ = m2->bid_;
         m1->ask_ = m2->ask_;
     }
@@ -53,8 +64,8 @@ namespace minute_calculator
         trades_.stop();
         quotes_.stop(); 
         t_group_.join_all();
-        next_minute(curr_t_, minute_t_, 0, &calculator::merge_trade_df);
-        next_minute(curr_q_, minute_q_, 0, &calculator::merge_quote_df);
+        next_minute(curr_t_, minute_t_, minute_t_ + 1, &calculator::merge_trade_df);
+        next_minute(curr_q_, minute_q_, minute_q_ + 1, &calculator::merge_quote_df);
     }
 
     boost::uint32_t calculator::minute_from_timestamp(std::string const& s)
@@ -74,10 +85,14 @@ namespace minute_calculator
         return minutes;
     }
 
+    //thread for processing trade messages
+    //collects minute datafeed for trades until message for next minute is come
+    //message with minute greater than current minute indicates next minute
     void calculator::process_trades()
     {
         while(!stop_)
         {
+            boost::mutex::scoped_lock lock(protector_t_);
             trade_message_ptr t;
             trades_.wait_and_pop(t); 
             if(stop_)
@@ -85,12 +100,7 @@ namespace minute_calculator
                 break;
             }
             boost::uint32_t min = minute_from_timestamp(t->timestamp_) + minute_since_1900();
-            if(minute_t_ < min)
-            { 
-                next_minute(curr_t_, minute_t_, min, &calculator::merge_trade_df);
-            }
-
-            boost::mutex::scoped_lock lock(protector_t_);
+            next_minute(curr_t_, minute_t_, min, &calculator::merge_trade_df);
             std::map<std::string, minute_datafeed_ptr>::iterator it = curr_t_.find(t->security_symbol_);
             if(it == curr_t_.end())
             { 
@@ -116,10 +126,14 @@ namespace minute_calculator
         }
     }
 
+    //thread for processing quote messages
+    //collects minute datafeed for quote until message for next minute is come
+    //message with minute greater than current minute indicates next minute
     void calculator::process_quotes()
     {
         while(!stop_)
         {
+            boost::mutex::scoped_lock lock(protector_q_);
             quote_message_ptr q;
             quotes_.wait_and_pop(q); 
             if(stop_)
@@ -127,11 +141,7 @@ namespace minute_calculator
                 break;
             }
             boost::uint32_t min = minute_from_timestamp(q->timestamp_) + minute_since_1900();
-            if(minute_q_ < min)
-            {
-                next_minute(curr_q_, minute_q_, min, &calculator::merge_quote_df);
-            } 
-            boost::mutex::scoped_lock lock(protector_q_);
+            next_minute(curr_q_, minute_q_, min, &calculator::merge_quote_df);
             std::map<std::string, minute_datafeed_ptr>::iterator i = curr_q_.find(q->security_symbol_);
             minute_datafeed_ptr p;
             if(i == curr_q_.end())
@@ -149,34 +159,42 @@ namespace minute_calculator
         }
     }
 
+    //updates to the next minute
+    //merges trade and quote minute datafeeds if opposite one exists 
+    //if not, put it to the collection
+    //datafeeds are matched by stock_name and minute
     void calculator::next_minute(stock_df_& curr, boost::uint32_t& minute, boost::uint32_t const min, merge_function merge_func)
     {
-        boost::mutex::scoped_lock lock(protector_datafeeds_);
-        for(std::map<std::string, minute_datafeed_ptr>::iterator i = curr.begin(); i != curr.end(); ++i)
+        if(minute < min)
         {
-            minute_datafeed_ptr i_df = i->second;
-            std::vector<minute_datafeed_ptr> const& v = datafeeds_[i->first];
-            bool exist = false;
-            for(std::vector<minute_datafeed_ptr>::const_iterator j = v.begin(); j != v.end(); ++j)
+            boost::mutex::scoped_lock lock(protector_datafeeds_);
+            for(std::map<std::string, minute_datafeed_ptr>::iterator i = curr.begin(); i != curr.end(); ++i)
             {
-                minute_datafeed_ptr j_df = *j;
-                if(i_df->stock_name_ == j_df->stock_name_ && i_df->minute_ == j_df->minute_)
-                { 
-                    merge_func(j_df, i_df);
-                    exist = true;
-                    break;
+                minute_datafeed_ptr i_df = i->second;
+                std::vector<minute_datafeed_ptr> const& v = datafeeds_[i->first];
+                bool exist = false;
+                for(std::vector<minute_datafeed_ptr>::const_iterator j = v.begin(); j != v.end(); ++j)
+                {
+                    minute_datafeed_ptr j_df = *j;
+                    if(i_df->stock_name_ == j_df->stock_name_ && i_df->minute_ == j_df->minute_)
+                    { 
+                        merge_func(j_df, i_df);
+                        exist = true;
+                        break;
+                    }
                 }
+                if(!exist)
+                    datafeeds_[i->first].push_back(i->second); 
             }
-            if(!exist)
-                datafeeds_[i->first].push_back(i->second); 
+            curr.clear();
+            minute = min;
         }
-        curr.clear();
-        minute = min;
     }
 
     void calculator::start()
     { 
         t_group_.create_thread(boost::bind(&calculator::process_trades, this));
+
         t_group_.create_thread(boost::bind(&calculator::process_quotes, this));
     }
 
