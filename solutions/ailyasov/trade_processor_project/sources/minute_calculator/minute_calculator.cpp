@@ -197,5 +197,6 @@ namespace minute_calculator
             " BID: " << d.bid_ <<
             " ASK: " << d.ask_ <<
             "]" << std::endl;
+        return os;
     }
 }
