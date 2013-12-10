@@ -8,15 +8,12 @@ class Islands
 {
 	ifstream fs;
 	ofstream of;
-	int count;
-	int rows;
-	int columns;
+	size_t rows;
+	size_t columns;
 	vector<vector<int>> Map;
-	int Trace();
+	void Trace();
 public:
 	Islands(const string& f = "Input3.txt");
 	int Count();
-	void changePrev(int old, int ne, size_t pos_x, size_t pos_y);
-	void changeLowLeft(int old, int ne,  size_t pos_x, size_t pos_y);
 	~Islands(void);
 };

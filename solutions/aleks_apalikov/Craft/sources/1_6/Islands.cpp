@@ -65,27 +65,50 @@ Islands::~Islands(void)
 enum {
 	forbidden = 4
 };
-int Islands::Trace()
+void make_water( size_t pos_x, size_t pos_y, vector<vector<int>>& map)
 {
-	count = 1;
-	if((rows == 1) && (columns == 1))
+	size_t x = pos_x;
+	size_t y = pos_y;
+	if(pos_x < map.size() - 1)
 	{
-		count = Map[0][0];
-		return count;
+		if( map[ ++ x][y] == 1)
+		{
+			int & low = map[ x][y];
+			low = 0;
+			make_water(x, y, map);
+		}
 	}
-	if((rows == 2) && (columns == 1))
+	if(pos_y < map[0].size() - 1)
 	{
-		count = ((Map[0][0] == 1) || (Map[1][0] == 1)) ? 1 : 0; 
-		return count; 
+		if ((map[ pos_x][++y] & 0x3) != 0)
+		{
+			int& right = map[pos_x][y];
+			right = 0;
+			make_water(pos_x, y, map);
+		}
 	}
-	if((rows == 1) && (columns == 2))
+	if(pos_y > 1)
 	{
-		count = ((Map[0][1] == 1) || (Map[0][1] == 1)) ? 1 : 0;
-		return count;
+		y = pos_y - 1;
+		if( (map[ pos_x][y] & 0x3) != 0 )
+		{
+			int & left = map[pos_x][y];
+			if(left != forbidden)
+			{
+				left = 0;
+				make_water(pos_x, y, map);
+			}
+		}
 	}
-	for(int i = 0; i < rows; ++i)
+	return;
+	
+}
+
+void Islands::Trace()
+{
+	for(size_t i = 0; i < rows; ++i)
 	{
-		for(int j = 0; j < columns; ++j)
+		for(size_t j = 0; j < columns; ++j)
 		{
 			if(j < columns - 1)
 			{
@@ -111,118 +134,27 @@ int Islands::Trace()
 			}
 		}
 	}
-	return count;
-}
-
-void Islands::changePrev(int old, int ne , size_t pos_x, size_t pos_y )
-{
-	int y = pos_y;
-	while(Map[pos_x][y] == old)
-	{
-		Map[pos_x][y] = ne;
-		y--;
-	}
-
-	
+	return;
 }
 
 int Islands::Count()
 {
-	int trace = Trace();
-	if (count < 2) // no groups was founded
+	if(rows == 0 && columns == 0)
+		return 0;
+	if(rows == 1 && columns == 1)
+		return Map[0][0];
+	Trace();
+	int summ = 0;
+	for(size_t i = 0; i < rows; ++i)
 	{
-		int summ = 0;
-		for(int i = 0; i < rows; ++i)
+		for(size_t j = 0; j < columns; ++j)
 		{
-			for(int j = 0; j < columns; ++j)
+			if( Map[i][j] == 1)
 			{
-				if( Map[i][j] == 1)
-				{
-					summ++;
-				}
-			}
-		}
-		of << summ;
-		return summ;
-	}
-	size_t size = count + 1;
-	int* numbers = new int[size];
-	size_t k;
-	for(k = 0; k < size; k++)
-	{
-		numbers[k] = 0;
-	}
-	for(int i = 0; i < rows; ++i)
-	{
-		for(int j = 0; j < columns; ++j)
-		{
-			int cur = Map[i][j];
-			if(cur == 1)
-			{
-				numbers[1]++;
-			}
-			else
-			{
-				numbers[cur] = 1;
+				summ++;
 			}
 		}
 	}
-	int sum = 0;
-	for(k = 0; k < size; k++)
-	{
-		sum += numbers[k];
-	}
-	of << sum;
-	return sum;
-}
-
-void Islands::changeLowLeft( int old, int ne, size_t pos_x, size_t pos_y )
-{
-	int x = pos_x;
-	int y = pos_y;
-	while(Map[pos_x][y] == old)
-	{
-		Map[pos_x][y] = ne;
-		y--;
-	}
-
-}
-
-void make_water( int pos_x, int pos_y, vector<vector<int>>& map)
-{
-	int x = pos_x;
-	int y = pos_y;
-	if(pos_x < map.size() - 1)
-	{
-		if( map[ ++ x][y] == 1)
-		{
-			int & low = map[ x][y];
-			low = 0;
-			make_water(x, y, map);
-		}
-	}
-	if(pos_y < map[0].size() - 1)
-	{
-		if ((map[ pos_x][++y] & 0x3) != 0)
-		{
-			int& right = map[pos_x][y];
-			right = 0;
-			make_water(pos_x, y, map);
-		}
-	}
-	y = pos_y - 1;
-	if(pos_y > 1)
-	{
-		if( (map[ pos_x][y] & 0x3) != 0 )
-		{
-			int & left = map[pos_x][y];
-			if(left != forbidden)
-			{
-				left = 0;
-				make_water(pos_x, y, map);
-			}
-		}
-	}
-	return;
-	
+	of << summ;
+	return summ;
 }
