@@ -46,7 +46,8 @@ message* message::read()
 	}
 	catch( std::exception e )
 	{
-		cout << e.what() << " at position in file: " << static_cast<int32_t> ( inp.tellg() ) << endl;
+		int32_t i = static_cast<int> (inp.tellg());
+		cout << e.what() << " at position in file: " << i << i << endl;
 		categ = end_reached;
 		return this;
 	}
