@@ -3,7 +3,14 @@
 #include <vector>
 
 using namespace std;
-void make_water(int pos_x, int pos_y, vector<vector<int>>& map); // all lower points
+
+enum {
+	water = 0, 
+	land = 1,
+	forbidden = 4
+};
+
+void make_water(size_t pos_x, size_t pos_y, vector<vector<int>>& map); // all lower points
 class Islands
 {
 	ifstream fs;
