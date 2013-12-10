@@ -62,6 +62,9 @@ Islands::~Islands(void)
 
 	Map.erase(Map.begin(), Map.end());
 }
+enum {
+	forbidden = 4
+};
 int Islands::Trace()
 {
 	count = 1;
@@ -90,22 +93,9 @@ int Islands::Trace()
 				int& cur = Map[i][j];
 				if ( cur != 0 && right != 0 )
 				{
-					if (cur > right)
-					{
-						right = cur;
-					}
-					else if(cur < right)
-					{
-						int oldCur = cur;
-						cur = right;
-						changeAll(oldCur, cur);
-					}
-					else if((cur == 1) && (right == 1))
-					{
-						count++;
-						right = count;
-						cur = count;
-					}
+					cur = forbidden;
+					make_water(i, j, Map);
+					cur = 1;
 				}
 			}
 			if(i < rows - 1)
@@ -114,16 +104,9 @@ int Islands::Trace()
 				int& cur1 = Map[i][j];
 				if(cur1 != 0 && lower != 0)
 				{
-					if (cur1 > lower)
-					{
-						lower = cur1;
-					}
-					else
-					{
-						count++;
-						lower = count;
-						cur1 = count;
-					}
+					cur1 = forbidden;
+					make_water(i, j, Map);
+					cur1 = 1;
 				}
 			}
 		}
@@ -131,17 +114,13 @@ int Islands::Trace()
 	return count;
 }
 
-void Islands::changeAll(const int old, const int ne )
+void Islands::changePrev(int old, int ne , size_t pos_x, size_t pos_y )
 {
-	if((old == 1) || (ne == 1))
-		return;
-	for(int i = 0; i < rows; ++i)
+	int y = pos_y;
+	while(Map[pos_x][y] == old)
 	{
-		for(int j = 0; j < columns; ++j)
-		{
-			if(Map[i][j] == old)
-				Map[i][j] = ne;
-		}
+		Map[pos_x][y] = ne;
+		y--;
 	}
 
 	
@@ -166,9 +145,10 @@ int Islands::Count()
 		of << summ;
 		return summ;
 	}
-	int* numbers = new int[count];
-	int k;
-	for(k = 0; k < count; k++)
+	size_t size = count + 1;
+	int* numbers = new int[size];
+	size_t k;
+	for(k = 0; k < size; k++)
 	{
 		numbers[k] = 0;
 	}
@@ -188,10 +168,61 @@ int Islands::Count()
 		}
 	}
 	int sum = 0;
-	for(k = 0; k < count; k++)
+	for(k = 0; k < size; k++)
 	{
 		sum += numbers[k];
 	}
 	of << sum;
 	return sum;
+}
+
+void Islands::changeLowLeft( int old, int ne, size_t pos_x, size_t pos_y )
+{
+	int x = pos_x;
+	int y = pos_y;
+	while(Map[pos_x][y] == old)
+	{
+		Map[pos_x][y] = ne;
+		y--;
+	}
+
+}
+
+void make_water( int pos_x, int pos_y, vector<vector<int>>& map)
+{
+	int x = pos_x;
+	int y = pos_y;
+	if(pos_x < map.size() - 1)
+	{
+		if( map[ ++ x][y] == 1)
+		{
+			int & low = map[ x][y];
+			low = 0;
+			make_water(x, y, map);
+		}
+	}
+	if(pos_y < map[0].size() - 1)
+	{
+		if ((map[ pos_x][++y] & 0x3) != 0)
+		{
+			int& right = map[pos_x][y];
+			right = 0;
+			make_water(pos_x, y, map);
+		}
+	}
+	y = pos_y - 1;
+	if(pos_y > 1)
+	{
+		if( (map[ pos_x][y] & 0x3) != 0 )
+		{
+			int & left = map[pos_x][y];
+			if(left != forbidden)
+			{
+				left = 0;
+				make_water(pos_x, y, map);
+			}
+		}
+	}
+	return;
+	
 }
