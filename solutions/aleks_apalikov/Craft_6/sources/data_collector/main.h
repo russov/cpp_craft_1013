@@ -7,22 +7,35 @@
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
 #include "config.h"
+#include <fstream>
 
-typedef vector<ifstream>::iterator f_iter;
+typedef vector<ifstream*> vec_ifstr;
+typedef vector<ifstream*>::iterator f_iter;
 typedef boost::asio::ip::udp::endpoint endpoint;
 typedef vector<endpoint>::iterator e_iter;
-bool all_empty(vector<ifstream> & tr, vector<ifstream> & q)
+bool all_empty(vec_ifstr & tr, vec_ifstr & q)
 {
 	bool b = true;
 	for (f_iter f = tr.begin(); f != tr.end(); f++)
 	{
-		b &= (f->peek() == EOF);
+		b &= ((*f)->peek() == EOF);
 	}
 	for (f_iter f = q.begin(); f != q.end(); f++)
 	{
-		b &= (f->peek() == EOF);
+		b &= ((*f)->peek() == EOF);
 	}
 	return b;
+}
+void clear_files(vec_ifstr & tr, vec_ifstr & q) //could add close files invoke
+{
+	for (f_iter f = tr.begin(); f != tr.end(); f++)
+	{
+		delete *f;
+	}
+	for (f_iter f = q.begin(); f != q.end(); f++)
+	{
+		delete *f;
+	}
 }
 void start_sending()
 {
@@ -34,18 +47,18 @@ void start_sending()
 	using namespace boost::asio::ip;
 
 	vector<endpoint> trades;
-	vector<ifstream> trade_files;
+	vec_ifstr trade_files;
 	for (iter i = c.get_trades().begin(); i != c.get_trades().end(); ++i )
 	{
 		trades.push_back( endpoint(address::from_string( i->first ), i->second ));
-		trade_files.push_back(ifstream (data_path + i->first + ".udp" ) );
+		trade_files.push_back(new ifstream ( string(data_path + i->first + ".udp").c_str()) );
 	}
 	vector<endpoint> quotes;
-	vector<ifstream> quote_files;
+	vec_ifstr quote_files;
 	for (iter q = c.get_quotes().begin(); q != c.get_quotes().end(); ++q )
 	{
 		quotes.push_back( endpoint(address::from_string( q->first ), q->second ));
-		quote_files.push_back(ifstream (data_path + q->first + ".udp" ) );
+		quote_files.push_back(new ifstream (string(data_path + q->first + ".udp").c_str() ) );
 	}
 
 	while (!all_empty(quote_files, trade_files))
@@ -54,9 +67,9 @@ void start_sending()
 		for (e_iter t = trades.begin(); t != trades.end(); t++, tf++ )
 		{
 			stringstream ss;
-			if(tf->peek() != EOF)
+			if((*tf)->peek() != EOF)
 			{
-				message::read_block(ss, *tf);
+				message::read_block(ss, **tf);
 				socket.send_to( boost::asio::buffer( ss.str().c_str(), ss.str().size() ), *t );
 				ss.str("");
 			}				
@@ -65,15 +78,16 @@ void start_sending()
 		for (e_iter q = quotes.begin(); q != quotes.end(); q++, qf++ )
 		{
 			stringstream ss;
-			if(qf->peek() != EOF)
+			if((*qf)->peek() != EOF)
 			{		
-				message::read_block(ss, *qf);
+				message::read_block(ss, **qf);
 				socket.send_to( boost::asio::buffer( ss.str().c_str(), ss.str().size() ), *q );
 				ss.str("");
 			}	
 		}
 		boost::this_thread::sleep_for( boost::chrono::nanoseconds( 10 ) );
 	}
+	clear_files(trade_files, quote_files);
 
 }
 #endif
