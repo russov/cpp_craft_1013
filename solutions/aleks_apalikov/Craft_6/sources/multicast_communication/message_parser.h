@@ -16,7 +16,7 @@ enum delim
 {
 	start = 0x01,
 	unit_separator = 0x1F,
-	end = 0x03
+	end_of_text = 0x03
 };
 class message;
 typedef vector<boost::shared_ptr<message>> vector_messages;

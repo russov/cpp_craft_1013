@@ -46,7 +46,7 @@ message* message::read()
 	}
 	catch( std::exception e )
 	{
-		cout << e.what() << endl;
+		cout << e.what() << " at position in file: " << static_cast<int32_t> ( inp.tellg() ) << endl;
 		categ = end_reached;
 		return this;
 	}
@@ -88,7 +88,7 @@ void message::read_block( stringstream& ss, ifstream& fs )
 		read_binary(fs, c);
 		write_binary(ss, c);
 	}
-	while (c != delim::end && fs.peek() != EOF)
+	while (c != end_of_text && fs.peek() != EOF)
 	{
 		read_binary(fs, c);
 		write_binary(ss, c);
@@ -135,7 +135,7 @@ void message::divide_messages( vector_messages& vec_msgs, boost::shared_ptr<std:
 			{
 				current_message << *it;
 				boost::shared_ptr<message> sm;
-				if((*it == unit_separator) || (*it == delim::end))
+				if((*it == unit_separator) || (*it == end_of_text))
 				{
 					if(quotes)
 					{
