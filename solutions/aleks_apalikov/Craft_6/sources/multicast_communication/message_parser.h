@@ -46,6 +46,7 @@ protected:
 		equity = 'E',
 		local_issue = 'L',
 		end_reached = -1,
+		error_occured = -2,
 		empty = 'Y'
 	};
 	message_category categ;
