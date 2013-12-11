@@ -46,7 +46,7 @@ void async_udp::receiver_test()
 		boost::asio::ip::udp::socket socket( service, endp.protocol() );
 
 		stringstream ss;
-		ifstream fs( data_path + "stock_receiver_test.dat");
+		ifstream fs( string (data_path + "stock_receiver_test.dat") .c_str() );
 		copy(istreambuf_iterator<char>(fs), istreambuf_iterator<char>(), 
 			ostreambuf_iterator<char>(ss));
 		string str = ss.str();
@@ -70,14 +70,14 @@ void async_udp::receiver_test()
 
 		vector<endpoint> trades;
 		vec_ifstr trade_files;
-		for (iter i = c.get_trades().cbegin(); i != c.get_trades().cend(); ++i )
+		for (iter i = c.get_trades().begin(); i != c.get_trades().end(); ++i )
 		{
 			trades.push_back( endpoint(address::from_string( i->first ), i->second ));
 			trade_files.push_back(new ifstream (string(data_path + i->first + ".udp").c_str()) );
 		}
 		vector<endpoint> quotes;
 		vec_ifstr quote_files;
-		for (iter q = c.get_quotes().cbegin(); q != c.get_quotes().cend(); ++q )
+		for (iter q = c.get_quotes().begin(); q != c.get_quotes().end(); ++q )
 		{
 			quotes.push_back( endpoint(address::from_string( q->first ), q->second ));
 			quote_files.push_back(new ifstream ( string(data_path + q->first + ".udp").c_str()) );

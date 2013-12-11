@@ -17,7 +17,7 @@ public:
 	market_data_processor( char * str = "")
 	{
 		string fileName = data_path;
-		string def = "results.txt";
+		string def = "market_data.dat";
 		if(strlen(str) == 0 ) 
 			fileName += def;
 		else 

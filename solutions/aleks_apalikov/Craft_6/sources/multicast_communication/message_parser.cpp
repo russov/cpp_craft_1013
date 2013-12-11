@@ -12,7 +12,7 @@ message::message_category message::read_category()
 		if( !inp_good )
 			return end_reached; // from enum message_category
 	}
-	catch (exception e)
+	catch (const exception & e)
 	{
 		cout << e.what() << endl;
 		return end_reached;		
@@ -44,10 +44,9 @@ message* message::read()
 	parse_rest();
 	return this;
 	}
-	catch( std::exception e )
+	catch( const std::exception & e )
 	{
-		int32_t i = static_cast<int> (inp.tellg());
-		cout << e.what() << " at position in file: " << i << i << endl;
+		cout << e.what() << " at position in file: " << static_cast<int> (inp.tellg())  << endl;
 		categ = end_reached;
 		return this;
 	}
