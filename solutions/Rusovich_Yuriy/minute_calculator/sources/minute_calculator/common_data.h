@@ -1,3 +1,6 @@
+#ifndef _COMMON_DATA_H_
+#define _COMMON_DATA_H_
+
 
 #include <boost/cstdint.hpp>
 
@@ -44,3 +47,5 @@ namespace common_data
 		{}
 	};
 }
+
+#endif

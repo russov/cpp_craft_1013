@@ -14,9 +14,6 @@
 	using namespace minute_calculator::tests_;
 
 	master_test_suite.add( BOOST_TEST_CASE( &minute_calculator_tests ) );
-	//master_test_suite.add( BOOST_TEST_CASE( &trade_message_tests ) );
-
-	//master_test_suite.add( BOOST_TEST_CASE( &market_data_processor_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif

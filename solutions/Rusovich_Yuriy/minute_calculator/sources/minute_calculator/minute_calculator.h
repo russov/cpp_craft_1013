@@ -23,8 +23,6 @@ namespace minute_calculator
 	protected:
 		void create_thread();
 
-		
-
 		void quote_calculate();
 		void trade_calculate();
 
