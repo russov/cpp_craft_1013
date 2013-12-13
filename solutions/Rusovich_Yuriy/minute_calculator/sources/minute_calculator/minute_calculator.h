@@ -34,10 +34,9 @@ namespace minute_calculator
 		vector_minute_datafeed minute_datafeeds;
 
 	public:
-		inline minute_calculator::minute_calculator_process::vector_minute_datafeed get_minute_datafeed()
-		{
-			return minute_datafeeds;
-		}
+		common_data::minute_datafeed get_minute_datafeed_one();
+		
+		vector_minute_datafeed get_minute_datafeed();
 	};
 }
 
