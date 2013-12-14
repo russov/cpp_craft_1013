@@ -15,10 +15,11 @@
 #include "market_data_receiver.h"
 
 typedef std::vector < common_data::minute_datafeed > vector_minute_datafeed;
+boost::thread_group thread_gr;
 
 std::map<std::string, std::ofstream *> output_files;
 minute_calculator::minute_calculator_process calculator;
-multicast_communication::market_data_receiver communication;
+multicast_communication::market_data_receiver communication(std::string(SOURCE_DIR"/sources/etc/configs.ini"));
 
 void save_datafeed(common_data::minute_datafeed& datafeed )
 {
@@ -92,6 +93,7 @@ static void button_handler( int )
 	vector_minute_datafeed minute_datafeeds = calculator.get_minute_datafeed();
 	calculator.stop();
 	communication.stop();
+	thread_gr.interrupt_all();
 
 	while (!minute_datafeeds.empty())
 	{
@@ -125,6 +127,6 @@ int main()
 	}
 	calculator.start();
 
-	boost::thread head_thread( boost::bind( &process ));
-	head_thread.join();
+	thread_gr.create_thread( boost::bind( &process) );
+	thread_gr.join_all();
 }
