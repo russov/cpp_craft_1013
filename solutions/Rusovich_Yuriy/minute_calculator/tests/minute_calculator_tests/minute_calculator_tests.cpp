@@ -12,6 +12,7 @@ void minute_calculator::tests_::minute_calculator_tests()
 	}
 
 	minute_calculator::minute_calculator_process calc;
+	calc.start();
 
 	BOOST_CHECK_NO_THROW
 	(

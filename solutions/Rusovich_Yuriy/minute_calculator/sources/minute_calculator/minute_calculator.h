@@ -18,11 +18,10 @@ namespace minute_calculator
 		void add_quote_data(const common_data::quote_data &quote);
 		void add_trade_data(const common_data::trade_data &trade);
 		
+		void start();
 		void stop();
 	
 	protected:
-		void create_thread();
-
 		void quote_calculate();
 		void trade_calculate();
 

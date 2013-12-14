@@ -3,11 +3,11 @@
 #include <iostream>
 #include <boost/regex.hpp>
 
-multicast_communication::ini_config::ini_config()
+multicast_communication::ini_config::ini_config(const std::string& iniFileName)
 	: trade_thread_size(0), quote_thread_size(0)
 {
-	std::string fileName = std::string(SOURCE_DIR) + "/sources/etc/configs.ini";
-	std::ifstream *inputFile = new std::ifstream(fileName.c_str());
+	//std::string fileName = std::string(SOURCE_DIR) + "/sources/etc/configs.ini";
+	std::ifstream *inputFile = new std::ifstream(iniFileName.c_str());
 
 	if ( inputFile->is_open() )
 	{
@@ -20,9 +20,9 @@ multicast_communication::ini_config::ini_config()
 	delete inputFile;
 }
 
-multicast_communication::ini_config* multicast_communication::ini_config::instance()
+multicast_communication::ini_config multicast_communication::ini_config::instance(const std::string& iniFileName)
 {
-	ini_config* ini = new ini_config();
+	static ini_config ini(iniFileName);
 	return ini;
 }
 

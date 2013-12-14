@@ -1,17 +1,42 @@
-#ifndef _MULTICAST_COMMUNICATION_MARKET_DATA_RECEIVER_H_
-#define _MULTICAST_COMMUNICATION_MARKET_DATA_RECEIVER_H_
+#ifndef _MARKET_DATA_RECEIVER_H_
+#define _MARKET_DATA_RECEIVER_H_
 
-#include "market_data_processor.h"
+#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <string>
 #include "ini_config.h"
-
+#include "udp_listener.h"
+#include "messages.h"
 
 namespace multicast_communication
 {
-	class marker_data_receiver
+	class market_data_receiver : virtual private boost::noncopyable
 	{
-		marker_data_receiver();
+	public:
+		market_data_receiver(const std::string& iniFileName = std::string(BINARY_DIR"/configs.ini"));
+		~market_data_receiver();
+		void start();
+		void stop();
+		std::vector<messages::trade_message> get_trade_messages();
+		std::vector<messages::quote_message> get_quote_messages();
+	private:
+		vector_address_port addr_port_QUOTE;
+		vector_address_port addr_port_TRADE;
+		size_t quote_thread_size;
+		size_t trade_thread_size;
+
+		std::vector < boost::shared_ptr < multicast_communication::udp_listener > > TradesListeners;
+		std::vector < boost::shared_ptr < multicast_communication::udp_listener > > QuotesListeners;
+
+		boost::asio::io_service io_service_trade, io_service_quote;
+		boost::thread_group thread_group_trade, thread_group_quote;
+
+		void run_service(boost::asio::io_service& io_serv);
+
 
 	};
 }
+#endif // _MARKET_DATA_RECEIVER_H_
 
-#endif //_MULTICAST_COMMUNICATION_MARKET_DATA_RECEIVER_H_

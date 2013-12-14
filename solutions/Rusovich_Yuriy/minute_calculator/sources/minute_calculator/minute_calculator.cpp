@@ -8,7 +8,7 @@ boost::mutex mtx_trade_data;
 
 minute_calculator::minute_calculator_process::minute_calculator_process()
 {
-	create_thread();
+
 }
 
 minute_calculator::minute_calculator_process::~minute_calculator_process()
@@ -16,7 +16,7 @@ minute_calculator::minute_calculator_process::~minute_calculator_process()
 	stop();
 }
 
-void minute_calculator::minute_calculator_process::create_thread()
+void minute_calculator::minute_calculator_process::start()
 {
 	calculate_group.create_thread( boost::bind( &minute_calculator_process::quote_calculate, this ));
 	calculate_group.create_thread( boost::bind( &minute_calculator_process::trade_calculate, this ));

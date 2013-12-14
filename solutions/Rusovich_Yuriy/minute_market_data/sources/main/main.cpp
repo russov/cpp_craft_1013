@@ -9,13 +9,16 @@
 #include <sstream>
 
 #include "common_data.h"
+#include "messages.h"
+
 #include "minute_calculator.h"
+#include "market_data_receiver.h"
 
 typedef std::vector < common_data::minute_datafeed > vector_minute_datafeed;
 
 std::map<std::string, std::ofstream *> output_files;
 minute_calculator::minute_calculator_process calculator;
-//multicast_communication communication;
+multicast_communication::market_data_receiver communication;
 
 void save_datafeed(common_data::minute_datafeed& datafeed )
 {
@@ -34,36 +37,48 @@ void process()
 {
 	while(1)
 	{
-		common_data::quote_data quote;
-		quote.bid_price = 4;
-		quote.offer_price = 6;
-		strcpy(quote.security_symbol, "55");
-		quote.time = 656;
-
-		common_data::trade_data trade;
-
-		trade.price = 34;
-		strcpy(trade.security_symbol, "55");
-		trade.time = 656;
-
-		common_data::quote_data quote1;
-		quote1.bid_price = 324;
-		quote1.offer_price = 23523513;
-		strcpy(quote1.security_symbol, "55");
-		quote1.time = 10000;
-
-
-		try
+		std::vector<messages::quote_message> quotes = communication.get_quote_messages();
+		while (!quotes.empty())
 		{
-			calculator.add_quote_data(quote);
-			calculator.add_trade_data(trade);
-			calculator.add_quote_data(quote1);
-			
-		} 
-		catch ( std::logic_error& )
-		{
+			messages::quote_message quote_m = quotes.back();
+			quotes.pop_back();
+
+			common_data::quote_data quote_d;
+
+			quote_d.bid_price = quote_m.bid_price;
+			quote_d.offer_price = quote_m.offer_price;
+			strcpy(quote_d.security_symbol, quote_m.security_symbol.c_str());
+			quote_d.time = quote_m.time;
+
+			try
+			{
+				calculator.add_quote_data(quote_d);
+			} 
+			catch ( std::logic_error& )
+			{
+			}
 		}
 
+		std::vector<messages::trade_message> trades = communication.get_trade_messages();
+		while (!trades.empty())
+		{
+			messages::trade_message trade_m = trades.back();
+			trades.pop_back();
+
+			common_data::trade_data trade_d;
+
+			trade_d.price = trade_m.price;
+			trade_d.time = trade_m.time;
+			strcpy(trade_d.security_symbol, trade_m.security_symbol.c_str());
+
+			try
+			{
+				calculator.add_trade_data(trade_d);
+			} 
+			catch ( std::logic_error& )
+			{
+			}
+		}
 		common_data::minute_datafeed data = calculator.get_minute_datafeed_one();
 		if ( data.minute != 0 )
 			save_datafeed(data);
@@ -76,7 +91,8 @@ static void button_handler( int )
 {
 	vector_minute_datafeed minute_datafeeds = calculator.get_minute_datafeed();
 	calculator.stop();
-	
+	communication.stop();
+
 	while (!minute_datafeeds.empty())
 	{
 		save_datafeed(minute_datafeeds.back());
@@ -97,6 +113,17 @@ static void button_handler( int )
 int main()
 {
 	signal( SIGINT, button_handler );
+
+	try
+	{
+		communication.start();
+	}
+	catch (const boost::system::system_error& e )
+	{
+		std::cout << e.what() << std::endl;
+		exit(0);
+	}
+	calculator.start();
 
 	boost::thread head_thread( boost::bind( &process ));
 	head_thread.join();
